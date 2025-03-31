@@ -1,0 +1,80 @@
+{
+    "faqs": [
+        {
+            "question": "What is a geo-radius based news application?",
+            "answer": "A geo-radius based news app provides news and updates based on the user's location within a specific radius."
+        },
+        {
+            "question": "How does the app determine my location?",
+            "answer": "The app uses GPS and network-based location services to determine your current location."
+        },
+        {
+            "question": "Can I manually set my location?",
+            "answer": "Yes, you can manually set your location in the app settings."
+        },
+        {
+            "question": "What is the default radius for news updates?",
+            "answer": "The default radius is set to 5 km, but you can adjust it as per your preference."
+        },
+        {
+            "question": "How can I change my news feed radius?",
+            "answer": "You can change your news feed radius in the app settings under 'Radius Selection'."
+        },
+        {
+            "question": "Does the app support multiple languages?",
+            "answer": "Yes, the app supports multiple languages which you can select in the language settings."
+        },
+        {
+            "question": "How do I enable notifications?",
+            "answer": "You can enable notifications in the app settings under 'Notifications'."
+        },
+        {
+            "question": "Can I receive emergency alerts?",
+            "answer": "Yes, emergency alerts are automatically sent based on your location."
+        },
+        {
+            "question": "Is my location shared with others?",
+            "answer": "No, your location is used only to provide relevant news and is not shared with others."
+        },
+        {
+            "question": "How do I report fake news?",
+            "answer": "You can report fake news by clicking the 'Report' button on the news article."
+        },
+        {
+            "question": "What kind of news is shown in the app?",
+            "answer": "The app shows local news, community updates, weather alerts, and emergency notifications."
+        },
+        {
+            "question": "Can I filter news by category?",
+            "answer": "Yes, you can filter news by category such as politics, sports, weather, and more."
+        },
+        {
+            "question": "How do I save news articles?",
+            "answer": "You can save articles by clicking the 'Save' button on the news article."
+        },
+        {
+            "question": "Can I share news articles?",
+            "answer": "Yes, you can share articles via social media, messaging apps, and email."
+        },
+        {
+            "question": "How does the app handle fake news?",
+            "answer": "We use AI-based fact-checking and user reports to identify and remove fake news."
+        },
+        {
+            "question": "How often is news updated?",
+            "answer": "News updates are provided in real-time as they are reported."
+        },
+        {
+            "question": "Can I disable location tracking?",
+            "answer": "Yes, you can disable location tracking in the app settings, but it may affect functionality."
+        },
+        {
+            "question": "What happens if I move to a different city?",
+            "answer": "The app will automatically update news based on your new location."
+        },
+        {
+            "question": "How do I contact support?",
+            "answer": "You can contact support via the 'Help' section in the app settings."
+        }
+    ]
+}

@@ -1,0 +1,128 @@
+[
+    {
+        "name": "Politics",
+        "icon": "🗳️",
+        "image": "https://example.com/politics.jpg",
+        "recommendation": true
+    },
+    {
+        "name": "Travel",
+        "icon": "✈️",
+        "image": "https://example.com/travel.jpg",
+        "recommendation": true
+    },
+    {
+        "name": "Sports",
+        "icon": "⚽",
+        "image": "https://example.com/sports.jpg",
+        "recommendation": true
+    },
+    {
+        "name": "Science",
+        "icon": "🔬",
+        "image": "https://example.com/science.jpg",
+        "recommendation": false
+    },
+    {
+        "name": "Technology",
+        "icon": "💻",
+        "image": "https://example.com/technology.jpg",
+        "recommendation": false
+    },
+    {
+        "name": "Business",
+        "icon": "📈",
+        "image": "https://example.com/business.jpg",
+        "recommendation": false
+    },
+    {
+        "name": "Gaming",
+        "icon": "🎮",
+        "image": "https://example.com/gaming.jpg",
+        "recommendation": false
+    },
+    {
+        "name": "Health",
+        "icon": "🏥",
+        "image": "https://example.com/health.jpg",
+        "recommendation": false
+    },
+    {
+        "name": "Finance",
+        "icon": "💰",
+        "image": "https://example.com/finance.jpg",
+        "recommendation": false
+    },
+    {
+        "name": "World",
+        "icon": "🌍",
+        "image": "https://example.com/world.jpg",
+        "recommendation": false
+    },
+    {
+        "name": "Entertainment",
+        "icon": "🎭",
+        "image": "https://example.com/entertainment.jpg",
+        "recommendation": false
+    },
+    {
+        "name": "Music",
+        "icon": "🎵",
+        "image": "https://example.com/music.jpg",
+        "recommendation": false
+    },
+    {
+        "name": "Family",
+        "icon": "👨‍👩‍👧‍👦",
+        "image": "https://example.com/family.jpg",
+        "recommendation": false
+    },
+    {
+        "name": "Animals",
+        "icon": "🐾",
+        "image": "https://example.com/animals.jpg",
+        "recommendation": false
+    },
+    {
+        "name": "Nature",
+        "icon": "🌿",
+        "image": "https://example.com/nature.jpg",
+        "recommendation": false
+    },
+    {
+        "name": "Education",
+        "icon": "📚",
+        "image": "https://example.com/education.jpg",
+        "recommendation": false
+    },
+    {
+        "name": "Weather",
+        "icon": "🌦️",
+        "image": "https://example.com/weather.jpg",
+        "recommendation": false
+    },
+    {
+        "name": "Crime",
+        "icon": "🚔",
+        "image": "https://example.com/crime.jpg",
+        "recommendation": false
+    },
+    {
+        "name": "Food",
+        "icon": "🍔",
+        "image": "https://example.com/food.jpg",
+        "recommendation": false
+    },
+    {
+        "name": "Lifestyle",
+        "icon": "🧘‍♂️",
+        "image": "https://example.com/lifestyle.jpg",
+        "recommendation": false
+    },
+    {
+        "name": "Environment",
+        "icon": "🌎",
+        "image": "https://example.com/environment.jpg",
+        "recommendation": false
+    }
+]

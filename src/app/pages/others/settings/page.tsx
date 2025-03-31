@@ -1,0 +1,16 @@
+"use client";
+import React from 'react'
+import MainContent from '../../auth/actions/MainContent'
+import useAuthVerification from '../../../hooks/useAuthVerification';
+
+function page() {
+    const { isVerified, loading } = useAuthVerification();
+
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+
+    return isVerified ? <MainContent /> : null;
+}
+
+export default page

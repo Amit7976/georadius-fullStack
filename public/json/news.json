@@ -1,0 +1,272 @@
+[
+    {
+        "id": 101,
+        "title": "Major Fire Breaks Out in Downtown",
+        "description": "A major fire broke out in a commercial building downtown, causing panic among residents.",
+        "image": "/images/profileIcon/image.jpg",
+        "publish_time": "2025-03-25T10:30:00Z",
+        "location": "Downtown, Jaipur",
+        "longitude": 75.7873,
+        "latitude": 26.9124,
+        "categories": [ "Crime", "Emergency" ],
+        "source": {
+            "username": "amit_agrawal",
+            "profile_picture": "/images/profileIcon/image.jpg"
+        },
+        "upvote": 120,
+        "downvote": 10,
+        "comments": 45
+    },
+    {
+        "id": 102,
+        "title": "City Park Inaugurated by Mayor",
+        "description": "The new city park was inaugurated today by the Mayor, aiming to provide more green spaces for citizens.",
+        "image": "/images/profileIcon/image.jpg",
+        "publish_time": "2025-03-25T08:15:00Z",
+        "location": "Central Park, Jaipur",
+        "longitude": 75.8098,
+        "latitude": 26.9205,
+        "categories": [ "Environment", "City Development" ],
+        "source": {
+            "username": "news_reporter_raj",
+            "profile_picture": "/images/profileIcon/image.jpg"
+        },
+        "upvote": 200,
+        "downvote": 5,
+        "comments": 30
+    },
+    {
+        "id": 103,
+        "title": "Traffic Congestion Increases Near Metro Station",
+        "description": "Daily commuters are facing severe traffic congestion near the newly opened metro station.",
+        "image": "/images/profileIcon/image.jpg",
+        "publish_time": "2025-03-24T18:45:00Z",
+        "location": "Metro Station, Jaipur",
+        "longitude": 75.8023,
+        "latitude": 26.9152,
+        "categories": [ "Traffic", "Transport" ],
+        "source": {
+            "username": "city_updates",
+            "profile_picture": "/images/profileIcon/image.jpg"
+        },
+        "upvote": 80,
+        "downvote": 20,
+        "comments": 15
+    },
+    {
+        "id": 104,
+        "title": "Smart Traffic Signals Launched",
+        "description": "The city's first AI-powered smart traffic signals have been launched to ease congestion.",
+        "image": "/images/profileIcon/image.jpg",
+        "publish_time": "2025-03-26T09:00:00Z",
+        "location": "Jaipur Main Circle",
+        "longitude": 75.8123,
+        "latitude": 26.9251,
+        "categories": [ "Technology", "Transport" ],
+        "source": {
+            "username": "tech_journalist_arya",
+            "profile_picture": "/images/profileIcon/image.jpg"
+        },
+        "upvote": 150,
+        "downvote": 7,
+        "comments": 20
+    },
+    {
+        "id": 105,
+        "title": "Health Camp Organized for Underprivileged",
+        "description": "A free health camp was organized to provide medical check-ups and medicines to the underprivileged.",
+        "image": "/images/profileIcon/image.jpg",
+        "publish_time": "2025-03-24T11:00:00Z",
+        "location": "Civil Hospital, Jaipur",
+        "longitude": 75.7995,
+        "latitude": 26.9134,
+        "categories": [ "Health & Fitness", "Government & Politics" ],
+        "source": {
+            "username": "ngo_healthcare",
+            "profile_picture": "/images/profileIcon/image.jpg"
+        },
+        "upvote": 180,
+        "downvote": 4,
+        "comments": 50
+    },
+    {
+        "id": 106,
+        "title": "New AI Research Center Opens in Bangalore",
+        "description": "A state-of-the-art AI research facility has been inaugurated in Bangalore, aiming to drive innovation in artificial intelligence and machine learning.",
+        "image": "/images/profileIcon/image.jpg",
+        "publish_time": "2025-03-26T11:00:00Z",
+        "location": "Bangalore, India",
+        "longitude": 77.5946,
+        "latitude": 12.9716,
+        "categories": [ "Technology", "Science / Tech" ],
+        "source": {
+            "username": "tech_insider",
+            "profile_picture": "/images/profileIcon/image.jpg"
+        },
+        "upvote": 250,
+        "downvote": 15,
+        "comments": 60
+    },
+    {
+        "id": 107,
+        "title": "Stock Market Hits Record Highs",
+        "description": "The stock market reached an all-time high today, driven by strong corporate earnings and investor confidence.",
+        "image": "/images/profileIcon/image.jpg",
+        "publish_time": "2025-03-26T09:30:00Z",
+        "location": "Mumbai, India",
+        "longitude": 72.8777,
+        "latitude": 19.0760,
+        "categories": [ "Business", "Finance" ],
+        "source": {
+            "username": "market_watch",
+            "profile_picture": "/images/profileIcon/image.jpg"
+        },
+        "upvote": 180,
+        "downvote": 8,
+        "comments": 40
+    },
+    {
+        "id": 108,
+        "title": "National Cricket Team Wins Championship",
+        "description": "India's national cricket team secured a thrilling victory in the world championship, bringing joy to millions of fans.",
+        "image": "/images/profileIcon/image.jpg",
+        "publish_time": "2025-03-25T22:00:00Z",
+        "location": "New Delhi, India",
+        "longitude": 77.2090,
+        "latitude": 28.6139,
+        "categories": [ "Sports" ],
+        "source": {
+            "username": "sports_fanatic",
+            "profile_picture": "/images/profileIcon/image.jpg"
+        },
+        "upvote": 300,
+        "downvote": 5,
+        "comments": 90
+    },
+    {
+        "id": 109,
+        "title": "Government Announces New Education Policy",
+        "description": "The government has rolled out a new education policy focusing on skill development and digital learning.",
+        "image": "/images/profileIcon/image.jpg",
+        "publish_time": "2025-03-24T16:00:00Z",
+        "location": "India",
+        "longitude": 78.9629,
+        "latitude": 20.5937,
+        "categories": [ "Education", "Government & Politics" ],
+        "source": {
+            "username": "edu_today",
+            "profile_picture": "/images/profileIcon/image.jpg"
+        },
+        "upvote": 220,
+        "downvote": 12,
+        "comments": 55
+    },
+    {
+        "id": 110,
+        "title": "Breakthrough in Cancer Treatment Announced",
+        "description": "Scientists have made a significant breakthrough in cancer treatment, raising hopes for more effective therapies.",
+        "image": "/images/profileIcon/image.jpg",
+        "publish_time": "2025-03-23T13:45:00Z",
+        "location": "London, UK",
+        "longitude": -0.1276,
+        "latitude": 51.5074,
+        "categories": [ "Health & Fitness", "Science / Tech" ],
+        "source": {
+            "username": "med_news",
+            "profile_picture": "/images/profileIcon/image.jpg"
+        },
+        "upvote": 270,
+        "downvote": 7,
+        "comments": 75
+    },
+    {
+        "id": 111,
+        "title": "International Travel Ban Lifted",
+        "description": "The long-standing international travel restrictions have been lifted, allowing unrestricted movement for travelers.",
+        "image": "/images/profileIcon/image.jpg",
+        "publish_time": "2025-03-22T19:00:00Z",
+        "location": "Global",
+        "longitude": 0.0000,
+        "latitude": 0.0000,
+        "categories": [ "Travel" ],
+        "source": {
+            "username": "world_traveler",
+            "profile_picture": "/images/profileIcon/image.jpg"
+        },
+        "upvote": 190,
+        "downvote": 10,
+        "comments": 50
+    },
+    {
+        "id": 112,
+        "title": "New Electric Car Model Launched",
+        "description": "A leading car manufacturer has unveiled its latest electric vehicle, boasting improved range and sustainability.",
+        "image": "/images/profileIcon/image.jpg",
+        "publish_time": "2025-03-21T14:30:00Z",
+        "location": "San Francisco, USA",
+        "longitude": -122.4194,
+        "latitude": 37.7749,
+        "categories": [ "Technology", "Environment" ],
+        "source": {
+            "username": "auto_reviewer",
+            "profile_picture": "/images/profileIcon/image.jpg"
+        },
+        "upvote": 240,
+        "downvote": 20,
+        "comments": 65
+    },
+    {
+        "id": 113,
+        "title": "Cybersecurity Breach Exposes Millions of Users",
+        "description": "A major cybersecurity breach has exposed personal data of millions, raising concerns over online security.",
+        "image": "/images/profileIcon/image.jpg",
+        "publish_time": "2025-03-20T20:15:00Z",
+        "location": "New York, USA",
+        "longitude": -74.0060,
+        "latitude": 40.7128,
+        "categories": [ "Crime", "Technology" ],
+        "source": {
+            "username": "cyber_expert",
+            "profile_picture": "/images/profileIcon/image.jpg"
+        },
+        "upvote": 150,
+        "downvote": 18,
+        "comments": 45
+    },
+    {
+        "id": 114,
+        "title": "Historic Agreement on Climate Change Signed",
+        "description": "World leaders have come together to sign a historic agreement aimed at reducing global carbon emissions.",
+        "image": "/images/profileIcon/image.jpg",
+        "publish_time": "2025-03-19T17:00:00Z",
+        "location": "Geneva, Switzerland",
+        "longitude": 6.1432,
+        "latitude": 46.2044,
+        "categories": [ "Environment", "Government & Politics" ],
+        "source": {
+            "username": "climate_watch",
+            "profile_picture": "/images/profileIcon/image.jpg"
+        },
+        "upvote": 310,
+        "downvote": 10,
+        "comments": 80
+    },
+    {
+        "id": 115,
+        "title": "New Fitness Trend Gains Popularity",
+        "description": "A new fitness trend is taking the world by storm, promoting a balanced and healthier lifestyle.",
+        "image": "/images/profileIcon/image.jpg",
+        "publish_time": "2025-03-18T08:00:00Z",
+        "location": "Sydney, Australia",
+        "longitude": 151.2093,
+        "latitude": -33.8688,
+        "categories": [ "Health & Fitness" ],
+        "source": {
+            "username": "fitness_guru",
+            "profile_picture": "/images/profileIcon/image.jpg"
+        },
+        "upvote": 230,
+        "downvote": 6,
+        "comments": 55
+    }
+]
