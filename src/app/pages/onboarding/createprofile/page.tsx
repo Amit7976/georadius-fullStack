@@ -33,59 +33,28 @@ function Page() {
         console.log("User authenticated:", authData.user.id);
         console.log("====================================");
 
-
-        // ✅ Step 2: Fetch User Interests
+        // ✅ Step 2: Check if userProfile exists
         console.log("====================================");
-        console.log("Fetching user interests...");
-        console.log("====================================");
-
-        const interestResponse = await fetch(`/api/userProfile/interest`);
-        if (!interestResponse.ok) throw new Error("Failed to fetch interests");
-
-        const { interest } = await interestResponse.json();
-        console.log("====================================");
-        console.log("User Interests:", interest);
+        console.log("Checking if user profile exists...");
         console.log("====================================");
 
+        const profileExistResponse = await fetch("/api/userProfile/exist");
+        const profileExistData = await profileExistResponse.json();
 
-        if (!Array.isArray(interest) || interest.length === 0) {
+        if (profileExistData.exists) {
           console.log("====================================");
-          console.log("Interest is empty, redirecting to interest selection...");
-          console.log("====================================");
-
-          router.replace("/pages/onboarding/interest");
-          return;
-        }
-
-        // ✅ Step 3: Fetch Full User Profile (Check Name)
-        console.log("====================================");
-        console.log("Fetching User's username...");
-        console.log("====================================");
-
-        const profileResponse = await fetch("/api/userProfile/username");
-        if (!profileResponse.ok) throw new Error("Failed to fetch user profile");
-
-        const { isUsernameEmpty } = await profileResponse.json();
-        console.log("====================================");
-        console.log("User Profile username empty:", isUsernameEmpty);
-        console.log("====================================");
-
-        if (isUsernameEmpty) {
-          console.log("====================================");
-          console.log("User username is missing, showing Create Profile page...");
-          console.log("====================================");
-          setIsVerified(true);
-        } else {
-          // console.log("====================================");
-          // console.log("User has a username, proceeding...");
-          // console.log("====================================");
-          console.log("====================================");
-          console.log("User profile complete, redirecting to home...");
+          console.log("User profile exists, redirecting to home...");
           console.log("====================================");
 
           router.replace("/");
+          return;
         }
 
+        console.log("====================================");
+        console.log("User profile not found, proceeding with profile setup...");
+        console.log("====================================");
+
+        setIsVerified(true);
       } catch (error) {
         console.log("====================================");
         console.error("Error in verification:", error);

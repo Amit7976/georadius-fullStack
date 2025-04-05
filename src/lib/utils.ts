@@ -13,7 +13,7 @@ export const connectToDatabase = async () => {
     const { connection } = await mongoose.connect(
       process.env.MONGO_URI as string,
       {
-        dbName: "nextAuth",
+        dbName: "geoRadius",
       }
     );
 

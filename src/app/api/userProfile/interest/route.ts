@@ -75,13 +75,13 @@ export async function PUT(req: NextRequest) {
     const updatedProfile = await UserProfile.findOneAndUpdate(
       { userId },
       { $set: { interest: interests } },
-      { new: true, upsert: true }
+      { upsert: true }
     );
 
     console.log("====================================");
     console.log("updatedProfile: " + updatedProfile);
     console.log("====================================");
-    return NextResponse.json({ success: true, profile: updatedProfile });
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error updating user interests:", error);
     return NextResponse.json(

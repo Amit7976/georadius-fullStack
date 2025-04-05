@@ -10,6 +10,8 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { getAddress } from "@/src/helpers/AddressFunc";
 
 
 const profileSchema = z.object({
@@ -46,26 +48,80 @@ export default function MainContent() {
     };
 
     // Get current location
-    const handleGetLocation = () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const location = `Lat: ${position.coords.latitude}, Lng: ${position.coords.longitude}`;
-                    setValue("location", location);
-                },
-                () => alert("Unable to retrieve location")
-            );
-        } else {
-            alert("Geolocation is not supported by this browser.");
+    const handleGetLocation = async () => {
+        const location = await getAddress();
+        setValue("location", location);
+    };
+
+    const router = useRouter();
+
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const onSubmit = async (data: any) => {
+        if (isSubmitting) return; // Prevent multiple clicks
+        setIsSubmitting(true);
+
+        try {
+            console.log("====================================");
+            console.log("Form submission started...");
+            console.log("====================================");
+
+            console.log("Received Form Data:", data);
+
+            const formData = new FormData();
+            formData.append("username", data.username);
+            formData.append("fullName", data.fullName);
+            formData.append("phoneNumber", data.phoneNumber);
+            formData.append("dob", data.dob);
+            formData.append("location", data.location);
+            formData.append("bio", data.bio);
+
+            console.log("✅ Basic fields appended!");
+
+            if (data.profileImage instanceof File) {
+                console.log("✅ Profile Image detected, appending...");
+                formData.append("profileImage", data.profileImage);
+
+
+                console.log("====================================");
+                console.log("Sending data to API...");
+                console.log("====================================");
+
+                console.log("📝 Final FormData Entries:", [...formData.entries()]);
+
+                const response = await fetch("/api/userProfile/profile", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const result = await response.json();
+                console.log("✅ API Response Received:", result);
+
+                if (!response.ok) {
+                    console.error("❌ API Error:", result.error);
+                    throw new Error(result.error || "Failed to update profile");
+                }
+
+                console.log("✅ Profile updated successfully!", result);
+                toast("Profile updated successfully!");
+
+                router.replace("/pages/onboarding/interest");
+
+            } else {
+                console.log("⚠️ No valid profile image provided.");
+                toast.warning("No valid profile image provided.");
+            }
+        } catch (error) {
+            console.error("❌ Error updating profile:", error);
+            toast("Failed to update profile.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
 
 
-    const onSubmit = (data: any) => {
-        console.log("Form Submitted! Data:", data);
-        toast("Profile updated successfully!");
-    };
 
 
 
@@ -209,11 +265,11 @@ export default function MainContent() {
                     <Button
                         type="submit"
                         size={100}
-                        onClick={onSubmit}
                         variant={"primary"}
+                        disabled={isSubmitting}
                         className="w-full bg-green-600 active:bg-green-400 active:scale-95 duration-300 h-16 text-white text-lg font-bold rounded-full"
                     >
-                        Create Profile
+                        {isSubmitting ? "Submitting..." : "Build Profile"}
                     </Button>
                 </div>
             </form>

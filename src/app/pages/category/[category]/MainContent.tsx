@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FaArrowLeftLong } from "react-icons/fa6";
-import ImagePost from "@/src/components/ImagePost";
+import ImagePost from "@/src/components/NewsPost";
 
 type Params = {
     category?: string;
@@ -16,16 +16,16 @@ function MainContent({ params }: { params: Params }) {
 
     const router = useRouter();
 
-    
+
     const categoryOptions = [
         "All", "Newest", "Technology", "Sports", "Business", "Science / Tech",
         "Crime", "Health & Fitness", "Education", "Travel",
         "Government & Politics", "Family & Relationships"
     ];
 
-    
+
     const formatCategory = (str: string) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-    
+
     let category = params.category ? formatCategory(params.category) : "";
     const isValidCategory = categoryOptions.includes(category);
 
@@ -48,7 +48,7 @@ function MainContent({ params }: { params: Params }) {
         }
     }, [newsData, category, isValidCategory]);
 
-    
+
     if (!isValidCategory) {
         return (
             <div className="flex items-center justify-center h-screen">
@@ -67,7 +67,7 @@ function MainContent({ params }: { params: Params }) {
                 <h1 className="text-xl font-bold">{category}</h1>
             </div>
 
-            
+
             <div>
                 {loading ? (
                     <p className="text-center text-gray-500">Loading news...</p>

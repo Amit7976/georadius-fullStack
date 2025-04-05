@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from "react";
 import { IoMapOutline, IoNotificationsOutline } from "react-icons/io5";
 import BreakingNewsSlider from "../components/BreakingNewsSlider";
 import { Button } from "@/components/ui/button";
-import ImagePost from "@/src/components/ImagePost";
+import ImagePost from "@/src/components/NewsPost";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import clsx from "clsx";
 
@@ -31,7 +31,7 @@ export default function MainContent() {
     const router = useRouter();
 
     // 🟢 ✅ Check onboarding & permissions
-   
+
 
     // 🟢 ✅ Fetch news data
     useEffect(() => {

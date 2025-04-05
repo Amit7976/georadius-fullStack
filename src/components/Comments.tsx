@@ -1,264 +1,332 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { BiLike, BiSolidLike } from "react-icons/bi";
-import { Flag, FlagIcon, Send } from "lucide-react";
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
-interface Reply {
-    commentId: number;
-    username: string;
-    profile_picture: string;
+
+interface CommentType {
+    _id: string;
     comment: string;
-}
-
-interface Comment {
-    postId: number;
-    commentId: number;
     username: string;
-    profile_picture: string;
-    comment: string;
-    replies: Reply[];
+    parentCommentId?: string;
+    replyingToUsername?: string;
+    profileImage?: string;
+    updatedAt: string;
+    likes: boolean;
+    reports: boolean;
 }
 
-interface CommentsProps {
-    news_id: number;
+interface CurrentUser {
+    username: string;
+    profileImage?: string;
 }
 
-const Comments: React.FC<CommentsProps> = ({ news_id }) => {
-    const [loading, setLoading] = useState(true);
-    const [comments, setComments] = useState<Comment[]>([]);
-    const [newComment, setNewComment] = useState("");
-    const [likedComments, setLikedComments] = useState<{ [key: number]: boolean }>({});
-    const [reportComments, setReportComments] = useState<{ [key: number]: boolean }>({});
-    const [likedReplies, setLikedReplies] = useState<{ [key: number]: boolean }>({});
-    const [replyText, setReplyText] = useState<{ [key: number]: string }>({});
-    const [showReplyInput, setShowReplyInput] = useState<{ [key: number]: boolean }>({});
+const Comments = ({ news_id }: { news_id: string }) => {
+    const [deleteCommentId, setDeleteCommentId] = useState<string | null>(null);
+    const [dialogOpen, setDialogOpen] = useState(false);
 
+    const [comments, setComments] = useState<CommentType[]>([]);
+    const [input, setInput] = useState('');
+    const [replyingTo, setReplyingTo] = useState<{
+        parentId: string;
+        replyingToUsername: string;
+    } | null>(null);
+    const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
 
     useEffect(() => {
-        fetch("/json/comments.json")
-            .then((res) => res.json())
-            .then((data) => {
-                const filtered = data.filter((comment: Comment) => comment.postId === news_id);
-                setComments(filtered);
-                setLoading(false);
-            })
-            .catch((err) => {
-                console.error("Error fetching comments:", err);
-                setLoading(false);
-            });
+        const fetchComments = async () => {
+            try {
+                const res = await fetch('/api/post/getComments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ postId: news_id }),
+                });
+
+                const data = await res.json();
+
+                if (data?.comments) {
+                    console.log('====================================');
+                    console.log('Fetched comments:', data.comments);
+                    console.log('Current user:', data.currentUser);
+                    console.log('====================================');
+                    setComments(data.comments);
+                    setCurrentUser(data.currentUser);
+                }
+            } catch (error) {
+                console.error('Error fetching comments:', error);
+            }
+        };
+
+        fetchComments();
     }, [news_id]);
 
-    const toggleLikeComment = (commentId: number) => {
-        setLikedComments((prev) => ({
-            ...prev,
-            [commentId]: !prev[commentId],
-        }));
+    const rootComments = comments.filter(c => !c.parentCommentId);
+    const getReplies = (id: string) => comments.filter(c => c.parentCommentId === id);
+
+    const handleSubmit = async () => {
+        if (!input.trim()) return;
+
+        try {
+            const body = {
+                postId: news_id,
+                comment: input.trim(),
+                parentCommentId: replyingTo?.parentId,
+                replyingToUsername: replyingTo?.replyingToUsername,
+            };
+
+            const res = await fetch('/api/post/comment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            });
+
+            const data = await res.json();
+
+            console.log('====================================');
+            console.log('res:', res);
+            console.log('Comment submitted:', data);
+            console.log('====================================');
+
+            if (res.ok && data?.comment) {
+                const savedComment: CommentType = {
+                    ...data.comment,
+                    likes: false,
+                    reports: false,
+                };
+                console.log('====================================');
+                console.log('Comment saved:', savedComment);
+                console.log('====================================');
+                setComments(prev => [...prev, savedComment]);
+                setInput('');
+                setReplyingTo(null);
+            }
+
+        } catch (error) {
+            console.error("Error submitting comment:", error);
+        }
     };
-    const toggleReportComment = (commentId: number) => {
-        setReportComments((prev) => ({
-            ...prev,
-            [commentId]: !prev[commentId],
-        }));
+
+
+    const handleDelete = (id: string) => {
+        setDeleteCommentId(id);
+        setDialogOpen(true);
     };
 
-    const toggleLikeReply = (replyId: number) => {
-        setLikedReplies((prev) => ({
-            ...prev,
-            [replyId]: !prev[replyId],
-        }));
+    const confirmDelete = async () => {
+        if (!deleteCommentId) return;
+        try {
+            const res = await fetch('/api/post/commentDelete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ commentId: deleteCommentId }),
+            });
+
+            if (res.ok) {
+                // remove root + all its replies
+                const idsToDelete = new Set<string>();
+                const collectReplies = (id: string) => {
+                    idsToDelete.add(id);
+                    comments.forEach(comment => {
+                        if (comment.parentCommentId === id) {
+                            collectReplies(comment._id);
+                        }
+                    });
+                };
+                collectReplies(deleteCommentId);
+
+                setComments(prev => prev.filter(c => !idsToDelete.has(c._id)));
+            }
+        } catch (err) {
+            console.error("Error deleting comment:", err);
+        } finally {
+            setDialogOpen(false);
+            setDeleteCommentId(null);
+        }
     };
 
-    const handleReplyChange = (commentId: number, text: string) => {
-        setReplyText((prev) => ({
-            ...prev,
-            [commentId]: text,
-        }));
+
+
+
+    const handleLike = async (id: string) => {
+        const isLiked = comments.find(c => c._id === id)?.likes;
+
+        try {
+            const res = await fetch('/api/post/commentLike', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    commentId: id,
+                    like: isLiked ? 0 : 1,  // Toggle like value
+                }),
+            });
+
+            const data = await res.json();
+            console.log('====================================');
+            console.log(data);
+            console.log('====================================');
+            if (res.ok && typeof data.liked === 'boolean') {
+                setComments(prev =>
+                    prev.map(c =>
+                        c._id === id ? { ...c, likes: data.liked } : c
+                    )
+                );
+            }
+        } catch (err) {
+            console.error('Error liking comment:', err);
+        }
     };
 
-    const submitReply = (commentId: number) => {
-        if (!replyText[commentId]) return;
+    const handleReport = async (id: string) => {
+        const isReported = comments.find(c => c._id === id)?.reports;
 
-        const newReply: Reply = {
-            commentId: Date.now(),
-            username: "Current User",
-            profile_picture: "/images/profileIcon/default.jpg",
-            comment: replyText[commentId],
-        };
+        try {
+            const res = await fetch('/api/post/commentReport', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    commentId: id,
+                    report: isReported ? 0 : 1,  // Toggle report value
+                }),
+            });
 
-        setComments((prev) =>
-            prev.map((comment) =>
-                comment.commentId === commentId
-                    ? { ...comment, replies: [...comment.replies, newReply] }
-                    : comment
-            )
+            const data = await res.json();
+            if (res.ok && typeof data.reported === 'boolean') {
+                setComments(prev =>
+                    prev.map(c =>
+                        c._id === id ? { ...c, reports: data.reported } : c
+                    )
+                );
+            }
+        } catch (err) {
+            console.error('Error reporting comment:', err);
+        }
+    };
+
+    const CommentItem = ({ comment, level = 0 }: { comment: CommentType; level?: number }) => {
+        const replies = getReplies(comment._id);
+
+        return (
+            <div className={`ml-${level * 4} border-gray-200 pl-4 mt-3`}>
+                <div className="flex items-start gap-3">
+                    {comment.profileImage && (
+                        <img
+                            src={comment.profileImage}
+                            alt={comment.username}
+                            className="w-8 h-8 rounded-full"
+                        />
+                    )}
+                    <div className="flex-1">
+                        <p className="text-sm font-semibold">{comment.username}</p>
+                        {comment.replyingToUsername && (
+                            <p className="text-xs text-gray-500">
+                                Replying to @{comment.replyingToUsername}
+                            </p>
+                        )}
+                        <p className="text-gray-800 mt-1">{comment.comment}</p>
+
+                        <div className="flex gap-3 mt-2 text-xs text-gray-600">
+                            <Button variant={"ghost"} size={100} className=""
+                                onClick={() => {
+                                    setReplyingTo({
+                                        parentId: comment.parentCommentId || comment._id,
+                                        replyingToUsername: comment.username,
+                                    });
+                                }}
+                            >
+                                Reply
+                            </Button>
+                            <Button variant={"ghost"} size={100}
+                                onClick={() => handleLike(comment._id)}
+                                className={comment.likes ? "text-green-600 font-semibold" : ""}
+                            >
+                                {comment.likes ? 'Liked' : 'Like'}
+                            </Button>
+                            {currentUser?.username === comment.username ? (
+                                <Button variant={"ghost"} size={100} className="" onClick={() => handleDelete(comment._id)}>Delete</Button>
+                            ) : (
+                                <Button variant={"ghost"} size={100}
+                                    onClick={() => handleReport(comment._id)}
+                                    className={comment.reports ? "text-red-600 font-semibold" : ""}
+                                >
+                                    {comment.reports ? 'Reported' : 'Report'}
+                                </Button>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+
+                {replies.map(reply => (
+                    <CommentItem key={reply._id} comment={reply} level={level + 1} />
+                ))}
+            </div>
         );
-
-        setReplyText((prev) => ({ ...prev, [commentId]: "" }));
-        setShowReplyInput((prev) => ({ ...prev, [commentId]: false }));
-    };
-    const addComment = () => {
-        if (!newComment.trim()) return;
-
-        const newCommentObj: Comment = {
-            postId: news_id,
-            commentId: Date.now(),
-            username: "Current User",
-            profile_picture: "/images/profileIcon/default.jpg",
-            comment: newComment,
-            replies: []
-        };
-
-        setComments([newCommentObj, ...comments]);
-        setNewComment("");
     };
 
     return (
-        <div className="space-y-3 mb-16 relative">
-            {/* Add Comment Input */}
-            <div className="flex items-center space-x-3 px-4 pb-2 m-0 w-full fixed bottom-0 bg-white left-0 z-10" style={{ boxShadow: "1px -6px 10px 1px #ececec" }}>
-                <div className="mt-5 mb-3 flex items-center space-x-3 w-full">
-                    <Input
-                        className="px-0 font-semibold border-0 border-b-2 rounded-none focus-visible:border-green-500 focus-visible:ring-0 focus-visible:outline-0"
-                        type="text"
-                        value={newComment}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setNewComment(e.target.value)
-                        }
-                        placeholder="Write a comment..."
-                    />
+        <>
+            <div className="w-full mx-auto mb-28">
 
-
-                    <Button
-                        type="submit"
-                        size={100}
-                        variant={"primary"}
-                        onClick={() => addComment()}
-                        className="w-fit px-4 py-2 bg-green-600 active:bg-green-400 active:scale-95 duration-300 text-white text-xs font-bold rounded-lg"
-                    >
-                        Post
-                    </Button>
-
-                </div>
-            </div>
-
-            {loading ? (
-                <p>Loading comments...</p>
-            ) : (
-                comments.map((comment) => (
-                    <div key={comment.commentId} className="flex flex-col space-y-2 p-2 pb-5 border-b-2 border-gray-100">
-                        {/* Main Comment */}
-                        <div className="flex items-start space-x-3 py-2">
-                            <img className="w-10 h-10 rounded-full" src={comment.profile_picture} alt="User Avatar" />
-                            <div className="flex-1 space-y-1">
-                                <p className="text-sm font-bold text-black">{comment.username}</p>
-                                <p className="text-base text-gray-600 font-medium">{comment.comment}</p>
-                                <div className="flex items-center justify-between space-x-4 mt-1">
-                                    <div className="flex items-center space-x-4 mt-1">
-                                        {/* Like Button */}
-                                        <Button variant={"ghost"} size={50}
-                                            onClick={() => toggleLikeComment(comment.commentId)}
-                                            className="flex items-center space-x-1 text-gray-600">
-                                            {likedComments[comment.commentId] ? (
-                                                <>
-                                                    <BiSolidLike className="size-5 text-green-500" />
-                                                    <span className="text-green-500">Like</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <BiLike className="size-5" />
-                                                    <span className="text-gray-500">Like</span>
-                                                </>
-                                            )}
-
-                                        </Button>
-
-                                        {/* Reply Button */}
-                                        <Button variant={"ghost"} size={50}
-                                            onClick={() => setShowReplyInput((prev) => ({ ...prev, [comment.commentId]: !prev[comment.commentId] }))}
-                                            className="text-blue-500 font-semibold">
-                                            Reply
-                                        </Button>
-                                    </div>
-
-                                    {/* Report Button */}
-                                    <Button variant={"ghost"} size={50}
-                                        onClick={() => toggleReportComment(comment.commentId)}
-                                        className="flex items-center space-x-1 text-gray-600">
-                                        {reportComments[comment.commentId] ? (
-                                            <Flag className="size-5 text-red-500" />
-                                        ) : (
-                                            <Flag className="size-5" />
-                                        )}
-                                    </Button>
-                                </div>
-
-                                {/* Reply Input */}
-                                {showReplyInput[comment.commentId] && (
-                                    <div className="mt-5 mb-3 flex items-center space-x-3">
-                                        <Input
-                                            className="px-0 font-semibold border-0 border-b-2 rounded-none focus-visible:border-green-500 focus-visible:ring-0 focus-visible:outline-0"
-                                            type="text"
-                                            value={replyText[comment.commentId] || ""}
-                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                                handleReplyChange(comment.commentId, e.target.value)
-                                            }
-                                            placeholder="Write a reply..."
-                                        />
-
-
-                                        <Button
-                                            type="submit"
-                                            size={100}
-                                            variant={"primary"}
-                                            onClick={() => submitReply(comment.commentId)}
-                                            className="w-fit px-4 py-2 bg-green-600 active:bg-green-400 active:scale-95 duration-300 text-white text-xs font-bold rounded-lg"
-                                        >
-                                            Send
-                                        </Button>
-
-                                    </div>
-                                )}
-                            </div>
+                <div className="fixed bottom-0 left-0 right-0 bg-white shadow-md p-4 border-t z-50">
+                    {replyingTo && (
+                        <div className="text-sm text-gray-500 mb-1">
+                            Replying to @{replyingTo.replyingToUsername}
+                            <Button variant={"ghost"} size={100}
+                                onClick={() => setReplyingTo(null)}
+                                className="ml-2 text-red-500 text-xs"
+                            >
+                                Cancel
+                            </Button>
                         </div>
-
-                        {/* Replies Section */}
-                        {comment.replies.length > 0 && (
-                            <div className="ml-10 space-y-3">
-                                {comment.replies.map((reply) => (
-                                    <div key={reply.commentId} className="flex items-start space-x-3">
-                                        <img className="w-8 h-8 rounded-full" src={reply.profile_picture} alt="User Avatar" />
-                                        <div className="flex-1 space-y-1">
-                                            <p className="text-sm font-bold text-black">{reply.username}</p>
-                                            <p className="text-base text-gray-600 font-medium">{reply.comment}</p>
-                                            <div className="flex items-center space-x-4 mt-1">
-                                                {/* Like Button for Reply */}
-                                                <Button variant={"ghost"} size={50}
-                                                    onClick={() => toggleLikeReply(reply.commentId)}
-                                                    className="flex items-center space-x-1 text-gray-600">
-                                                    {likedReplies[reply.commentId] ? (
-                                                        <>
-                                                            <BiSolidLike className="size-5 text-green-500" />
-                                                            <span className="text-green-500">Like</span>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <BiLike className="size-5" />
-                                                            <span className="text-gray-500">Like</span>
-                                                        </>
-                                                    )}
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+                    )}
+                    <div className="flex gap-2">
+                        <textarea
+                            className="flex-1 border rounded p-2 resize-none"
+                            placeholder="Write a comment..."
+                            value={input}
+                            rows={1}
+                            onChange={e => setInput(e.target.value)}
+                        />
+                        <Button variant={"ghost"} size={100} className="px-4 bg-green-500 text-xs text-white" onClick={handleSubmit}>
+                            {replyingTo ? 'Reply' : 'Comment'}
+                        </Button>
                     </div>
-                ))
-            )}
-        </div>
+                </div>
+
+                {rootComments.length === 0 && (
+                    <div className="text-center text-gray-500 mt-4">
+                        No comments yet. Be the first to comment!
+                    </div>
+                )}
+                {rootComments.map(comment => (
+                    <CommentItem key={comment._id} comment={comment} />
+                ))}
+            </div>
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogContent className={""}>
+                    <DialogHeader className={""}>
+                        <DialogTitle className={""}>Delete Comment?</DialogTitle>
+                        <DialogDescription className={"mt-3"}>
+                            Are you sure you want to delete this comment? <br /> This action cannot be undone.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className={"flex items-center justify-center gap-4 mt-4 flex-row"}>
+                        <Button size={100} className="flex-1 w-full py-2" variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+                        <Button size={100} className="flex-1 w-full py-2" variant="destructive" onClick={confirmDelete}>Delete</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </>
+
     );
 };
 

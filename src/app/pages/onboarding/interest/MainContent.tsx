@@ -42,16 +42,16 @@ function MainContent({ interest }: MainContentProps) {
         body: JSON.stringify({ interests: selectedInterests }),
       });
 
-      const data = await response.json();
+
       if (response.ok) {
         console.log("====================================");
-        console.log("Interests saved successfully:", data);
+        console.log("Interests saved successfully:");
         console.log("====================================");
 
         router.replace("/");
       } else {
         console.log("====================================");
-        console.error("Failed to save interests:", data.error);
+        console.error("Failed to save interests: ", response.status);
         console.log("====================================");
       }
     } catch (error) {

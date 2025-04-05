@@ -69,20 +69,10 @@ const credentialsSignUp = async (
 
   console.log("candidate fetch data: " + candidate);
 
-  // Create a new CandidateSettingModel entry with the candidate's _id
-  console.log(
-    "Create a new CandidateProfileModel entry with the candidate's _id"
-  );
-  console.log(candidate._id);
-
-  await UserProfile.create({ userId: candidate._id, fullname: fullname });
-  console.log("data inserted");
-
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   redirect("/pages/auth/signin");
 
-  console.log("8");
 };
 
 export { credentialsSignUp };

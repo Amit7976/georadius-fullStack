@@ -17,7 +17,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const allowedRoutes = ["/", "/profile", "/home", "/post", "/rapid", "/search"];
 
 const metadata: Metadata = {
   title: "Create Next App",
@@ -25,9 +24,11 @@ const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const [userName, setUserName] = useState<string | null>(null); // State to hold the fetched username
   const pathname = usePathname();
   const [clientPath, setClientPath] = useState<string | null>(null);
 
+  const allowedRoutes = ["/", "/" + userName, "/home", "/post", "/rapid", "/search"];
 
   useEffect(() => {
     const handleUnload = () => {
@@ -42,7 +43,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     };
   }, []);
 
+  useEffect(() => {
+    const fetchUserName = async () => {
+      try {
+        const response = await fetch("/api/userProfile/username"); // Adjust the endpoint as needed
+        const data = await response.json();
 
+        if (data.username) {
+          setUserName(data.username);
+        } else {
+          console.error("Username not found.");
+        }
+      } catch (error) {
+        console.error("Failed to fetch username:", error);
+      }
+    };
+
+    fetchUserName();
+  }, []);
 
   useEffect(() => {
     setClientPath(pathname);

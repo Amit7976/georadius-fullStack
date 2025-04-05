@@ -7,17 +7,16 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Image from "next/image";
 import { FaArrowLeftLong } from "react-icons/fa6";
+import { getAddress } from "@/src/helpers/AddressFunc";
 
-
+// Zod Schema
 const profileSchema = z.object({
-    profileImage: z
-        .instanceof(File, { message: "Profile image is required" })
-        .or(z.string().min(1, "Profile image is required")),
+    profileImage: z.string().min(1, "Profile image is required"),
     username: z.string().min(3, "Username must be at least 3 characters"),
     fullName: z.string().min(3, "Full name is required"),
     phoneNumber: z.string().optional(),
@@ -27,6 +26,21 @@ const profileSchema = z.object({
 });
 
 export default function MainContent() {
+    const router = useRouter();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    // State to hold the actual File object
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const imageUrl = URL.createObjectURL(file);
+            setImagePreview(imageUrl); // Show preview
+            setSelectedFile(file); // Store File object
+        }
+    };
+
+
     const {
         register,
         handleSubmit,
@@ -37,49 +51,109 @@ export default function MainContent() {
     });
 
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
 
-    // Handle profile image selection
-    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
-            setValue("profileImage", file);
-            setImagePreview(URL.createObjectURL(file));
-        }
-    };
+    // Fetch existing profile data from API
+    useEffect(() => {
+        console.log("Fetching existing profile data...");
+        fetch("/api/update/profile")
+            .then((res) => res.json())
+            .then((data) => {
+                console.log("Profile Data:", data);
+                if (data.error) {
+                    toast.error("Failed to fetch profile data");
+                    return;
+                }
+
+                // Prefill form fields
+                setValue("profileImage", data.profileImage);
+                setValue("username", data.username);
+                setValue("fullName", data.fullname);
+                setValue("phoneNumber", data.phoneNumber || "");
+                setValue("dob", new Date(data.dob).toISOString().split("T")[0]);
+                setValue("location", data.location);
+                setValue("bio", data.bio);
+                setImagePreview(data.profileImage);
+            })
+            .catch((err) => {
+                console.error("Error fetching profile:", err);
+                toast.error("Error fetching profile data");
+            })
+            .finally(() => setLoading(false));
+    }, [setValue]);
+
+
 
     // Get current location
-    const handleGetLocation = () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const location = `Lat: ${position.coords.latitude}, Lng: ${position.coords.longitude}`;
-                    setValue("location", location);
-                },
-                () => alert("Unable to retrieve location")
-            );
-        } else {
-            alert("Geolocation is not supported by this browser.");
+    const handleGetLocation = async () => {
+        const location = await getAddress();
+        setValue("location", location);
+    };
+
+
+    // Handle form submission
+    const onSubmit = async (data: any) => {
+        if (isSubmitting) return;
+        setIsSubmitting(true);
+
+        try {
+
+            const formData = new FormData();
+            formData.append("username", data.username);
+            formData.append("fullName", data.fullName);
+            formData.append("phoneNumber", data.phoneNumber);
+            formData.append("dob", data.dob);
+            formData.append("location", data.location); // Use the resolved address
+            formData.append("bio", data.bio);
+
+            console.log("📤 Sending Form Data:", formData);
+
+
+
+            // **Check if user selected a new file**
+            if (selectedFile) {
+                console.log("✅ New profile image detected, appending...");
+                formData.append("profileImage", selectedFile);
+            } else {
+                console.log("✅ Using existing image URL...");
+                formData.append("profileImage", data.profileImage); // Send existing image path
+            }
+
+            const response = await fetch("/api/update/profile", {
+                method: "PUT",
+                body: formData,
+            });
+
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || "Profile update failed");
+
+            console.log("✅ Profile updated successfully!", result);
+            toast("Profile updated successfully!");
+
+            router.refresh();
+        } catch (error) {
+            console.error("❌ Error updating profile:", error);
+            toast("Failed to update profile.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
 
 
-    const onSubmit = (data: any) => {
-        console.log("Profile Data:", data);
-        toast("Profile updated successfully!");
-    };
-    const router = useRouter();
-
+    if (loading) return <p>Loading...</p>;
 
     return (
-        <div className="max-w-lg mx-auto px-4 py-0">
-            <div className='flex items-center justify-center relative mt-6 mb-8'>
+        <div className="max-w-lg mx-auto px-6 py-0">
+            <div className='flex items-center justify-center relative my-5'>
                 <FaArrowLeftLong
                     onClick={() => router.back()}
-                    className="text-lg absolute left-0 w-10 h-10 p-2.5 cursor-pointer"
+                    className="text-lg absolute left-3 w-10 h-10 p-2.5 cursor-pointer"
                 />
-                <h1 className="text-xl font-extrabold text-gray-800 text-center">Update your <span className="text-green-600">Profile</span></h1>
+
+                <h1 className="text-xl font-extrabold text-gray-800 text-center py-6 pb-8">Update your <span className="text-green-600">Profile</span></h1>
             </div>
+
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {/* Profile Image Upload */}
                 <div className="border-2 border-gray-100 w-full p-6 rounded-lg flex items-center gap-6">
@@ -169,10 +243,10 @@ export default function MainContent() {
                         {...register("dob")}
                         type="date"
                         autoComplete="bday"
-                        defaultValue={new Date().toISOString().split("T")[0]} // Set today's date
                     />
                     {errors.dob && <p className="text-red-500">{errors.dob.message}</p>}
                 </div>
+
 
 
                 {/* Location + Get Current Location Button */}
@@ -217,9 +291,10 @@ export default function MainContent() {
                         type="submit"
                         size={100}
                         variant={"primary"}
+                        disabled={isSubmitting}
                         className="w-full bg-green-600 active:bg-green-400 active:scale-95 duration-300 h-16 text-white text-lg font-bold rounded-full"
                     >
-                        Update Profile
+                        {isSubmitting ? "Submitting..." : "Build Profile"}
                     </Button>
                 </div>
             </form>

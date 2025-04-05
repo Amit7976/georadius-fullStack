@@ -13,13 +13,7 @@ import PostPage from "@/src/app/post/page";
 import SearchPage from "@/src/app/search/page";
 import ProfilePage from "@/src/app/[profile]/page";
 
-const tabs = [
-    { key: "home", name: "Home", icon: IoHomeOutline, icon2: IoHome, component: <HomePage /> },
-    { key: "rapid", name: "Rapid", icon: IoFlashOutline, icon2: IoFlash, component: <RapidPage /> },
-    { key: "post", name: "Post", icon: MdOutlineAddBox, icon2: MdAddBox, component: <PostPage /> },
-    { key: "search", name: "Search", icon: CgSearch, icon2: CgSearchLoading, component: <SearchPage /> },
-    { key: "profile", name: "Profile", icon: FaUser, icon2: FaUser, component: <ProfilePage /> },
-];
+
 
 export default function BottomNavigation() {
     const router = useRouter();
@@ -29,7 +23,16 @@ export default function BottomNavigation() {
     const currentTab = pathname.split("/")[1] || "home";
     const [activeTab, setActiveTab] = useState(currentTab);
     const [isVisible, setIsVisible] = useState(true);
+    const [userName, setUserName] = useState<string | null>(null); // State to hold the fetched username
     let lastScrollY = 0;
+
+    const tabs = [
+        { key: "home", name: "Home", icon: IoHomeOutline, icon2: IoHome, component: <HomePage /> },
+        { key: "rapid", name: "Rapid", icon: IoFlashOutline, icon2: IoFlash, component: <RapidPage /> },
+        { key: "post", name: "Post", icon: MdOutlineAddBox, icon2: MdAddBox, component: <PostPage /> },
+        { key: "search", name: "Search", icon: CgSearch, icon2: CgSearchLoading, component: <SearchPage /> },
+        { key: userName, name: "Profile", icon: FaUser, icon2: FaUser, component: <ProfilePage /> },
+    ];
 
     useEffect(() => {
         const handleScroll = () => {
@@ -40,6 +43,26 @@ export default function BottomNavigation() {
 
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    // ✅ Fetch username from the server when the component mounts
+    useEffect(() => {
+        const fetchUserName = async () => {
+            try {
+                const response = await fetch("/api/userProfile/username"); // Adjust the endpoint as needed
+                const data = await response.json();
+
+                if (data.username) {
+                    setUserName(data.username);
+                } else {
+                    console.error("Username not found.");
+                }
+            } catch (error) {
+                console.error("Failed to fetch username:", error);
+            }
+        };
+
+        fetchUserName();
     }, []);
 
     // ✅ Update URL on tab change
