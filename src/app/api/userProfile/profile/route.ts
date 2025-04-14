@@ -4,18 +4,27 @@ import { auth } from "@/src/auth";
 import { connectToDatabase } from "@/src/lib/utils";
 import { UserProfile } from "@/src/models/UserProfileModel";
 
+
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+
 export async function POST(req: Request) {
+
+  console.log("====================================");
+  console.log("======= Update User Profile ========");
+  console.log("====================================");
+  
+
   console.log("[START] Processing profile update request...");
 
   try {
-    // Authenticate User
+   
     console.log("[STEP 1] Authenticating user...");
+
     const session = await auth();
     const userId = session?.user?.id;
 
@@ -26,10 +35,12 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
     console.log("[SUCCESS] User authenticated. User ID:", userId);
 
-    // Parse Form Data
+
     console.log("[STEP 2] Parsing form data...");
+
     const formData = await req.formData();
     const username = formData.get("username")?.toString() || "";
     const fullName = formData.get("fullName")?.toString() || "";
@@ -40,15 +51,20 @@ export async function POST(req: Request) {
     const location = formData.get("location")?.toString() || "";
     const bio = formData.get("bio")?.toString() || "";
     const interest = formData.getAll("interest").map(String) || [];
+
     console.log("[SUCCESS] Form data parsed successfully.");
 
     let profileImageUrl = "";
 
-    // Upload Image to Cloudinary
+   
     const file = formData.get("profileImage") as File | null;
+
     if (file) {
+
       console.log("[STEP 3] Uploading profile image to Cloudinary...");
+
       try {
+
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
@@ -58,8 +74,8 @@ export async function POST(req: Request) {
               {
                 folder: "profile_pictures",
                 transformation: [
-                  { width: 300, height: 300, crop: "limit" }, // Resize image
-                  { quality: "auto", fetch_format: "auto" }, // Compress and set format automatically
+                  { width: 300, height: 300, crop: "limit" },
+                  { quality: "auto", fetch_format: "auto" },
                 ],
               },
               (error, result) => {
@@ -76,26 +92,34 @@ export async function POST(req: Request) {
         });
 
         profileImageUrl = (uploadResult as any).secure_url || "";
+
       } catch (uploadError) {
+
         console.error("[ERROR] Image upload exception:", uploadError);
+
       }
+
     } else {
+
       console.log("[INFO] No profile image provided, skipping upload.");
+
     }
 
-    // Connect to Database
+
     console.log("[STEP 4] Connecting to database...");
     await connectToDatabase();
     console.log("[SUCCESS] Database connected successfully.");
 
-    // Check if user profile exists
+
     console.log("[STEP 5] Checking if user profile exists...");
     let userProfile = await UserProfile.findOne({ userId });
 
     if (!userProfile) {
+
       console.log(
         "[INFO] User profile does not exist, creating new profile..."
       );
+
       userProfile = await UserProfile.create({
         userId,
         username,
@@ -108,9 +132,13 @@ export async function POST(req: Request) {
         posts: [],
         profileImage: profileImageUrl,
       });
+
       console.log("[SUCCESS] New profile created.");
+
     } else {
+
       console.log("[INFO] User profile found, updating existing profile...");
+
       userProfile.username = username;
       userProfile.fullname = fullName;
       userProfile.phoneNumber = phoneNumber;
@@ -120,19 +148,27 @@ export async function POST(req: Request) {
       userProfile.interest = interest.length > 0 ? interest : [];
       if (profileImageUrl) userProfile.profileImage = profileImageUrl;
       await userProfile.save();
+
       console.log("[SUCCESS] User profile updated successfully.");
+
     }
 
+
     console.log("[END] Profile update request completed successfully.");
+
     return NextResponse.json({
       message: "Profile updated successfully!",
       userProfile,
     });
+
   } catch (error) {
+
     console.error("[FATAL ERROR] Error updating profile:", error);
+
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
     );
+
   }
 }

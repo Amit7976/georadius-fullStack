@@ -16,15 +16,17 @@ import SaveButton from "./saveButton";
 import ShareButton from "./ShareButton";
 import VoteButtons from "./VoteButtons";
 import DeleteButton from "./DeleteButton";
+import Link from "next/link";
+import { TbReport } from "react-icons/tb";
 
 
-const NewsPost = ({ news, onHide }: { news: any; onHide: (id: number) => void }) => {
+const NewsPost = ({ news, onHide, fullDescription }: { news: any; fullDescription: any; onHide: (id: number) => void }) => {
     const [distance, setDistance] = useState<string | null>(null);
 
     console.log("📰 News Post Data:", news);
 
     const [showAddress, setShowAddress] = useState(false);
-    const [showDescription, setShowDescription] = useState(false);
+    const [showDescription, setShowDescription] = useState(fullDescription);
 
     useEffect(() => {
         getDistanceFromCurrentLocation(news.latitude, news.longitude)
@@ -36,19 +38,20 @@ const NewsPost = ({ news, onHide }: { news: any; onHide: (id: number) => void })
 
     return (
         <div key={String(news._id)}>
-            <Card className="w-full my-0 border-0 shadow-none gap-4">
+            <Card className="w-full my-0 border-0 shadow-none gap-4 select-none">
                 {/* Header */}
                 <div className="flex justify-between items-center px-2">
-                    <div className="flex items-center gap-3">
-                        <Image src={news.creatorImage} alt="Profile" width={40} height={40} className="rounded-full" />
+                    <div className="flex items-start gap-3">
+                        <Link href={"/" + news.creatorName}>
+                            <Image src={news.creatorImage} alt="Profile" width={40} height={40} priority className="rounded-full mt-0.5" /></Link>
                         <div>
                             <div className="flex items-center gap-2">
-                                <span className="font-bold">{news.creatorName}</span>
+                                <Link href={"/" + news.creatorName}><span className="font-bold">{news.creatorName}</span></Link>
                                 <span className="text-gray-500 text-sm">-</span>
                                 <span className="text-gray-500 text-xs">{formatTimeAgo(news.createdAt)}</span>
                             </div>
-                            <div className="flex items-center gap-2 text-gray-500 text-xs">
-                                <span className="text-green-600">{distance}</span>
+                            <div className="flex items-start gap-2 text-gray-500 text-xs">
+                                <span className="text-green-600 font-semibold">{distance}</span>
                                 <span
                                     className={`cursor-pointer ${showAddress ? "" : "line-clamp-1"}`}
                                     onClick={() => setShowAddress(!showAddress)}
@@ -64,16 +67,37 @@ const NewsPost = ({ news, onHide }: { news: any; onHide: (id: number) => void })
                         <DrawerTrigger>
                             <MoreHorizontal className="text-gray-600 cursor-pointer" />
                         </DrawerTrigger>
-                        <DrawerContent className={""}>
+                        <DrawerContent className={""} aria-describedby={undefined}>
                             <div className="p-4">
                                 <DrawerTitle className="text-lg font-semibold text-center mb-4">Options</DrawerTitle>
                                 <div className="space-y-3 mb-10">
+                                    {/* News Categories */}
+                                    <div className="flex gap-2 px-4 flex-wrap">
+                                        {news.categories.map((category: string, index: number) => (
+                                            <Link href={`/category/${category}`} key={index} className="bg-gray-200 rounded px-2 py-1 text-xs font-semibold text-gray-600 hover:text-green-500 cursor-pointer">
+                                                {category}
+                                            </Link>
+                                        ))}
+                                    </div>
                                     <HideButton postId={news._id} onHide={onHide} />
                                     <QrButton postId={news._id} />
-                                    <Button size={100} variant="ghost" className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100">
-                                        <Pencil /> Edit
-                                    </Button>
-                                    <DeleteButton postId={news._id} onHide={onHide} />
+                                    {news.currentUserProfile ? (
+                                        <>
+                                            <Link href={"/pages/edit_post/" + news._id} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100 items-center font-semibold">
+                                                <Pencil /> Edit
+                                            </Link>
+                                            <DeleteButton postId={news._id} onHide={onHide} />
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Link href={"/" + news.creatorName} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100 items-center font-semibold">
+                                                    <Image src={news.creatorImage} alt="Profile" width={40} height={40} className="rounded-full size-5" priority /> View Profile
+                                            </Link>
+                                            <Link href={`/pages/others/report_an_issue?id=${news._id}`} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100">
+                                                <TbReport className="size-6" /> Report
+                                            </Link>
+                                        </>
+                                    )}
 
                                 </div>
                             </div>
@@ -82,13 +106,19 @@ const NewsPost = ({ news, onHide }: { news: any; onHide: (id: number) => void })
                 </div>
 
 
-                {/* Image Slider */}
-                {news.images.length > 0 && <ImageSlider images={news.images} />}
 
-                <p className={`border-l-4 border-green-500 pl-3 py-3 text-sm text-gray-800 ${showDescription ? "" : "line-clamp-6"}`}
-                    onClick={() => setShowDescription(!showDescription)}>
-                    {news.description}
-                </p>
+                {/* Image Slider */}
+                {news.images.length > 0 && <ImageSlider images={news.images} height={400} />}
+
+
+
+                <div className="pl-1">
+                    <p className={`border-l-4 border-green-500 pl-3 py-3 text-sm text-gray-800 ${showDescription ? "" : "line-clamp-6"}`}
+                        onClick={() => setShowDescription(!showDescription)}>
+                        {news.description}
+                    </p>
+
+                </div>
 
                 {/* Footer */}
                 <div className="flex justify-between items-center px-4">
@@ -101,7 +131,7 @@ const NewsPost = ({ news, onHide }: { news: any; onHide: (id: number) => void })
                                 <MessageCircle className="size-6" />
                                 <span className="font-semibold text-sm">{formatNumber(news.commentsCount)}</span>
                             </DrawerTrigger>
-                            <DrawerContent className={""}>
+                            <DrawerContent className={""} aria-describedby={undefined}>
                                 <DrawerHeader className="p-4 overflow-scroll">
                                     <DrawerTitle className="text-lg font-semibold text-center mb-1">Comments</DrawerTitle>
                                     <Comment news_id={news._id} />

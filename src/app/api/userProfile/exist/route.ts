@@ -4,8 +4,17 @@ import { UserProfile } from "@/src/models/UserProfileModel";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
+
+  console.log("====================================");
+  console.log("======= Checking User Profile ======");
+  console.log("====================================");
+
+  console.log("📌 [START] Checking User Profile Existence");
+
   try {
+    
     await connectToDatabase();
+
 
     const session = await auth();
     const userId = session?.user?.id;
@@ -17,7 +26,7 @@ export async function GET(req: Request) {
       );
     }
 
-    // Check if any document exists for the userId
+   
     const profileExists = await UserProfile.exists({ userId });
 
     console.log("====================================");
@@ -25,11 +34,14 @@ export async function GET(req: Request) {
     console.log("====================================");
 
     return NextResponse.json({ exists: !!profileExists });
+
   } catch (error) {
+
     console.error("Error checking user profile existence:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
     );
+    
   }
 }

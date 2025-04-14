@@ -47,6 +47,7 @@ function MainContent() {
         alt="On Boarding Get Started"
         width={200}
         height={200}
+        priority
         className="w-full h-96 object-contain"
       />
 

@@ -2,14 +2,25 @@ import { NextResponse } from "next/server";
 import { UserProfile } from "@/src/models/UserProfileModel";
 import { Post } from "@/src/models/postModel";
 import { auth } from "@/src/auth";
-import mongoose from "mongoose";
+
+
+interface UserProfileType {
+  _id: string;
+  posts: string[];
+  saved: string[];
+}
+
 
 export async function POST(req: Request) {
+
   console.log("====================================");
+  console.log("====== Post Fetch By Username ======");
+  console.log("====================================");
+
   console.log("📌 [START] Fetching user posts");
 
   try {
-    // 🔹 Authenticate User
+   
     const session = await auth();
     const userId = session?.user?.id;
     console.log("🔍 Authenticated User ID:", userId);
@@ -22,7 +33,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // 🔹 Parse Request Body
+   
     const { username } = await req.json();
     console.log("🔍 Fetching profile for username:", username);
 
@@ -33,18 +44,12 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-
-    // 🔹 Fetch User Profile
-    interface UserProfileType {
-      _id: string;
-      posts: string[];
-      saved: string[];
-    }
+    
 
     const userProfile = await UserProfile.findOne(
       { username },
       { _id: 1, posts: 1, saved: 1 }
-    ).lean<UserProfileType>(); // ✅ Convert Mongoose document to a plain object
+    ).lean<UserProfileType>();
 
     console.log("📌 UserProfile Data:", userProfile);
 
@@ -53,7 +58,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // 🔹 Extract & Validate Post IDs
+   
     const postIds = Array.isArray(userProfile.posts) ? userProfile.posts : [];
     console.log("✅ User's Posts IDs:", postIds);
 
@@ -65,19 +70,20 @@ export async function POST(req: Request) {
       );
     }
 
-    // 🔹 Extract Saved Post IDs
+   
     const savedIds = Array.isArray(userProfile.saved)
       ? userProfile.saved.map((id) => id.toString())
       : [];
     console.log("✅ User's Saved Posts IDs:", savedIds);
 
-    // 🔹 Fetch Posts from Database
+   
     console.log("🔄 Fetching posts from DB...");
     const posts = await Post.find(
       { _id: { $in: postIds } },
       {
         _id: 1,
         title: 1,
+        userId: 1,
         description: 1,
         location: 1,
         longitude: 1,
@@ -88,6 +94,7 @@ export async function POST(req: Request) {
         upvoteCount: { $size: "$upvote" },
         downvoteCount: { $size: "$downvote" },
         share: 1,
+        categories: 1,
         commentsCount: { $size: "$comments" },
         createdAt: 1,
         isUserUpvote: { $in: [userId, "$upvote"] },
@@ -97,27 +104,33 @@ export async function POST(req: Request) {
 
     console.log("✅ Posts fetched successfully, Count:", posts.length);
 
-    // 🔹 Process & Check if Post is Saved
     const finalPosts = posts.map((post) => {
       const postIdStr = post._id.toString();
-      const isSaved = savedIds.includes(postIdStr); // ✅ Directly check if post ID exists in saved
+      const isSaved = savedIds.includes(postIdStr);
 
       console.log(`🔎 Checking Post ID: ${postIdStr}, isSaved: ${isSaved}`);
 
       return {
-        ...post.toObject(), // Convert Mongoose document to plain object
+        ...post.toObject(),
         isSaved,
+        currentUserProfile: userId && post.userId?.toString() === userId,
       };
     });
+    
+   
 
     console.log("✅ Final Posts Processed, Sending Response");
+
 
     return NextResponse.json(
       { message: "Posts retrieved successfully", posts: finalPosts },
       { status: 200 }
     );
+
   } catch (error) {
+
     console.error("❌ Error fetching posts:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
+    
   }
 }

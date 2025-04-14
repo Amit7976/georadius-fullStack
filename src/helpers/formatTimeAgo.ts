@@ -1,9 +1,12 @@
 export const formatTimeAgo = (publish_time: string) => {
+  console.log("====================================");
+  console.log("triggered formatTimeAgo with publish_time:", publish_time);
+  console.log("====================================");
   const time = new Date(publish_time);
   const now = new Date();
   const diff = Math.floor((now.getTime() - time.getTime()) / 1000); // Difference in seconds
 
-  if (diff < 60) return `${diff} min ago`;
+  if (diff < 60) return `${diff} sec ago`;
   const minutes = Math.floor(diff / 60);
   if (minutes < 60) return `${minutes} min ago`;
   const hours = Math.floor(minutes / 60);

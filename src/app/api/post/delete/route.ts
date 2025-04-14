@@ -1,11 +1,11 @@
 import { auth } from "@/src/auth";
 import { Post } from "@/src/models/postModel";
-import { User } from "@/src/models/userModel";
 import { NextResponse } from "next/server";
 import cloudinary from "cloudinary";
 import { UserProfile } from "@/src/models/UserProfileModel";
 import { Comment } from "@/src/models/commentModel";
 import mongoose from "mongoose";
+import { connectToDatabase } from "@/src/lib/utils";
 
 const cloudinaryV2 = cloudinary.v2;
 cloudinaryV2.config({
@@ -14,7 +14,6 @@ cloudinaryV2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// ✅ Recursive function to delete comment and all its replies
 async function deleteCommentWithReplies(
   commentId: string,
   deletedIds: string[]
@@ -34,17 +33,14 @@ interface DeleteRequest {
 }
 
 export async function DELETE(req: Request): Promise<NextResponse> {
+  console.log("====================================");
+  console.log("============ Delete API ============");
+  console.log("====================================");
+  console.log("🗑️ DELETE request received at /api/post/delete");
+
   try {
-    const body = await req.json();
-    const postId = body.postId?.trim();
-
-    console.log(`[INFO] Received request to delete post: ${postId}`);
-
-    // ✅ Validate postId
-    if (!postId || !mongoose.Types.ObjectId.isValid(postId)) {
-      console.log("[ERROR] Invalid post ID");
-      return NextResponse.json({ error: "Invalid post ID" }, { status: 400 });
-    }
+    console.log("🔗 Connecting to database...");
+    await connectToDatabase();
 
     const session = await auth();
     const userId = session?.user?.id;
@@ -55,12 +51,20 @@ export async function DELETE(req: Request): Promise<NextResponse> {
         { status: 400 }
       );
     }
-
     console.log(`[INFO] Authenticated user: ${userId}`);
 
-    // ✅ Find the post in MongoDB
+    const body = await req.json();
+    const postId = body.postId?.trim();
+
+    console.log(`[INFO] Received request to delete post: ${postId}`);
+
+    if (!postId || !mongoose.Types.ObjectId.isValid(postId)) {
+      console.log("[ERROR] Invalid post ID");
+      return NextResponse.json({ error: "Invalid post ID" }, { status: 400 });
+    }
+
     const post = await Post.findById(postId, {
-      creatorName: 1,
+      userId: 1,
       saved: 1,
       images: 1,
       comments: 1,
@@ -71,17 +75,13 @@ export async function DELETE(req: Request): Promise<NextResponse> {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
-    const user = await UserProfile.findOne({ userId }, { username: 1 });
-
-    // ✅ Ensure the current user is the creator of the post
-    if (post.creatorName !== user?.username) {
+    if (post.userId !== userId) {
       console.log("[ERROR] Unauthorized: User is not the post creator.");
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     console.log("[INFO] User is the creator. Proceeding with deletion...");
 
-    // ✅ Step 1: Delete all comments + replies related to this post
     if (post.comments && post.comments.length > 0) {
       const deletedIds: string[] = [];
 
@@ -94,7 +94,6 @@ export async function DELETE(req: Request): Promise<NextResponse> {
       );
     }
 
-    // ✅ Step 2: Delete images from Cloudinary
     if (post.images?.length > 0) {
       try {
         await Promise.all(
@@ -119,7 +118,6 @@ export async function DELETE(req: Request): Promise<NextResponse> {
       console.log("[INFO] No images found for this post.");
     }
 
-    // ✅ Step 3: Remove post ID from user's posts array
     const updatedUserProfile = await UserProfile.findOneAndUpdate(
       { userId },
       { $pull: { posts: postId } }
@@ -127,7 +125,6 @@ export async function DELETE(req: Request): Promise<NextResponse> {
 
     console.log("[INFO] Post removed from user's profile:", updatedUserProfile);
 
-    // ✅ Step 4: Remove post ID from saved list of other users
     const updatedUsers = await UserProfile.updateMany(
       { saved: postId },
       { $pull: { saved: postId } }
@@ -135,7 +132,6 @@ export async function DELETE(req: Request): Promise<NextResponse> {
 
     console.log(`[DEBUG] Users updated: ${updatedUsers.modifiedCount}`);
 
-    // ✅ Step 5: Delete the post itself
     await Post.findByIdAndDelete(postId);
 
     console.log("[SUCCESS] Post deleted successfully from database.");

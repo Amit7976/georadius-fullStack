@@ -13,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FaArrowLeftLong, FaCross } from "react-icons/fa6";
 import { HiOutlineChevronRight } from "react-icons/hi2";
 import { RiUploadCloud2Line } from "react-icons/ri";
+import { toast } from "sonner";
 
 const issueSchema = z.object({
     description: z.string().min(5, "Description must be at least 5 characters"),
@@ -29,7 +30,11 @@ const issues = [
     "Other",
 ];
 
-const MainContent: React.FC = () => {
+interface MainContentProps {
+    id: string | null;
+}
+
+const MainContent: React.FC<MainContentProps> = ({ id }) => {
     const [selectedIssue, setSelectedIssue] = useState<string | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedImages, setSelectedImages] = useState<File[]>([]);
@@ -39,12 +44,47 @@ const MainContent: React.FC = () => {
         defaultValues: { description: "", photos: [] },
     });
 
-    const onSubmit = (values: any) => {
-        console.log("Submitted", values);
-        setModalOpen(false);
-        form.reset();
-        setSelectedImages([]);
+
+
+    const onSubmit = async (values: any) => {
+        const formData = new FormData();
+
+        // Add description
+        formData.append("description", values.description);
+
+        // Add post ID from props
+        if (id) {
+            formData.append("postId", id);
+        }
+
+        // Append selected images
+        selectedImages.forEach((image, index) => {
+            formData.append("photos", image); // backend should accept multiple 'photos'
+        });
+
+        try {
+            const res = await fetch("/api/post/report", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (res.ok) {
+                console.log("Issue submitted!");
+                toast.success("Report submitted!");
+                setModalOpen(false);
+                form.reset();
+                setSelectedImages([]);
+                router.back();
+            } else {
+                console.error("Failed to submit issue");
+            }
+        } catch (err) {
+            console.error("Error submitting issue:", err);
+        }
     };
+
+
+
     const router = useRouter();
 
 

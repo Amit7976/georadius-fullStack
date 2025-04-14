@@ -3,11 +3,16 @@ import { Post } from "@/src/models/postModel";
 import { auth } from "@/src/auth";
 
 export async function POST(req: Request) {
+
   console.log("====================================");
+  console.log("====== Post Upvote, Downvote =======");
+  console.log("====================================");
+
   console.log("📌 [START] Processing Vote");
 
   try {
-    // 🔹 Authenticate User
+  
+    
     const session = await auth();
     const userId = session?.user?.id;
     console.log("🔍 Authenticated User ID:", userId);
@@ -20,7 +25,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // 🔹 Parse Request Body
+    
     const { postId, vote } = await req.json();
     console.log("🔍 Post ID:", postId, "| Vote:", vote);
 
@@ -29,20 +34,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
-    // 🔹 Check if Post Exists (Without Fetching Full Data)
+   
     const postExists = await Post.exists({ _id: postId });
     if (!postExists) {
       console.error("[ERROR] Post not found");
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
-    // 🔹 Step 1: Remove User from Both Arrays First
+   
     await Post.updateOne(
       { _id: postId },
       { $pull: { upvote: userId, downvote: userId } }
     );
 
-    // 🔹 Step 2: Add to Correct Array if Needed
+
     if (vote === 1) {
       await Post.updateOne({ _id: postId }, { $addToSet: { upvote: userId } });
     } else if (vote === 2) {
@@ -57,8 +62,11 @@ export async function POST(req: Request) {
       { message: "Vote updated successfully" },
       { status: 200 }
     );
+
   } catch (error) {
+
     console.error("❌ Error processing vote:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
+
   }
 }

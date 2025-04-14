@@ -47,7 +47,7 @@ function MainContent() {
     <>
       <div className="p-2 bg-white flex flex-col items-center h-[94.3vh] rounded-b-3xl">
         <div className="flex flex-col items-center space-y-1 py-6">
-          <Image src={logo} alt="Logo" className="w-[35vw] pb-10" />
+          <Image src={logo} alt="Logo" className="w-[35vw] pb-10" priority />
           <h1 className="text-2xl font-bold text-black">Sign Up Account</h1>
           <p className="text-base text-gray-600 font-medium mt-1.5">
             Enter your personal data to create your account.

@@ -2,10 +2,17 @@ import { NextResponse } from "next/server";
 import { auth } from "@/src/auth";
 import { UserProfile } from "@/src/models/UserProfileModel";
 
+
 export async function POST(req: Request) {
+
+  console.log("====================================");
+  console.log("======= Fetch User Profile ========");
+  console.log("====================================");
+
   console.log("🔹 Incoming request to fetch user profile...");
 
   try {
+
     const session = await auth();
     console.log("🔹 Session Data:", session);
 
@@ -17,7 +24,8 @@ export async function POST(req: Request) {
       );
     }
 
-    const { username } = await req.json(); // <-- Extract username from request body
+
+    const { username } = await req.json();
     console.log("🔹 Username received:", username);
 
     if (!username) {
@@ -28,10 +36,11 @@ export async function POST(req: Request) {
       );
     }
 
+
     console.log(`🔹 Searching for user: ${username}...`);
     const userProfile = await UserProfile.findOne(
       { username },
-      { fullname: 1, profileImage: 1, bio: 1, location: 1, userId: 1 } // Include only necessary fields
+      { fullname: 1, profileImage: 1, bio: 1, location: 1, userId: 1 }
     );
 
     if (!userProfile) {
@@ -41,34 +50,41 @@ export async function POST(req: Request) {
 
     console.log("✅ User profile found:", userProfile);
 
-    // Check if the current user's ID matches the user profile's userId
+    
     const currentUserProfile =
       userProfile.userId.toString() === session.user.id.toString();
 
-    // Send only necessary data back along with the currentUserProfile flag
+   
     return NextResponse.json({
       fullname: userProfile.fullname,
       profileImage: userProfile.profileImage,
       bio: userProfile.bio,
       location: userProfile.location,
-      currentUserProfile, // This indicates if the fetched profile belongs to the current user
+      currentUserProfile,
     });
+
   } catch (error) {
+
     console.error("❌ Internal Server Error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
     );
+
   }
 }
 
 
-
 export async function GET(req: Request) {
+
+  console.log("====================================");
+  console.log("======= Get Current User ========");
+  console.log("====================================");
+
   console.log("🔹 Incoming GET request to fetch current user...");
 
   try {
-    // Authenticate User
+   
     console.log("[STEP 1] Authenticating user...");
     const session = await auth();
     const userId = session?.user?.id;
@@ -80,13 +96,15 @@ export async function GET(req: Request) {
         { status: 400 }
       );
     }
+    
     console.log("[SUCCESS] User authenticated. User ID:", userId);
+    
 
     console.log(`🔹 Fetching profile for current user with ID: ${userId}`);
 
     const userProfile = await UserProfile.findOne(
       { userId },
-      { username: 1 } // Only return the username field
+      { username: 1 }
     );
 
     if (!userProfile) {
@@ -94,13 +112,18 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "No user found" }, { status: 404 });
     }
 
+
     console.log("✅ Current user profile fetched:", userProfile);
+
     return NextResponse.json({ username: userProfile.username });
+
   } catch (error) {
+
     console.error("❌ Internal Server Error:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
     );
+
   }
 }

@@ -3,10 +3,17 @@ import { connectToDatabase } from "@/src/lib/utils";
 import { UserProfile } from "@/src/models/UserProfileModel";
 import { NextRequest, NextResponse } from "next/server";
 
-// ✅ GET request: Fetch user interests
+
 export async function GET(req: NextRequest) {
+
+  console.log("====================================");
+  console.log("======= Get User Interests ========");
+  console.log("====================================");
+
   try {
+
     await connectToDatabase();
+    
 
     const session = await auth();
     const userId = session?.user?.id;
@@ -18,10 +25,10 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // ✅ Optimized Query: Fetch only "interest" array, ignore "_id"
+   
     const userProfile = await UserProfile.findOne(
       { userId },
-      { interest: 1, _id: 0 } // ✅ Projection: Only return "interest"
+      { interest: 1, _id: 0 }
     );
 
     console.log("====================================");
@@ -36,28 +43,41 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json(userProfile);
+
   } catch (error) {
+
     console.error("Error fetching user interests:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
     );
+
   }
 }
 
-// ✅ PUT request: Update user interests
+
 export async function PUT(req: NextRequest) {
+  
   console.log("====================================");
-  console.log("Enter PUT Method");
+  console.log("======= Update User Interests ======");
   console.log("====================================");
 
-  const session = await auth();
-  const userId = session?.user?.id;
+   const session = await auth();
+   const userId = session?.user?.id;
+
+   if (!userId) {
+     return NextResponse.json(
+       { error: "User ID is required" },
+       { status: 400 }
+     );
+   }
 
   try {
+
     await connectToDatabase();
 
     const { interests } = await req.json();
+
 
     console.log("====================================");
     console.log(userId);
@@ -65,12 +85,14 @@ export async function PUT(req: NextRequest) {
     console.log(interests);
     console.log("====================================");
 
+
     if (!userId || !Array.isArray(interests) || interests.length < 3) {
       console.log("====================================");
       console.log("Invalid Data");
       console.log("====================================");
       return NextResponse.json({ error: "Invalid data" }, { status: 400 });
     }
+
 
     const updatedProfile = await UserProfile.findOneAndUpdate(
       { userId },
@@ -81,12 +103,17 @@ export async function PUT(req: NextRequest) {
     console.log("====================================");
     console.log("updatedProfile: " + updatedProfile);
     console.log("====================================");
+
+
     return NextResponse.json({ success: true });
+
   } catch (error) {
+
     console.error("Error updating user interests:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
     );
+
   }
 }

@@ -6,26 +6,29 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const connectToDatabase = async () => {
-  try {
-    if (mongoose.Connection && mongoose.connections[0].readyState) return;
 
-    const { connection } = await mongoose.connect(
-      process.env.MONGO_URI as string,
-      {
-        dbName: "geoRadius",
-      }
-    );
+let isConnected = false;
+
+export const connectToDatabase = async () => {
+  if (isConnected) {
+    return;
+  }
+
+  try {
+    const db = await mongoose.connect(process.env.MONGO_URI as string, {
+      dbName: "geoRadius",
+    });
+
+    isConnected = true;
 
     console.log("====================================");
-    console.log(`Connecting to database: ${connection.host}`);
+    console.log(`✅ Connected to MongoDB: ${db.connection.host}`);
     console.log("====================================");
   } catch (error) {
     console.log("====================================");
-    console.log("Error connecting to database");
-    console.log("====================================");
+    console.log("❌ Error connecting to MongoDB:");
     console.log(error);
     console.log("====================================");
-    throw new Error("Error connecting to database");
+    throw new Error("MongoDB connection failed");
   }
 };

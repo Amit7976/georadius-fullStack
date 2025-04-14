@@ -215,7 +215,7 @@ const Comments = ({ news_id }: { news_id: string }) => {
         const replies = getReplies(comment._id);
 
         return (
-            <div className={`ml-${level * 4} border-gray-200 pl-4 mt-3`}>
+            <div className={`ml-${level * 4} border-gray-200 pl-4 mt-5`}>
                 <div className="flex items-start gap-3">
                     {comment.profileImage && (
                         <img
@@ -246,7 +246,7 @@ const Comments = ({ news_id }: { news_id: string }) => {
                             </Button>
                             <Button variant={"ghost"} size={100}
                                 onClick={() => handleLike(comment._id)}
-                                className={comment.likes ? "text-green-600 font-semibold" : ""}
+                                className={comment.likes ? "text-green-700 font-semibold" : ""}
                             >
                                 {comment.likes ? 'Liked' : 'Like'}
                             </Button>
@@ -255,7 +255,7 @@ const Comments = ({ news_id }: { news_id: string }) => {
                             ) : (
                                 <Button variant={"ghost"} size={100}
                                     onClick={() => handleReport(comment._id)}
-                                    className={comment.reports ? "text-red-600 font-semibold" : ""}
+                                    className={comment.reports ? "text-red-700 font-semibold" : ""}
                                 >
                                     {comment.reports ? 'Reported' : 'Report'}
                                 </Button>

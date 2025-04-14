@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { IoSettingsOutline } from "react-icons/io5";
-import ImagePost from "@/src/components/NewsPost";
+import NewsPost from "@/src/components/NewsPost";
 
 function MainContent({ username, userData, userPosts }: any) {
     const router = useRouter();
@@ -76,7 +76,7 @@ function MainContent({ username, userData, userPosts }: any) {
             {/* News Posts */}
             <div className="mt-6 mb-20">
                 {newsData.map((news: any) => (
-                    <ImagePost news={news} key={news._id} onHide={handleHide} />
+                    <NewsPost news={news} key={news._id} onHide={handleHide} fullDescription={false} />
                 ))}
             </div>
         </div>

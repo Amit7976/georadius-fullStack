@@ -20,6 +20,7 @@ const formSchema = z.object({
     longitude: z.number().min(1, "longitude must be provided"),
     categories: z.array(z.string()).min(1, "At least one category must be selected"),
     images: z.array(z.any()).max(3, "You can only upload up to 3 images").optional(),
+    deletedImages: z.array(z.any()).max(3, "You can only delete up to 3 images").optional(),
 });
 
 export interface FormValues {
@@ -30,10 +31,11 @@ export interface FormValues {
     longitude: number;
     categories: string[];
     images?: File[];
+    deletedImages?: string[];
 }
 
-export default function MainContent() {
-    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+export default function MainContent({ post }: any) {
+    const [selectedCategories, setSelectedCategories] = useState<string[]>(post.categories || []);
     const [processing, setProcessing] = useState(false);
 
     console.log("Component Rendered");
@@ -41,8 +43,18 @@ export default function MainContent() {
     // ✅ Form Setup with Debugging
     const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<FormValues>({
         resolver: zodResolver(formSchema),
-        defaultValues: { title: "", description: "", location: "", longitude: 0, latitude: 0, categories: [], images: [] },
+        defaultValues: {
+            title: post.title,
+            description: post.description,
+            location: post.location,
+            longitude: post.longitude,
+            latitude: post.latitude,
+            categories: post.categories,
+            images: post.images,
+            deletedImages: [],
+        },
     });
+
 
     useEffect(() => {
         console.log("Current Errors:", errors);
@@ -61,6 +73,7 @@ export default function MainContent() {
         try {
             // ✅ Create FormData for sending images
             const formData = new FormData();
+            formData.append("postId", post._id);
             formData.append("title", values.title);
             formData.append("description", values.description);
             formData.append("location", values.location);
@@ -69,7 +82,14 @@ export default function MainContent() {
 
             // ✅ Append categories as JSON string (since it's an array)
             formData.append("categories", JSON.stringify(values.categories));
+            formData.append("deletedImages", JSON.stringify(values.deletedImages));
 
+
+            console.log('====================================');
+            console.log("FormData:", values.deletedImages);
+            console.log('====================================');
+            console.log("FormData:", JSON.stringify(values.deletedImages));
+            console.log('====================================');
             // ✅ Append images if available
             if (values.images && values.images.length > 0) {
                 values.images.forEach((image, index) => {
@@ -78,7 +98,7 @@ export default function MainContent() {
             }
 
             // ✅ Send Data to Server
-            const response = await fetch("/api/post/new", {
+            const response = await fetch("/api/update/post", {
                 method: "POST",
                 body: formData,
             });
@@ -91,11 +111,11 @@ export default function MainContent() {
 
             console.log("Upload Successful:", data);
 
-            // ✅ Reset Form After Successful Submission
+            //✅ Reset Form After Successful Submission
             reset();
             setSelectedCategories([]);
 
-            // ✅ Redirect After Submission
+            //✅ Redirect After Submission
             router.push("/");
         } catch (error) {
             console.error("Upload Error:", error);
@@ -111,7 +131,7 @@ export default function MainContent() {
             {isSubmitting && <p className="text-blue-500">Submitting...</p>}
 
             <TitleInput register={register} errors={errors} />
-            <LocationInput register={register} setValue={setValue} errors={errors} />
+            <LocationInput register={register} setValue={setValue} errors={errors} data={post} />
             <DescriptionInput register={register} errors={errors} />
 
             <CategorySelector
@@ -121,7 +141,7 @@ export default function MainContent() {
                 register={register}
                 errors={errors}
             />
-            <ImageUploader setValue={setValue} errors={errors} />
+            <ImageUploader setValue={setValue} errors={errors} data={post.images} />
 
             {errors && (
                 <div className="text-red-500">

@@ -143,6 +143,7 @@ export default function MainContent() {
                                     alt="Preview"
                                     width={80}
                                     height={80}
+                                    priority
                                     className="w-32 h-32 rounded-xl object-cover pointer-events-none" />
                             </>
                         )}
@@ -158,6 +159,7 @@ export default function MainContent() {
                                 alt="Preview"
                                 width={80}
                                 height={80}
+                                priority
                                 className="w-32 h-32 rounded-xl object-cover"
                             />
                         )}

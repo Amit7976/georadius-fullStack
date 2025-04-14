@@ -1,16 +1,19 @@
-"use client";
-import React from 'react'
-import MainContent from './MainContent'
+'use client';
+import React from 'react';
+import MainContent from './MainContent';
 import useAuthVerification from '../../../hooks/useAuthVerification';
+import { useSearchParams } from 'next/navigation';
 
-function page() {
+function Page() {
     const { isVerified, loading } = useAuthVerification();
+    const searchParams = useSearchParams();
+    const id = searchParams.get('id'); // Get 'id' from URL
 
     if (loading) {
         return <p>Loading...</p>;
     }
 
-    return isVerified ? <MainContent /> : null;
+    return isVerified ? <MainContent id={id} /> : null;
 }
 
-export default page
+export default Page;

@@ -1,4 +1,7 @@
-export const getDistanceFromCurrentLocation = async (lat: number, lon: number) => {
+export const getDistanceFromCurrentLocation = async (
+  lat: number,
+  lon: number
+) => {
   return new Promise<{
     formattedDistance: string;
     distance: number;
@@ -53,16 +56,11 @@ export const getDistanceFromCurrentLocation = async (lat: number, lon: number) =
 
         // Format distance
         let formattedDistance = "";
-        if (distance < 0.1) {
-          formattedDistance = "0m";
-        } else if (distance < 0.5) {
-          formattedDistance = "100m";
-        } else if (distance < 1) {
-          formattedDistance = "500m";
-        } else if (distance < 5) {
-          formattedDistance = "1km";
-        } else if (distance < 50) {
-          formattedDistance = "5km";
+        console.log("====================================");
+        console.log(distance);
+        console.log("====================================");
+        if (distance < 1) {
+          formattedDistance = `${Math.round(distance * 100)}m`;
         } else {
           formattedDistance = `${Math.round(distance)}km`;
         }

@@ -11,17 +11,18 @@ interface LocationInputProps {
     register: any;
     setValue: any;
     errors: any;
+    data?: any; // Optional post prop for pre-filling data
 }
 
-export default function LocationInput({ register, setValue, errors }: LocationInputProps) {
+export default function LocationInput({ register, setValue, errors, data }: LocationInputProps) {
     const [open, setOpen] = useState(false);
-    const [inputValue, setInputValue] = useState("");
+    const [inputValue, setInputValue] = useState(data.location);
     const [error, setError] = useState<string | null>(null);
     const [customLocation, setCustomLocation] = useState(false);
     const [suggestions, setSuggestions] = useState<string[]>([]);
-    const [latitude, setLatitude] = useState<number | null>(null);
-    const [longitude, setLongitude] = useState<number | null>(null);
-    const [location, setLocation] = useState("");
+    const [latitude, setLatitude] = useState<number | null>(data.latitude || null); // Pre-fill with data prop if available
+    const [longitude, setLongitude] = useState<number | null>(data.longitude || null); // Pre-fill with data prop if available
+    const [location, setLocation] = useState(data?.location || null); // Pre-fill with data prop if available
 
     const router = useRouter();
 

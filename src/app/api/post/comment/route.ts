@@ -7,7 +7,20 @@ import { UserProfile } from "@/src/models/UserProfileModel";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
+
+  console.log("====================================");
+  console.log("======== Post Comment API ==========");
+  console.log("====================================");
+
+  console.log("📝 POST request received at /api/post/comment");
+  console.log("📌 [START] Posting comment");
+
   try {
+
+    console.log("🔗 Connecting to DB...");
+    await connectToDatabase();
+
+
     console.log("🔐 Authenticating...");
     const session = await auth();
     const userId = session?.user?.id;
@@ -17,10 +30,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    console.log("🔗 Connecting to DB...");
-    await connectToDatabase();
 
-    const userProfile = await UserProfile.findOne({ userId });
+    const userProfile = await UserProfile.findOne({ userId }, { username: 1, profileImage: 1 });
     if (!userProfile) {
       console.log("❌ User profile not found");
       return NextResponse.json(
@@ -28,6 +39,7 @@ export async function POST(req: Request) {
         { status: 404 }
       );
     }
+
 
     const body = await req.json();
     const { postId, comment, parentCommentId, replyingToUsername } = body;
@@ -42,7 +54,9 @@ export async function POST(req: Request) {
       );
     }
 
+
     console.log("📝 Creating new comment...");
+
 
     const newComment = new Comment({
       postId,
@@ -53,22 +67,21 @@ export async function POST(req: Request) {
       parentCommentId: parentCommentId || undefined,
     });
 
+
     await newComment.save();
     console.log("✅ Comment saved with ID:", newComment._id);
 
-    console.log("🔄 Updating Post to include comment...");
-    const updatedPost = await Post.findByIdAndUpdate(
-      postId,
-      { $push: { comments: newComment._id } },
-      { new: true }
-    );
 
-    if (!updatedPost) {
-      console.log("⚠️ Post not found while trying to update comments");
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
-    }
+    console.log("🔄 Updating Post to include comment...");
+     await Post.findByIdAndUpdate(postId, {
+      $push: { comments: newComment._id },
+    });
+
+    console.log("✅ Post updated with new comment");
+
 
     console.log("✅ Post updated with new comment ID");
+
 
     return NextResponse.json(
       {
@@ -78,11 +91,14 @@ export async function POST(req: Request) {
       },
       { status: 201 }
     );
+
   } catch (err) {
+
     console.error("❌ Error posting comment:", err);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
     );
+
   }
 }

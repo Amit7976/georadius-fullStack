@@ -33,6 +33,11 @@ const PostSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     creatorName: {
       type: String,
       required: true,
@@ -52,7 +57,7 @@ const PostSchema = new mongoose.Schema(
       default: [],
     },
     report: {
-      type: [Number],
+      type: [String],
       default: [],
     },
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],

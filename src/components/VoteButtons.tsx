@@ -50,13 +50,13 @@ const VoteButtons = ({ news }: { news: any }) => {
     return (
         <div className="flex gap-2">
             {/* Upvote Button */}
-            <Button size="icon" variant="ghost" disabled={loading} className="flex items-center gap-1" onClick={() => handleVote(1)}>
+            <Button size="icon" variant="ghost" disabled={loading} className="flex items-center gap-1 hover:bg-transparent hover:text-gray-300" onClick={() => handleVote(1)}>
                 {vote === 1 ? <BiSolidLike className="size-6 fill-green-500" /> : <BiLike className="size-6" />}
                 <span className="font-semibold text-sm">{formatNumber(upvoteCount)}</span>
             </Button>
 
             {/* Downvote Button */}
-            <Button size="icon" variant="ghost" disabled={loading} className="flex items-center gap-1" onClick={() => handleVote(2)}>
+            <Button size="icon" variant="ghost" disabled={loading} className="flex items-center gap-1 hover:bg-transparent hover:text-gray-300" onClick={() => handleVote(2)}>
                 {vote === 2 ? <BiSolidDislike className="size-6 fill-red-500" /> : <BiDislike className="size-6" />}
                 <span className="font-semibold text-sm">{formatNumber(downvoteCount)}</span>
             </Button>

@@ -1,62 +1,92 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
-import { IoMapOutline, IoNotificationsOutline } from "react-icons/io5";
-import BreakingNewsSlider from "../components/BreakingNewsSlider";
 import { Button } from "@/components/ui/button";
-import ImagePost from "@/src/components/NewsPost";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import clsx from "clsx";
+import interestsList from "@/public/json/interestList.json";
+import NewsPost from "@/src/components/NewsPost";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { IoMapOutline, IoNotificationsOutline } from "react-icons/io5";
+import TrendingNewsSlider from "../components/TrendingNewsSlider";
 
-const filterOptions = ["Radius", "District", "Global"];
-const categoryOptions = [
-    "All", "Newest", "Technology", "Sports", "Business", "Science / Tech",
-    "Crime", "Health & Fitness", "Education", "Travel",
-    "Government & Politics", "Family & Relationships"
-];
+const filterOptions = ["Nearby", "District", "Global"];
 
 export default function MainContent() {
-    const [selectedFilter, setSelectedFilter] = useState("Radius");
+    const [selectedFilter, setSelectedFilter] = useState("Nearby");
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [newsData, setNewsData] = useState<any[]>([]);
-    const [filteredNews, setFilteredNews] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [showFixedHeader, setShowFixedHeader] = useState(false);
     const [showFixedCategories, setShowFixedCategories] = useState(false);
     const [addShadow, setAddShadow] = useState(false);
-
+    const [error, setError] = useState<string | null>(null);
     const lastScrollY = useRef(0);
     const categoriesRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
 
-    // 🟢 ✅ Check onboarding & permissions
 
 
-    // 🟢 ✅ Fetch news data
-    useEffect(() => {
-        fetch("/json/news.json")
-            .then((res) => res.json())
-            .then((data) => {
-                setNewsData(data);
-                setLoading(false);
-            })
-            .catch((err) => {
-                console.error("Error fetching news:", err);
-                setLoading(false);
-            });
-    }, []);
+    const handleHide = (postId: number) => {
+        setNewsData(prevNews => prevNews.filter(news => news._id !== postId));
 
-    // 🟢 ✅ Filter news based on category
-    useEffect(() => {
-        if (selectedCategory === "All") {
-            setFilteredNews(newsData);
-        } else {
-            setFilteredNews(newsData.filter((news) => news.categories.includes(selectedCategory)));
+        let hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");
+        if (!hiddenPosts.includes(postId)) {
+            hiddenPosts.push(postId);
+            localStorage.setItem("hideNews", JSON.stringify(hiddenPosts));
         }
-    }, [selectedCategory, newsData]);
+    };
 
-    // 🟢 ✅ Handle scroll events
+    useEffect(() => {
+        const range = selectedFilter === "Nearby"
+            ? 50
+            : selectedFilter === "District"
+                ? 100
+                : 7000;
+
+        const fetchNearbyPosts = async (latitude: number, longitude: number) => {
+            setLoading(true);
+            try {
+                const res = await fetch(`/api/main/category?category=${selectedCategory}&lat=${latitude}&lng=${longitude}&range=${range}&limit=5`);
+                const json = await res.json();
+
+                console.log('====================================');
+                console.log(json);
+                console.log('====================================');
+
+                const hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");
+                const filteredNews = json.filter((news: any) => !hiddenPosts.includes(news._id));
+                setNewsData(filteredNews);
+
+            } catch (err) {
+                console.error("API fetch error:", err);
+                setError("Failed to fetch nearby posts.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                fetchNearbyPosts(latitude, longitude);
+            },
+            (err) => {
+                console.error("Geolocation error:", err);
+                setError("Location access is required to load nearby posts.");
+                setLoading(false);
+            }
+        );
+    }, [selectedFilter, selectedCategory]);
+
+
+    useEffect(() => {
+        if (error) {
+            alert(error);
+            setError(null);
+        }
+    }, [error]);
+
+
     useEffect(() => {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
@@ -79,9 +109,12 @@ export default function MainContent() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+
+
     return (
         <div className="h-screen w-full bg-white p-0 scroll-smooth">
-            {/* Normal Header */}
+
+
             <div className="sticky top-0 w-full bg-white z-50 transition-shadow">
                 <div className="flex justify-between items-center p-3 pb-1.5 bg-white">
                     <Select value={selectedFilter} onValueChange={setSelectedFilter}>
@@ -98,27 +131,76 @@ export default function MainContent() {
                     </Select>
 
                     <div className="flex items-center gap-4 pr-1">
-                        <IoNotificationsOutline className="text-3xl scale-95" onClick={() => router.push("/pages/others/notifications")} />
+                        {/* <IoNotificationsOutline className="text-3xl scale-95" onClick={() => router.push("/pages/others/notifications")} /> */}
                         <IoMapOutline className="text-3xl scale-95" onClick={() => router.push("/pages/others/map")} />
                     </div>
                 </div>
             </div>
 
-            {/* Breaking News */}
-            <BreakingNewsSlider />
+
+
+            <div className="bg-green-600 text-white font-medium p-2 pr-5 my-2 text-sm overflow-hidden whitespace-nowrap relative flex items-center">
+                <div
+                    className="relative flex items-center gap- flex-4"
+                    style={{
+                        animation: 'scrollText 50s linear infinite ',
+                    }}
+                >
+                    <span>
+                        Thundering with Thunderstorm, Very Strong Winds, Lightning, and Dust Storm is very likely to occur at many places over Ajmer, Didwana-Kuchaman, Dudu, Jaipur, Jaipur (Gramin), Nagaur, Neem Ka Thana, Sikar in next 3 hours.
+                    </span>
+                </div>
+
+                <style jsx>{`
+                                @keyframes scrollText {
+                                0% {
+                                    transform: translateX(10%);
+                                }
+                                100% {
+                                    transform: translateX(-100%);
+                                }
+                                }
+                            `}</style>
+            </div>
+
+
+
+
+
+            {/* Trending News */}
+            <TrendingNewsSlider
+                range={
+                    selectedFilter === "Nearby"
+                        ? 50
+                        : selectedFilter === "District"
+                            ? 100
+                            : 7000
+                }
+            />
+
+
+
 
             {/* Categories */}
             <div ref={categoriesRef} className="w-full py-2 bg-white">
                 <div className="flex gap-2 px-2 overflow-x-auto whitespace-nowrap">
-                    {categoryOptions.map((category) => (
+                    <Button
+                        size={100}
+                        variant="outline"
+                        className={`rounded-lg px-6 py-2 font-bold active:scale-95 text-xs ${selectedCategory === "All" ? "bg-black text-white" : ""}`}
+                        onClick={() => setSelectedCategory("All")}
+                    >
+                        All
+                    </Button>
+                    {interestsList.map((category, index) => (
                         <Button
-                            key={category}
+                            key={index}
                             size={100}
                             variant="outline"
-                            className={`rounded-lg px-6 py-2 font-bold active:scale-95 text-xs ${selectedCategory === category ? "bg-black text-white" : ""}`}
-                            onClick={() => setSelectedCategory(category)}
+                            className={`rounded-lg px-6 py-2 font-bold active:scale-95 text-xs ${selectedCategory === category.name ? "bg-black text-white" : ""}`}
+                            onClick={() => setSelectedCategory(category.name)}
                         >
-                            {category}
+                            {category.name}
                         </Button>
                     ))}
                 </div>
@@ -152,13 +234,19 @@ export default function MainContent() {
             {/* News Posts */}
             <div>
                 {loading ? (
-                    <p className="text-center text-gray-500">Loading news...</p>
+                    <p className="text-center text-gray-500 py-10">Loading news...</p>
                 ) : (
-                    filteredNews.map((news) => (
-                        <div key={news.id} className="snap-start">
-                            <ImagePost news={news} />
+                    newsData.length > 0 ? (
+                        newsData.map((news) => (
+                            <div key={news._id} className="snap-start">
+                                <NewsPost news={news} key={news._id} onHide={handleHide} fullDescription={false} />
+                            </div>
+                        ))) : (
+                        <div className="flex flex-col gap-2 py-10">
+                            <p className="text-center text-gray-500">No News Available.</p>
                         </div>
-                    ))
+
+                    )
                 )}
             </div>
         </div>
