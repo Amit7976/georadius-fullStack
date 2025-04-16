@@ -116,7 +116,7 @@ export default function MainContent({ post }: any) {
             setSelectedCategories([]);
 
             //✅ Redirect After Submission
-            router.push("/");
+            router.replace("/");
         } catch (error) {
             console.error("Upload Error:", error);
             alert("Failed to upload. Please try again.");

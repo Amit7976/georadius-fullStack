@@ -21,7 +21,7 @@ const LoginForm = () => {
 
         if (!error) {
             toast.success("Login success");
-            router.push("/");
+            router.replace("/");
         } else {
             toast.error("Login failed! " + error.err);
         }

@@ -50,12 +50,13 @@ export default function BottomNavigation() {
         const fetchUserName = async () => {
             try {
                 const response = await fetch("/api/userProfile/username"); // Adjust the endpoint as needed
-                const data = await response.json();
-
-                if (data.username) {
-                    setUserName(data.username);
-                } else {
-                    console.error("Username not found.");
+                if (response.status !== 204) {
+                    const data = await response.json();
+                    if (data.username) {
+                        setUserName(data.username);
+                    } else {
+                        console.error("Username not found.");
+                    }
                 }
             } catch (error) {
                 console.error("Failed to fetch username:", error);
@@ -68,7 +69,7 @@ export default function BottomNavigation() {
     // ✅ Update URL on tab change
     const handleTabChange = (tab: string) => {
         setActiveTab(tab);
-        router.push(`/${tab}`, { scroll: false }); // Prevents page reload
+        router.replace(`/${tab}`, { scroll: false }); // Prevents page reload
     };
 
     return (

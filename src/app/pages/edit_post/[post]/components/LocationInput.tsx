@@ -37,7 +37,7 @@ export default function LocationInput({ register, setValue, errors, data }: Loca
 
         navigator.permissions.query({ name: "geolocation" }).then((result) => {
             if (result.state === "denied") {
-                router.push("/pages/onboarding/permissions/location");
+                router.replace("/pages/onboarding/permissions/location");
             } else {
                 handleGetLocation();
             }

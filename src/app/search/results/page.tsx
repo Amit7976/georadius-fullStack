@@ -38,7 +38,7 @@ export default function SearchResultsPage() {
     }, [searchType]);
 
     useEffect(() => {
-        if (navigator.geolocation) {
+        if (typeof navigator !== "undefined" && navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const lat = position.coords.latitude;

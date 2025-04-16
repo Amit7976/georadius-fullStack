@@ -10,7 +10,7 @@ function Page() {
     const id = searchParams.get('id'); // Get 'id' from URL
 
     if (loading) {
-        return <p>Loading...</p>;
+        return <div className="flex items-center justify-center h-screen"><div className="loader"></div></div>;
     }
 
     return isVerified ? <MainContent id={id} /> : null;

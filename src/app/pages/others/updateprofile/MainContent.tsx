@@ -141,7 +141,7 @@ export default function MainContent() {
 
 
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <div className="flex items-center justify-center h-screen"><div className="loader"></div></div>;
 
     return (
         <div className="max-w-lg mx-auto px-6 py-0">

@@ -55,7 +55,7 @@ export default function SearchInput({ queryParam = "" }: SearchInputProps) {
     const handleSearch = (q?: string) => {
         const searchTerm = (q || query)?.trim();
         if (!searchTerm) return;
-        router.push(`/search/results?q=${encodeURIComponent(searchTerm)}`);
+        router.replace(`/search/results?q=${encodeURIComponent(searchTerm)}`);
         setSuggestions([]); // 💨 Clear suggestions after search
     };
 
@@ -75,7 +75,7 @@ export default function SearchInput({ queryParam = "" }: SearchInputProps) {
                     type="text"
                     placeholder="Search for users, posts, location..."
                     value={query}
-                    onChange={(e:any) => {
+                    onChange={(e: any) => {
                         setQuery(e.target.value);
                         setHasTyped(true);
                     }}

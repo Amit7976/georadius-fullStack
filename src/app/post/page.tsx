@@ -7,7 +7,7 @@ function page() {
   const { isVerified, loading } = useAuthVerification();
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <div className="flex items-center justify-center h-screen"><div className="loader"></div></div>;
   }
   return isVerified ? (
     <>

@@ -11,6 +11,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { useGeolocation } from "../../hooks/useGeolocation";
 
 export default function CategoryPage() {
     const { name } = useParams();
@@ -19,6 +20,7 @@ export default function CategoryPage() {
     const [lat, setLat] = useState<number | null>(null);
     const [lng, setLng] = useState<number | null>(null);
     const [expandedDescriptions, setExpandedDescriptions] = useState<string[]>([]);
+    const location = useGeolocation();
 
     const toggleDescription = (postId: string) => {
         setExpandedDescriptions((prev) =>
@@ -44,19 +46,14 @@ export default function CategoryPage() {
 
     useEffect(() => {
         if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    const { latitude, longitude } = pos.coords;
-                    setLat(latitude);
-                    setLng(longitude);
-                    fetchCategoryPosts(latitude, longitude);
-                },
-                (err) => {
-                    console.error("Geolocation error:", err);
-                }
-            );
+            if (!location) return;
+
+
+            setLat(location.lat);
+            setLng(location.lng);
+            fetchCategoryPosts(location.lat, location.lng);
         }
-    }, [name, radius]);
+    }, [location, name, radius]);
 
     return (
         <div className="p-4">

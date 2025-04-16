@@ -1,54 +1,69 @@
-// app/client-layout.tsx
 'use client';
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import BottomNavigation from "../components/BottomNavigation";
 import { Toaster } from "sonner";
+import clsx from "clsx"; // if not installed: npm i clsx
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const [userName, setUserName] = useState<string | null>(null);
-    const [clientPath, setClientPath] = useState<string | null>(null);
+    const [showBottomNav, setShowBottomNav] = useState(false);
     const pathname = usePathname();
 
-    const allowedRoutes = ["/", "/" + userName, "/home", "/post", "/rapid", "/search"];
+    const allowedRoutes = ["/", "/home", "/post", "/rapid", "/search"];
+    if (userName) allowedRoutes.push("/" + userName);
 
+    // Remove localStorage on refresh
     useEffect(() => {
         const handleUnload = () => {
             localStorage.removeItem("NPS");
             localStorage.removeItem("LPS");
         };
-
         window.addEventListener("beforeunload", handleUnload);
         return () => window.removeEventListener("beforeunload", handleUnload);
     }, []);
 
+    // Get userName from server
     useEffect(() => {
         const fetchUserName = async () => {
             try {
                 const response = await fetch("/api/userProfile/username");
-                const data = await response.json();
-                if (data.username) setUserName(data.username);
+                if (response.status !== 204) {
+                    const data = await response.json();
+                    if (data.username) setUserName(data.username);
+                }
             } catch (error) {
                 console.error("Failed to fetch username:", error);
             }
         };
-
         fetchUserName();
     }, []);
 
+    // Show or hide bottom nav based on route
     useEffect(() => {
-        setClientPath(pathname);
-    }, [pathname]);
+        const timeout = setTimeout(() => {
+            const shouldShow = allowedRoutes.includes(pathname);
+            setShowBottomNav(shouldShow);
+        }, 200); // keep it short
+        return () => clearTimeout(timeout);
+    }, [pathname, userName]);
 
-    const showBottomNav = clientPath !== null && allowedRoutes.includes(clientPath);
-    const showMain = !showBottomNav;
+    // ✅ Instead of conditionally rendering <main>, we always render and just hide contents
+    const isMainHidden = allowedRoutes.includes(pathname);
+    console.log("Route:", pathname);
+    console.log("Show BottomNav?", showBottomNav);
+    console.log("Hide Main?", isMainHidden);
 
     return (
         <>
-            {showMain && <main className="flex-grow">{children}</main>}
+            <main className={clsx("flex-grow", isMainHidden && "hidden")}>
+                {children}
+            </main>
             <Toaster richColors position="top-center" expand={false} closeButton />
-            {showBottomNav && <BottomNavigation />}
+            <div className={clsx(!showBottomNav && "hidden")}>
+                <BottomNavigation />
+            </div>
         </>
     );
 }

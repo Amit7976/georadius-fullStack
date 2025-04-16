@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { IoMapOutline, IoNotificationsOutline } from "react-icons/io5";
 import TrendingNewsSlider from "../components/TrendingNewsSlider";
+import { useGeolocation } from "./hooks/useGeolocation";
 
 const filterOptions = ["Nearby", "District", "Global"];
 
@@ -23,6 +24,7 @@ export default function MainContent() {
     const lastScrollY = useRef(0);
     const categoriesRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
+    const location = useGeolocation();
 
 
 
@@ -37,6 +39,7 @@ export default function MainContent() {
     };
 
     useEffect(() => {
+        if (!location) return;
         const range = selectedFilter === "Nearby"
             ? 50
             : selectedFilter === "District"
@@ -65,18 +68,12 @@ export default function MainContent() {
             }
         };
 
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const { latitude, longitude } = position.coords;
-                fetchNearbyPosts(latitude, longitude);
-            },
-            (err) => {
-                console.error("Geolocation error:", err);
-                setError("Location access is required to load nearby posts.");
-                setLoading(false);
-            }
-        );
-    }, [selectedFilter, selectedCategory]);
+
+
+
+        fetchNearbyPosts(location.lat, location.lng);
+
+    }, [selectedFilter, selectedCategory, location]);
 
 
     useEffect(() => {
@@ -131,8 +128,7 @@ export default function MainContent() {
                     </Select>
 
                     <div className="flex items-center gap-4 pr-1">
-                        {/* <IoNotificationsOutline className="text-3xl scale-95" onClick={() => router.push("/pages/others/notifications")} /> */}
-                        <IoMapOutline className="text-3xl scale-95" onClick={() => router.push("/pages/others/map")} />
+                        <IoMapOutline className="text-3xl scale-95" onClick={() => router.replace("/pages/others/map")} />
                     </div>
                 </div>
             </div>
@@ -224,8 +220,7 @@ export default function MainContent() {
                         </Select>
 
                         <div className="flex items-center gap-4 pr-1">
-                            <IoNotificationsOutline className="text-3xl scale-95" onClick={() => router.push("/pages/others/notifications")} />
-                            <IoMapOutline className="text-3xl scale-95" onClick={() => router.push("/pages/others/map")} />
+                            <IoMapOutline className="text-3xl scale-95" onClick={() => router.replace("/pages/others/map")} />
                         </div>
                     </div>
                 </div>
@@ -234,7 +229,7 @@ export default function MainContent() {
             {/* News Posts */}
             <div>
                 {loading ? (
-                    <p className="text-center text-gray-500 py-10">Loading news...</p>
+                    <div className="flex items-center justify-center h-screen"><div className="loader"></div></div>
                 ) : (
                     newsData.length > 0 ? (
                         newsData.map((news) => (

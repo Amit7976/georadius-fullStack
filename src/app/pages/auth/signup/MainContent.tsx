@@ -40,7 +40,7 @@ function MainContent() {
   //   // Create new user
   //   await User.create({ name, email, password: hashedPassword });
 
-  //   router.push("/pages/auth/signin");
+  //   router.replace("/pages/auth/signin");
 
   // }
   return (

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useGeolocation } from "@/src/app/hooks/useGeolocation";
 
 function MainContent() {
   const router = useRouter();
@@ -36,15 +37,15 @@ function MainContent() {
       setLocationStatus("Geolocation not supported in this browser");
       return;
     }
+    
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setLocationStatus(`Lat: ${latitude.toFixed(2)}, Lng: ${longitude.toFixed(2)}`);
-        console.log(`User Location: Lat ${latitude}, Lng ${longitude}`);
-        router.replace("/"); // ✅ Redirect after getting location
-      },
-    );
+    const location = useGeolocation();
+
+    if (location) {
+      setLocationStatus(`Lat: ${location.lat.toFixed(2)}, Lng: ${location.lng.toFixed(2)}`);
+      console.log(`User Location: Lat ${location.lat}, Lng ${location.lng}`);
+      router.replace("/");
+    }
   };
 
   return (

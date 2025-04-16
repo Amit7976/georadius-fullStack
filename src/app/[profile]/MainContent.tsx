@@ -42,7 +42,7 @@ function MainContent({ username, userData, userPosts }: any) {
         <div className="bg-white">
             <div className="flex items-center justify-between p-6">
                 <h2 className="text-lg font-bold">{username}</h2>
-                <IoSettingsOutline className="text-2xl" onClick={() => router.push("/pages/others/settings")} />
+                <IoSettingsOutline className="text-2xl" onClick={() => router.replace("/pages/others/settings")} />
             </div>
 
             <div className="flex items-start gap-4 my-2 p-4">
@@ -61,7 +61,7 @@ function MainContent({ username, userData, userPosts }: any) {
 
             <div className="flex flex-row justify-between gap-3 px-3">
                 {userData.currentUserProfile && (
-                    <Button variant={"primary"} size={100} onClick={() => router.push("/pages/others/updateprofile")}
+                    <Button variant={"primary"} size={100} onClick={() => router.replace("/pages/others/updateprofile")}
                         className="bg-gray-200 w-full flex-1 h-10 text-gray-600 font-semibold text-sm active:scale-95">
                         Update Profile
                     </Button>

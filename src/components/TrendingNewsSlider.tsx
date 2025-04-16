@@ -11,6 +11,7 @@ import Link from 'next/link';
 import useAuthVerification from '../app/hooks/useAuthVerification';
 import { formatTimeAgo } from '../helpers/formatTimeAgo';
 import { getDistanceFromCurrentLocation } from '../helpers/getDistanceFromCurrentLocation';
+import { useGeolocation } from '../app/hooks/useGeolocation';
 
 type TrendingNewsSliderProps = {
     range: number;
@@ -23,9 +24,12 @@ const TrendingNewsSlider: React.FC<TrendingNewsSliderProps> = ({ range }) => {
     const [loadingPosts, setLoadingPosts] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [distances, setDistances] = useState<Record<string, string>>({});
+    const location = useGeolocation();
 
     useEffect(() => {
         if (!isVerified) return;
+        if (!location) return;
+
 
         const fetchNearbyPosts = async (latitude: number, longitude: number) => {
             try {
@@ -58,20 +62,12 @@ const TrendingNewsSlider: React.FC<TrendingNewsSliderProps> = ({ range }) => {
             }
         };
 
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const { latitude, longitude } = position.coords;
-                fetchNearbyPosts(latitude, longitude);
-            },
-            (err) => {
-                console.error("Geolocation error:", err);
-                setError("Location access is required to load nearby posts.");
-                setLoadingPosts(false);
-            }
-        );
-    }, [isVerified, range]);
 
-    if (loading || loadingPosts) return <p>Loading...</p>;
+
+        fetchNearbyPosts(location.lat, location.lng);
+    }, [location, isVerified, range]);
+
+    if (loading || loadingPosts) return <div className="flex items-center justify-center h-screen"><div className="loader"></div></div>;
     if (error) return <p className="text-red-500 text-center">{error}</p>;
     if (!data || data.length === 0) return <p className="text-center">No breaking news nearby.</p>;
 

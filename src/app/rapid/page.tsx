@@ -3,15 +3,18 @@
 import { useEffect, useState } from "react";
 import useAuthVerification from "../hooks/useAuthVerification";
 import MainContent from "./MainContent";
+import { useGeolocation } from "../hooks/useGeolocation";
 
 function Page() {
     const { isVerified, loading } = useAuthVerification();
     const [data, setData] = useState<any>(null);
     const [loadingPosts, setLoadingPosts] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const location = useGeolocation();
 
     useEffect(() => {
         if (!isVerified) return;
+        if (!location) return;
 
         const fetchNearbyPosts = async (latitude: number, longitude: number) => {
             try {
@@ -26,20 +29,14 @@ function Page() {
             }
         };
 
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const { latitude, longitude } = position.coords;
-                fetchNearbyPosts(latitude, longitude);
-            },
-            (err) => {
-                console.error("Geolocation error:", err);
-                setError("Location access is required to load nearby posts.");
-                setLoadingPosts(false);
-            }
-        );
-    }, [isVerified]);
 
-    if (loading || loadingPosts) return <p>Loading...</p>;
+      
+        fetchNearbyPosts(location.lat, location.lng);
+
+
+    }, [location,isVerified]);
+
+    if (loading || loadingPosts) return <div className="flex items-center justify-center h-screen"><div className="loader"></div></div>;
     if (error) return <p className="text-red-500">{error}</p>;
 
     return isVerified && data ? (

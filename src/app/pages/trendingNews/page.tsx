@@ -11,6 +11,7 @@ import Link from 'next/link';
 import useAuthVerification from '../../hooks/useAuthVerification';
 import { getDistanceFromCurrentLocation } from '@/src/helpers/getDistanceFromCurrentLocation';
 import NewsPost from '@/src/components/NewsPost';
+import { useGeolocation } from '../../hooks/useGeolocation';
 
 
 function page() {
@@ -20,9 +21,12 @@ function page() {
     const [loadingPosts, setLoadingPosts] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [distances, setDistances] = useState<Record<string, string>>({});
-
+    const location = useGeolocation();
+    
     useEffect(() => {
         if (!isVerified) return;
+        if (!location) return;
+
 
         const fetchNearbyPosts = async (latitude: number, longitude: number) => {
             try {
@@ -55,20 +59,14 @@ function page() {
             }
         };
 
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const { latitude, longitude } = position.coords;
-                fetchNearbyPosts(latitude, longitude);
-            },
-            (err) => {
-                console.error("Geolocation error:", err);
-                setError("Location access is required to load nearby posts.");
-                setLoadingPosts(false);
-            }
-        );
-    }, [isVerified]);
 
-    if (loading || loadingPosts) return <p>Loading...</p>;
+      
+
+        fetchNearbyPosts(location.lat, location.lng);
+        
+    }, [location,isVerified]);
+
+    if (loading || loadingPosts) return <div className="flex items-center justify-center h-screen"><div className="loader"></div></div>;
     if (error) return <p className="text-red-500 text-center">{error}</p>;
     if (!data || data.length === 0) return <p className="text-center">No trending news nearby.</p>;
 
@@ -83,16 +81,16 @@ function page() {
     };
 
 
-  return (
-      <div className='py-3 px-1'>
-          <h2 className="text-3xl font-bold">Breaking <span className='text-green-500'>News!</span></h2>
-          <div className="mt-6 mb-20">
-              {data.map((news: any) => (
-                  <NewsPost news={news} key={news._id} onHide={handleHide} fullDescription={false} />
-              ))}
-          </div>
-    </div>
-  )
+    return (
+        <div className='py-3 px-1'>
+            <h2 className="text-3xl font-bold">Breaking <span className='text-green-500'>News!</span></h2>
+            <div className="mt-6 mb-20">
+                {data.map((news: any) => (
+                    <NewsPost news={news} key={news._id} onHide={handleHide} fullDescription={false} />
+                ))}
+            </div>
+        </div>
+    )
 }
 
 export default page
