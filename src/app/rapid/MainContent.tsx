@@ -62,7 +62,7 @@ export default function MainContent({ posts }: any) {
                                 >
                                     {post.images.map((image: any) => (
                                         <SwiperSlide key={image} className="relative flex items-center justify-center w-full">
-                                            <Image src={image} alt={post.title} layout="fill" objectFit="cover" priority />
+                                            <Image src={image} alt={post.title} layout="fill" sizes="full" objectFit="cover" priority />
                                         </SwiperSlide>
                                     ))}
 

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { IoSettingsOutline } from "react-icons/io5";
 import NewsPost from "@/src/components/NewsPost";
+import { FaArrowLeftLong } from "react-icons/fa6";
 
 function MainContent({ username, userData, userPosts }: any) {
     const router = useRouter();
@@ -40,8 +41,16 @@ function MainContent({ username, userData, userPosts }: any) {
 
     return (
         <div className="bg-white">
-            <div className="flex items-center justify-between p-6">
-                <h2 className="text-lg font-bold">{username}</h2>
+            <div className="flex items-center justify-between py-5 p-4">
+                <div className="flex items-center gap-4 relative">
+                    {!userData.currentUserProfile && (
+                        <FaArrowLeftLong
+                            onClick={() => router.back()}
+                            className="text-lg w-5 cursor-pointer mt-1"
+                        />
+                    )}
+                    <h2 className="text-lg font-bold">{username}</h2>
+                </div>
                 <IoSettingsOutline className="text-2xl" onClick={() => router.replace("/pages/others/settings")} />
             </div>
 

@@ -41,9 +41,10 @@ const NewsPost = ({ news, onHide, fullDescription }: { news: any; fullDescriptio
             <Card className="w-full my-0 border-0 shadow-none gap-4 select-none">
                 {/* Header */}
                 <div className="flex justify-between items-center px-2">
-                    <div className="flex items-start gap-3">
-                        <Link href={"/" + news.creatorName}>
-                            <Image src={news.creatorImage} alt="Profile" width={40} height={40} priority className="rounded-full mt-0.5" /></Link>
+                    <div className="flex items-start gap-2">
+                        <Link href={"/" + news.creatorName} className="mt-1 shrink-0 w-9 h-9">
+                            <Image src={news.creatorImage} alt="Profile" width={40} height={40} priority className="rounded-full w-9 h-9 aspect-square" />
+                        </Link>
                         <div>
                             <div className="flex items-center gap-2">
                                 <Link href={"/" + news.creatorName}><span className="font-bold">{news.creatorName}</span></Link>

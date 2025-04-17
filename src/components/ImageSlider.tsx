@@ -35,6 +35,7 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ images, height }) => {
                             src={image}
                             alt={`Slide ${index}`}
                             fill
+                            sizes="full"
                             priority
                             style={{ objectFit: "contain" }}
                         />

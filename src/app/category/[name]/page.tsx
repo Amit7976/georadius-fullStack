@@ -69,7 +69,9 @@ export default function CategoryPage() {
                         <SelectItem className={""} value="10">10 km</SelectItem>
                         <SelectItem className={""} value="25">25 km</SelectItem>
                         <SelectItem className={""} value="50">50 km</SelectItem>
-                        <SelectItem className={""} value="100">100 km</SelectItem>
+                        <SelectItem className={""} value="500">500 km</SelectItem>
+                        <SelectItem className={""} value="5000">5000 km</SelectItem>
+                        <SelectItem className={""} value="50000">World Wide</SelectItem>
                     </SelectContent>
                 </Select>
             </div>

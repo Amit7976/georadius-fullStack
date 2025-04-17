@@ -85,7 +85,7 @@ const TrendingNewsSlider: React.FC<TrendingNewsSliderProps> = ({ range }) => {
                 <Swiper spaceBetween={0} slidesPerView={1} parallax={true} modules={[Autoplay]}>
                     {data.map((news: any, index: number) => (
                         <SwiperSlide key={news._id || index}>
-                            <div className="w-full h-96 relative overflow-hidden select-none">
+                            <div className="w-full h-80 relative overflow-hidden select-none">
                                 {/* Nested Swiper for images */}
                                 {news?.images && (
                                     <Image

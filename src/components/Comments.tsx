@@ -11,6 +11,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import Link from 'next/link';
 
 
 interface CommentType {
@@ -218,17 +219,22 @@ const Comments = ({ news_id }: { news_id: string }) => {
             <div className={`ml-${level * 4} border-gray-200 pl-4 mt-5`}>
                 <div className="flex items-start gap-3">
                     {comment.profileImage && (
-                        <img
-                            src={comment.profileImage}
-                            alt={comment.username}
-                            className="w-8 h-8 rounded-full"
-                        />
+                        <Link href={"/" + comment.username}>
+                            <img
+                                src={comment.profileImage}
+                                alt={comment.username}
+                                className="w-8 h-8 rounded-full"
+                            />
+                        </Link>
                     )}
                     <div className="flex-1">
-                        <p className="text-sm font-semibold">{comment.username}</p>
+                        <Link href={"/" + comment.username}><p className="text-sm font-semibold">{comment.username}</p></Link>
                         {comment.replyingToUsername && (
                             <p className="text-xs text-gray-500">
-                                Replying to @{comment.replyingToUsername}
+                                Replying to
+                                <Link href={"/" + comment.replyingToUsername}>
+                                @{comment.replyingToUsername}
+                                </Link>
                             </p>
                         )}
                         <p className="text-gray-800 mt-1">{comment.comment}</p>
