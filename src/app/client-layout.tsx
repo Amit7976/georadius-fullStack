@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import BottomNavigation from "../components/BottomNavigation";
 import { Toaster } from "sonner";
-import clsx from "clsx"; // if not installed: npm i clsx
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const [userName, setUserName] = useState<string | null>(null);
@@ -45,25 +44,34 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         const timeout = setTimeout(() => {
             const shouldShow = allowedRoutes.includes(pathname);
             setShowBottomNav(shouldShow);
-        }, 200); // keep it short
+        }, 1000); // keep it short
         return () => clearTimeout(timeout);
     }, [pathname, userName]);
 
     // ✅ Instead of conditionally rendering <main>, we always render and just hide contents
     const isMainHidden = allowedRoutes.includes(pathname);
+    console.log("AllowedRoutes:", allowedRoutes);
     console.log("Route:", pathname);
     console.log("Show BottomNav?", showBottomNav);
     console.log("Hide Main?", isMainHidden);
 
     return (
         <>
-            <main className={clsx("flex-grow", isMainHidden && "hidden")}>
-                {children}
-            </main>
+            {
+                !isMainHidden && (
+                    <main>
+                        {children}
+                    </main>
+                )
+            }
             <Toaster richColors position="top-center" expand={false} closeButton />
-            <div className={clsx(!showBottomNav && "hidden")}>
-                <BottomNavigation />
-            </div>
+            {
+                showBottomNav && (
+                    <div>
+                        <BottomNavigation />
+                    </div>
+                )
+            }
         </>
     );
 }

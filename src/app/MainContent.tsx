@@ -6,7 +6,7 @@ import interestsList from "@/public/json/interestList.json";
 import NewsPost from "@/src/components/NewsPost";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { IoMapOutline, IoNotificationsOutline } from "react-icons/io5";
+import { IoMapOutline } from "react-icons/io5";
 import TrendingNewsSlider from "../components/TrendingNewsSlider";
 import { useGeolocation } from "./hooks/useGeolocation";
 
