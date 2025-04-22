@@ -55,7 +55,7 @@ export default function SearchInput({ queryParam = "" }: SearchInputProps) {
     const handleSearch = (q?: string) => {
         const searchTerm = (q || query)?.trim();
         if (!searchTerm) return;
-        router.replace(`/search/results?q=${encodeURIComponent(searchTerm)}`);
+        router.push(`/search/results?q=${encodeURIComponent(searchTerm)}`);
         setSuggestions([]); // 💨 Clear suggestions after search
     };
 

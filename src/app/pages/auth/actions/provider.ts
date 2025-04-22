@@ -9,7 +9,7 @@ import { CredentialsSignin } from "next-auth";
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-const ProviderLoginSignUp = async (provider: string) => {
+const ProviderLoginSignUp = (provider: string) => {
 
 
     console.log("1");
@@ -17,9 +17,9 @@ const ProviderLoginSignUp = async (provider: string) => {
 
     try {
         console.log("2");
-        await signIn(provider);
+        signIn(provider);
         console.log("3");
-    } catch (error: any) {
+    } catch (error) {
         const err = error as CredentialsSignin;
         return err.cause;
     }

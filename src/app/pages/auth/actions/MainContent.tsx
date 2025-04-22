@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { signOut } from "@/src/auth";
 import ProviderLogout from "@/src/helpers/logout";
 import Link from 'next/link';
 import { useRouter } from "next/navigation";
@@ -20,7 +19,6 @@ import { useEffect, useState } from "react";
 import { FaRegUserCircle } from 'react-icons/fa';
 import { FaArrowLeftLong } from 'react-icons/fa6';
 import { FiSun } from "react-icons/fi";
-import { HiOutlineLogout } from "react-icons/hi";
 import { HiOutlineChevronRight } from "react-icons/hi2";
 import { IoLanguage, IoLocationOutline, IoNotificationsOutline } from "react-icons/io5";
 import { MdOutlineReport, MdPassword } from "react-icons/md";
@@ -37,13 +35,15 @@ const MainContent = () => {
     const [pushNotifications, setPushNotifications] = useState(true);
     const [displayMode, setDisplayMode] = useState("system");
     const [radius, setRadius] = useState(10);
-    const [languages, setLanguages] = useState<{ language: string }[]>([]);
+    type Language = { language: string };
+    const [languages, setLanguages] = useState<Language[]>([]);
 
     useEffect(() => {
         const fetchLanguages = async () => {
             try {
                 // const res = await axios.get("https://translation.googleapis.com/language/translate/v2/languages?key=YOUR_GOOGLE_API_KEY");
                 // setLanguages(res.data.data.languages);
+                setLanguages([{ language: "Hindi" }, { language: "English" }]);
             } catch (error) {
                 console.error("Error fetching languages", error);
             }
@@ -173,14 +173,14 @@ const MainContent = () => {
                         </DialogHeader>
                         <Select
                             value={selectedLanguage}
-                            onChange={({ e }: any) => setSelectedLanguage(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedLanguage(e.target.value)}
                         >
                             <SelectTrigger className="w-full border-2 h-14">
                                 <SelectValue placeholder="Select a Language" />
                             </SelectTrigger>
                             <SelectContent className="">
                                 <SelectGroup>
-                                    {languages.map((lang) => (
+                                    {languages.map((lang: Language) => (
                                         <SelectItem className="" key={lang.language} value={lang.language}>{lang.language.toUpperCase()}</SelectItem>
                                     ))}
                                 </SelectGroup>

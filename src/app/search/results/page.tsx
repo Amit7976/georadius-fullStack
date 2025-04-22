@@ -17,7 +17,7 @@ import { formatTimeAgo } from "@/src/helpers/formatTimeAgo";
 export default function SearchResultsPage() {
     const searchParams = useSearchParams();
     const query = searchParams.get("q") || "";
-    const [radius, setRadius] = useState("10");
+    const [radius, setRadius] = useState("5000000");
     const [searchType, setSearchType] = useState("post");
 
     const [latLng, setLatLng] = useState<{
@@ -125,9 +125,9 @@ export default function SearchResultsPage() {
 
                         {searchType === "post" && (
                             <div>
-                                <Select onValueChange={setRadius} defaultValue="10">
+                                <Select onValueChange={setRadius} defaultValue="5000000">
                                     <SelectTrigger className="w-fit flex items-center shadow-none border-0">
-                                        <SelectValue placeholder="10 km" />
+                                        <SelectValue placeholder="World Wide" />
                                     </SelectTrigger>
                                     <SelectContent className="static">
                                         <SelectItem className="static" value="5">5 km</SelectItem>

@@ -12,7 +12,7 @@ cloudinary.v2.config({
 });
 
 
-export async function GET(req: Request) {
+export async function GET() {
 
   console.log("====================================");
   console.log("======= Get User Profile ========");
@@ -216,7 +216,7 @@ export async function PUT(req: Request) {
     console.log("[INFO] Updated profile image URL:", profileImageUrl);
 
   
-    let userProfile = await UserProfile.findOneAndUpdate(
+    const userProfile = await UserProfile.findOneAndUpdate(
       { userId },
       {
         username,

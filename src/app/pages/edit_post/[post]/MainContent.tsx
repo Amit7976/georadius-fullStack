@@ -1,4 +1,3 @@
-"use client";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,13 +10,13 @@ import { Button } from "@/components/ui/button";
 import ImageUploader from "./components/ImageUploader";
 import { useRouter } from "next/navigation";
 
-// ✅ Zod Validation Schema with Debugging
+// Zod Validation Schema
 const formSchema = z.object({
     title: z.string().min(3, "Title must be at least 3 characters long"),
     description: z.string().min(10, "Description must be at least 10 characters long"),
     location: z.string().min(10, "Location must be provided"),
-    latitude: z.number().min(1, "latitude must be provided"),
-    longitude: z.number().min(1, "longitude must be provided"),
+    latitude: z.number().min(1, "Latitude must be provided"),
+    longitude: z.number().min(1, "Longitude must be provided"),
     categories: z.array(z.string()).min(1, "At least one category must be selected"),
     images: z.array(z.any()).max(3, "You can only upload up to 3 images").optional(),
     deletedImages: z.array(z.any()).max(3, "You can only delete up to 3 images").optional(),
@@ -33,14 +32,24 @@ export interface FormValues {
     images?: File[];
     deletedImages?: string[];
 }
+interface MainContentProps {
+    post: {
+        _id: string;
+        title: string;
+        description: string;
+        location: string;
+        latitude: number;
+        longitude: number;
+        categories: string[];
+        images?: File[];
+    };
+}
 
-export default function MainContent({ post }: any) {
+export default function MainContent({ post }: MainContentProps) {
     const [selectedCategories, setSelectedCategories] = useState<string[]>(post.categories || []);
     const [processing, setProcessing] = useState(false);
+    const router = useRouter();
 
-    console.log("Component Rendered");
-
-    // ✅ Form Setup with Debugging
     const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -55,23 +64,13 @@ export default function MainContent({ post }: any) {
         },
     });
 
-
     useEffect(() => {
         console.log("Current Errors:", errors);
     }, [errors]);
 
-
-
-    const router = useRouter();
-
-    // ✅ Handle Form Submission with Debugging
     const onSubmit = async (values: FormValues) => {
-        setProcessing(true)
-        console.log("Form Submitted");
-        console.log("Submitted Data:", values);
-
+        setProcessing(true);
         try {
-            // ✅ Create FormData for sending images
             const formData = new FormData();
             formData.append("postId", post._id);
             formData.append("title", values.title);
@@ -80,51 +79,39 @@ export default function MainContent({ post }: any) {
             formData.append("latitude", values.latitude.toString());
             formData.append("longitude", values.longitude.toString());
 
-            // ✅ Append categories as JSON string (since it's an array)
+            // Append categories as a JSON string
             formData.append("categories", JSON.stringify(values.categories));
             formData.append("deletedImages", JSON.stringify(values.deletedImages));
 
-
-            console.log('====================================');
-            console.log("FormData:", values.deletedImages);
-            console.log('====================================');
-            console.log("FormData:", JSON.stringify(values.deletedImages));
-            console.log('====================================');
-            // ✅ Append images if available
+            // Append images if present
             if (values.images && values.images.length > 0) {
-                values.images.forEach((image, index) => {
-                    formData.append(`images`, image);
+                values.images.forEach((image) => {
+                    formData.append("images", image);
                 });
             }
 
-            // ✅ Send Data to Server
             const response = await fetch("/api/update/post", {
                 method: "POST",
                 body: formData,
             });
 
             const data = await response.json();
-
             if (!response.ok) {
                 throw new Error(data.message || "Failed to upload");
             }
 
-            console.log("Upload Successful:", data);
-
-            //✅ Reset Form After Successful Submission
+            // Reset form on success
             reset();
-            setSelectedCategories([]);
-
-            //✅ Redirect After Submission
+            setSelectedCategories([]); // Reset the selected categories as well
             router.replace("/");
+
         } catch (error) {
             console.error("Upload Error:", error);
             alert("Failed to upload. Please try again.");
         } finally {
-            setProcessing(false)
+            setProcessing(false);
         }
     };
-
 
     return (
         <div className="p-5 space-y-10">
@@ -138,10 +125,9 @@ export default function MainContent({ post }: any) {
                 selectedCategories={selectedCategories}
                 setSelectedCategories={setSelectedCategories}
                 setValue={setValue}
-                register={register}
                 errors={errors}
             />
-            <ImageUploader setValue={setValue} errors={errors} data={post.images} />
+            <ImageUploader setValue={setValue} errors={errors} data={(post.images || []).map(image => typeof image === "string" ? image : "")} />
 
             {errors && (
                 <div className="text-red-500">
@@ -151,7 +137,14 @@ export default function MainContent({ post }: any) {
                 </div>
             )}
 
-            <Button size={100} variant={"primary"} disabled={processing} type="submit" onClick={handleSubmit(onSubmit)} className="w-full bg-green-600 active:bg-green-400 active:scale-95 h-16 text-white text-lg font-bold rounded-lg">
+            <Button
+                size={100}
+                variant={"</div>primary"}
+                disabled={processing}
+                type="submit" // Keep this as is because it's the default submit behavior
+                onClick={handleSubmit(onSubmit)} // Remove onClick for simplicity
+                className="w-full bg-green-600 active:bg-green-400 active:scale-95 h-16 text-white text-lg font-bold rounded-lg"
+            >
                 {processing ? "Processing...." : "Post News"}
             </Button>
         </div>

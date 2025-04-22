@@ -13,12 +13,19 @@ import {
 } from "@/components/ui/select";
 import { useGeolocation } from "../../hooks/useGeolocation";
 
+type Post = {
+    _id: string;
+    title: string;
+    location: string;
+    description: string;
+    updatedAt: string;
+    images: string[];
+};
+
 export default function CategoryPage() {
     const { name } = useParams();
-    const [posts, setPosts] = useState([]);
+    const [posts, setPosts] = useState<Post[]>([]);
     const [radius, setRadius] = useState("10");
-    const [lat, setLat] = useState<number | null>(null);
-    const [lng, setLng] = useState<number | null>(null);
     const [expandedDescriptions, setExpandedDescriptions] = useState<string[]>([]);
     const location = useGeolocation();
 
@@ -47,13 +54,10 @@ export default function CategoryPage() {
     useEffect(() => {
         if ("geolocation" in navigator) {
             if (!location) return;
-
-
-            setLat(location.lat);
-            setLng(location.lng);
             fetchCategoryPosts(location.lat, location.lng);
         }
-    }, [location, name, radius]);
+    }, [location, name, radius, fetchCategoryPosts]);
+
 
     return (
         <div className="p-4">
@@ -78,7 +82,7 @@ export default function CategoryPage() {
 
             <div className="gap-4 flex flex-col">
                 {posts.length > 0 ? (
-                    posts.map((post: any) => (
+                    posts.map((post) => (
                         <Link href={"/post/" + post._id} key={post._id} className="py-2 space-y-2">
                             <p className="text-gray-500 text-xs">{formatTimeAgo(post.updatedAt)}</p>
                             <h4 className="font-semibold text-lg leading-5">{post.title}</h4>

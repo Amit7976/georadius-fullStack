@@ -3,7 +3,7 @@ import { connectToDatabase } from "@/src/lib/utils";
 import { UserProfile } from "@/src/models/UserProfileModel";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
+export async function GET() {
 
   console.log("====================================");
   console.log("======= Checking User Profile ======");

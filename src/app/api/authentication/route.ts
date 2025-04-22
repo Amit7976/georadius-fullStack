@@ -9,7 +9,7 @@ export async function GET() {
     return NextResponse.json({ user: session?.user || null });
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to authenticate" },
+      { error: "Failed to authenticate" + error },
       { status: 500 }
     );
   }

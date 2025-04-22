@@ -91,7 +91,9 @@ export async function POST(req: Request) {
             .end(buffer);
         });
 
-        profileImageUrl = (uploadResult as any).secure_url || "";
+        
+         const typedUploadResult = uploadResult as { secure_url: string };
+         profileImageUrl = typedUploadResult.secure_url || "";
 
       } catch (uploadError) {
 

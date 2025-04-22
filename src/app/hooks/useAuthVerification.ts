@@ -141,7 +141,7 @@ const useAuthVerification = () => {
     };
 
     checkAuthAndPermissions();
-  }, []);
+  }, [router]);
 
   return { isVerified, loading };
 };

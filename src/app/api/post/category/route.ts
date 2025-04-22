@@ -5,18 +5,14 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
-
-
   console.log("====================================");
   console.log("======== Post Category API ========");
   console.log("====================================");
   console.log("📌 [START] Category API");
 
   try {
-    
     console.log("➡️ Connecting to DB...");
     await connectToDatabase();
-
 
     const { searchParams } = new URL(req.url);
     const category = searchParams.get("category");
@@ -26,14 +22,12 @@ export async function GET(req: NextRequest) {
     const lngMin = parseFloat(searchParams.get("lngMin") || "");
     const lngMax = parseFloat(searchParams.get("lngMax") || "");
 
-
     if (!category) {
       return NextResponse.json(
         { error: "Category is required" },
         { status: 400 }
       );
     }
-
 
     console.log("🔍 Category:", category);
     console.log("📍 Radius:", radius, "km");
@@ -48,17 +42,18 @@ export async function GET(req: NextRequest) {
       lngMax
     );
 
-
-    const query: any = {
+    const query: {
+      categories: { $in: string[] };
+      latitude?: { $gte: number; $lte: number };
+      longitude?: { $gte: number; $lte: number };
+    } = {
       categories: { $in: [category] },
     };
 
-   
     if (!isNaN(latMin) && !isNaN(latMax) && !isNaN(lngMin) && !isNaN(lngMax)) {
       query.latitude = { $gte: latMin, $lte: latMax };
       query.longitude = { $gte: lngMin, $lte: lngMax };
     }
-
 
     const posts = await Post.find(query)
       .sort({ updatedAt: -1 })
@@ -66,18 +61,14 @@ export async function GET(req: NextRequest) {
         "_id title description images location latitude longitude updatedAt"
       );
 
-    
     console.log(`✅ Found ${posts.length} posts`);
-
 
     return NextResponse.json(posts);
   } catch (err) {
-
     console.error("❌ Category API Error:", err);
     return NextResponse.json(
       { error: "Something went wrong" },
       { status: 500 }
     );
-    
   }
 }

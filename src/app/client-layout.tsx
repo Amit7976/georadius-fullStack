@@ -46,7 +46,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
             setShowBottomNav(shouldShow);
         }, 1000); // keep it short
         return () => clearTimeout(timeout);
-    }, [pathname, userName]);
+    }, [pathname, userName, allowedRoutes]);
 
     // ✅ Instead of conditionally rendering <main>, we always render and just hide contents
     const isMainHidden = allowedRoutes.includes(pathname);

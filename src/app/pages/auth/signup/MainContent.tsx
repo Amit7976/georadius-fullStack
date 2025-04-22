@@ -1,48 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import React from "react";
 import logo from "@/public/images/Logo.png";
-import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
-import { User } from "@/src/models/userModel";
-import { hash } from "bcryptjs";
-import { connectToDatabase } from "@/src/lib/utils";
 import SignUpForm from "./signUpForm";
 import { handleSignIn } from "../actions/server";
 
 function MainContent() {
-  const router = useRouter();
 
-  // const signUpHandler = async (formData: FormData) => {
-  //   "use server"
-
-  //   const name = formData.get("name") as string | undefined;
-  //   const email = formData.get("email") as string | undefined;
-  //   const password = formData.get("password") as string | undefined;
-
-  //   if (!email || !password || !name) {
-  //     throw new Error("Please provide all required fields")
-  //   }
-
-  //   // Connection with database
-  //   await connectToDatabase();
-
-  //   const user = await User.findOne({ email });
-
-  //   if (user) {
-  //     throw new Error("Email already exists")
-  //   }
-
-  //   const hashedPassword = await hash(password, 10);
-
-  //   // Create new user
-  //   await User.create({ name, email, password: hashedPassword });
-
-  //   router.replace("/pages/auth/signin");
-
-  // }
   return (
     <>
       <div className="p-2 bg-white flex flex-col items-center h-[94.3vh] rounded-b-3xl">

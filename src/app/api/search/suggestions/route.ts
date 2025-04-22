@@ -2,6 +2,16 @@ import { connectToDatabase } from "@/src/lib/utils";
 import { Post } from "@/src/models/postModel";
 import { NextResponse } from "next/server";
 
+interface RawPost {
+  _id: string | { toString(): string }; // handles ObjectId or string
+  title: string;
+}
+
+interface PostSuggestion {
+  id: string;
+  name: string;
+}
+
 export async function GET(req: Request) {
 
   console.log("====================================");
@@ -26,7 +36,7 @@ export async function GET(req: Request) {
     await connectToDatabase();
     
 
-    const results = await Post.find(
+    const results = (await Post.find(
       {
         $or: [
           { title: { $regex: query, $options: "i" } },
@@ -36,10 +46,10 @@ export async function GET(req: Request) {
       { _id: 1, title: 1 }
     )
       .limit(5)
-      .lean();
+      .lean()
+      .exec()) as unknown as RawPost[];
 
-    
-    const suggestions = results.map((post: any) => ({
+    const suggestions: PostSuggestion[] = results.map((post) => ({
       id: post._id.toString(),
       name: post.title,
     }));

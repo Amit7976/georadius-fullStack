@@ -95,7 +95,7 @@ export async function POST(req: Request) {
       console.log("🚮 Deleting images...");
 
       await Promise.all(
-        deletedImages.map(async (url: any) => {
+        deletedImages.map(async (url: string) => {
           const publicId = extractPublicId(url);
           if (publicId) {
             await cloudinary.v2.uploader.destroy(publicId);

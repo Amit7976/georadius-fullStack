@@ -28,9 +28,6 @@ async function deleteCommentWithReplies(
   await Comment.deleteOne({ _id: commentId });
 }
 
-interface DeleteRequest {
-  postId: string;
-}
 
 export async function DELETE(req: Request): Promise<NextResponse> {
   console.log("====================================");

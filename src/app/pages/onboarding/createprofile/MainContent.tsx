@@ -58,7 +58,17 @@ export default function MainContent() {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const onSubmit = async (data: any) => {
+    interface FormDataType {
+        username: string;
+        fullName: string;
+        phoneNumber?: string;
+        dob: string;
+        location: string;
+        bio: string;
+        profileImage: File | string;
+    }
+
+    const onSubmit = async (data: FormDataType) => {
         if (isSubmitting) return; // Prevent multiple clicks
         setIsSubmitting(true);
 
@@ -72,7 +82,7 @@ export default function MainContent() {
             const formData = new FormData();
             formData.append("username", data.username);
             formData.append("fullName", data.fullName);
-            formData.append("phoneNumber", data.phoneNumber);
+            formData.append("phoneNumber", data.phoneNumber || "");
             formData.append("dob", data.dob);
             formData.append("location", data.location);
             formData.append("bio", data.bio);
@@ -82,7 +92,6 @@ export default function MainContent() {
             if (data.profileImage instanceof File) {
                 console.log("✅ Profile Image detected, appending...");
                 formData.append("profileImage", data.profileImage);
-
 
                 console.log("====================================");
                 console.log("Sending data to API...");
@@ -95,7 +104,7 @@ export default function MainContent() {
                     body: formData,
                 });
 
-                const result = await response.json();
+                const result: { error?: string } = await response.json();
                 console.log("✅ API Response Received:", result);
 
                 if (!response.ok) {

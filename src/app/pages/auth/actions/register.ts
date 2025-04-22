@@ -2,7 +2,6 @@
 
 import { connectToDatabase } from "@/src/lib/utils";
 import { User } from "@/src/models/userModel";
-import { UserProfile } from "@/src/models/UserProfileModel";
 import bcryptjs from "bcryptjs";
 import { redirect } from "next/navigation";
 
@@ -10,9 +9,9 @@ import { redirect } from "next/navigation";
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const credentialsSignUp = async (
-  fullname: String,
-  email: String,
-  password: any
+  fullname: string,
+  email: string,
+  password: string,
 ) => {
   // CONNECT TO THE DATABASE
   try {

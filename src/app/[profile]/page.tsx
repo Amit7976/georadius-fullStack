@@ -61,7 +61,7 @@ function Page({ params2 }: any) {
     }
 
     if (!params) {
-        return <div>Page not found</div>;
+        return <div className="flex items-center justify-center h-screen"><div className="loader"></div></div>;
     }
 
     if (error) {
@@ -71,7 +71,7 @@ function Page({ params2 }: any) {
     return isVerified && userData ? (
         <MainContent username={params.profile} userData={userData} userPosts={newsData} />
     ) : (
-        <div>No user profile found.</div>
+        <div className="flex items-center justify-center h-screen"><div className="loader"></div></div>
     );
 }
 

@@ -67,57 +67,59 @@ const TrendingNewsSlider: React.FC<TrendingNewsSliderProps> = ({ range }) => {
         fetchNearbyPosts(location.lat, location.lng);
     }, [location, isVerified, range]);
 
-    if (loading || loadingPosts) return <div className="flex items-center justify-center h-screen"><div className="loader"></div></div>;
-    if (error) return <p className="text-red-500 text-center">{error}</p>;
-    if (!data || data.length === 0) return <p className="text-center">No breaking news nearby.</p>;
-
-    return (
-        <div className="py-3 px-0">
-            {/* Header */}
-            <div className="flex justify-between items-end p-2">
-                <h2 className="text-3xl font-bold">Breaking <span className='text-green-500'>News!</span></h2>
-                <Link href={'/pages/trendingNews'} className="text-xs font-bold pb-2 text-gray-500 active:scale-95">
-                    View More
-                </Link>
-            </div>
-
+    if (loading || loadingPosts) return (
+        <>
             <div className="py-2 pr-0">
                 <Swiper spaceBetween={0} slidesPerView={1} parallax={true} modules={[Autoplay]}>
-                    {data.map((news: any, index: number) => (
-                        <SwiperSlide key={news._id || index}>
-                            <div className="w-full h-80 relative overflow-hidden select-none">
-                                {/* Nested Swiper for images */}
-                                {news?.images && (
-                                    <Image
-                                        src={news.images[0]}
-                                        alt={news.title}
-                                        width={600}
-                                        height={300}
-                                        priority
-                                        className="w-full h-full object-fill object-center"
-                                    />
-                                )}
-
-                                {/* Text Overlay */}
-                                <div className="absolute bottom-0 space-y-3 py-4 w-full h-full bg-gradient-to-b to-[#00000080] bg-opacity-40 px-3 flex flex-col justify-end text-white z-50">
-                                    <span className="text-xl font-bold">{news.title}</span>
-                                    <div className="flex items-center gap-4 flex-wrap">
-                                        <p className="text-green-500 text-sm font-semibold">
-                                            {distances[news._id] || "Calculating..."}
-                                        </p>
-                                        <p className="font-bold text-gray-100 text-sm">
-                                            <span className='text-gray-300 font-normal'>by</span> {news?.creatorName || "Unknown"}
-                                        </p>
-                                        <p className="text-gray-400 text-xs font-medium">
-                                            {news.createdAt ? formatTimeAgo(news.createdAt) : "Just now"}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                    {[1, 2, 3].map((i) => (
+                        <SwiperSlide key={i}>
+                            <div className="animate-pulse bg-gray-100 rounded-lg h-80 w-full" />
                         </SwiperSlide>
                     ))}
                 </Swiper>
             </div>
+        </>
+    );
+    if (error) return <p className="text-red-500 text-center">{error}</p>;
+    if (!data || data.length === 0) return <p className="text-center">No breaking news nearby.</p>;
+
+    return (
+        <div className="py-2 pr-0">
+            <Swiper spaceBetween={0} slidesPerView={1} parallax={true} modules={[Autoplay]}>
+                {data.map((news: any, index: number) => (
+                    <SwiperSlide key={news._id || index}>
+                        <div className="w-full h-80 relative overflow-hidden select-none">
+                            {/* Nested Swiper for images */}
+                            {news?.images && (
+                                <Image
+                                    src={news.images[0]}
+                                    alt={news.title}
+                                    width={600}
+                                    height={300}
+                                    priority
+                                    className="w-full h-full object-fill object-center"
+                                />
+                            )}
+
+                            {/* Text Overlay */}
+                            <div className="absolute bottom-0 space-y-3 py-4 w-full h-full bg-gradient-to-b to-[#00000080] bg-opacity-40 px-3 flex flex-col justify-end text-white z-50">
+                                <span className="text-xl font-bold">{news.title}</span>
+                                <div className="flex items-center gap-4 flex-wrap">
+                                    <p className="text-green-500 text-sm font-semibold">
+                                        {distances[news._id] || "Calculating..."}
+                                    </p>
+                                    <p className="font-bold text-gray-100 text-sm">
+                                        <span className='text-gray-300 font-normal'>by</span> {news?.creatorName || "Unknown"}
+                                    </p>
+                                    <p className="text-gray-400 text-xs font-medium">
+                                        {news.createdAt ? formatTimeAgo(news.createdAt) : "Just now"}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </SwiperSlide>
+                ))}
+            </Swiper>
         </div>
     );
 };

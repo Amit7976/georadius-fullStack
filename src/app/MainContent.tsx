@@ -9,17 +9,23 @@ import { useEffect, useRef, useState } from "react";
 import { IoMapOutline } from "react-icons/io5";
 import TrendingNewsSlider from "../components/TrendingNewsSlider";
 import { useGeolocation } from "./hooks/useGeolocation";
+import Link from "next/link";
 
 const filterOptions = ["Nearby", "District", "Global"];
+
+interface NewsPostType {
+    _id: number;
+    title: string;
+    description: string;
+    // Add other properties of the news object as needed
+}
 
 export default function MainContent() {
     const [selectedFilter, setSelectedFilter] = useState("Nearby");
     const [selectedCategory, setSelectedCategory] = useState("All");
-    const [newsData, setNewsData] = useState<any[]>([]);
+    const [newsData, setNewsData] = useState<NewsPostType[]>([]);
     const [loading, setLoading] = useState(true);
     const [showFixedHeader, setShowFixedHeader] = useState(false);
-    const [showFixedCategories, setShowFixedCategories] = useState(false);
-    const [addShadow, setAddShadow] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const lastScrollY = useRef(0);
     const categoriesRef = useRef<HTMLDivElement | null>(null);
@@ -31,7 +37,7 @@ export default function MainContent() {
     const handleHide = (postId: number) => {
         setNewsData(prevNews => prevNews.filter(news => news._id !== postId));
 
-        let hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");
+        const hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");
         if (!hiddenPosts.includes(postId)) {
             hiddenPosts.push(postId);
             localStorage.setItem("hideNews", JSON.stringify(hiddenPosts));
@@ -57,7 +63,7 @@ export default function MainContent() {
                 console.log('====================================');
 
                 const hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");
-                const filteredNews = json.filter((news: any) => !hiddenPosts.includes(news._id));
+                const filteredNews: NewsPostType[] = json.filter((news: NewsPostType) => !hiddenPosts.includes(news._id));
                 setNewsData(filteredNews);
 
             } catch (err) {
@@ -90,21 +96,34 @@ export default function MainContent() {
             const screenHeight = window.innerHeight;
             const categoriesTop = categoriesRef.current?.offsetTop || 0;
 
+            // Scroll up
             if (currentScrollY > screenHeight && currentScrollY < lastScrollY.current) {
                 setShowFixedHeader(true);
-            } else if (currentScrollY > screenHeight && currentScrollY > lastScrollY.current) {
+            }
+            // Scroll down
+            else if (currentScrollY > screenHeight && currentScrollY > lastScrollY.current) {
                 setShowFixedHeader(false);
             }
 
-            setShowFixedCategories(currentScrollY > categoriesTop);
-            setAddShadow(currentScrollY > 0);
-
+            // At the top, hide fixed
+            if (currentScrollY === 0) {
+                setShowFixedHeader(false);
+            }
+         
             lastScrollY.current = currentScrollY;
         };
 
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
+    const Placeholder = () => (
+        <div className="flex flex-col gap-4 px-4 py-6">
+            {[1, 2, 3].map((i) => (
+                <div key={i} className="animate-pulse bg-gray-100 rounded-lg h-32 w-full" />
+            ))}
+        </div>
+    );
 
 
 
@@ -128,7 +147,7 @@ export default function MainContent() {
                     </Select>
 
                     <div className="flex items-center gap-4 pr-1">
-                        <IoMapOutline className="text-3xl scale-95" onClick={() => router.replace("/pages/others/map")} />
+                        <IoMapOutline className="text-3xl scale-95" onClick={() => router.push("/pages/others/map")} />
                     </div>
                 </div>
             </div>
@@ -164,17 +183,23 @@ export default function MainContent() {
 
 
             {/* Trending News */}
-            <TrendingNewsSlider
-                range={
-                    selectedFilter === "Nearby"
-                        ? 50
-                        : selectedFilter === "District"
-                            ? 100
-                            : 7000
-                }
-            />
-
-
+            <div className="py-3 px-0">
+                <div className="flex justify-between items-end p-2">
+                    <h2 className="text-3xl font-bold">Breaking <span className='text-green-500'>News!</span></h2>
+                    <Link href={'/pages/trendingNews'} className="text-xs font-bold pb-2 text-gray-500 active:scale-95">
+                        View More
+                    </Link>
+                </div>
+                <TrendingNewsSlider
+                    range={
+                        selectedFilter === "Nearby"
+                            ? 50
+                            : selectedFilter === "District"
+                                ? 100
+                                : 7000
+                    }
+                />
+            </div>
 
 
             {/* Categories */}
@@ -202,10 +227,10 @@ export default function MainContent() {
                 </div>
             </div>
 
-            {/* Fixed Header */}
             {showFixedHeader && (
                 <div className="fixed top-0 left-0 w-full bg-white shadow-md z-50 transition-transform duration-300">
-                    <div className="flex justify-between items-center p-3">
+                    {/* Header */}
+                    <div className="flex justify-between items-center p-3 pb-2">
                         <Select value={selectedFilter} onValueChange={setSelectedFilter}>
                             <SelectTrigger className="w-fit border-0 text-2xl font-bold shadow-none px-0 scale-90">
                                 <SelectValue placeholder="Select Filter" />
@@ -220,29 +245,56 @@ export default function MainContent() {
                         </Select>
 
                         <div className="flex items-center gap-4 pr-1">
-                            <IoMapOutline className="text-3xl scale-95" onClick={() => router.replace("/pages/others/map")} />
+                            <IoMapOutline className="text-3xl scale-95" onClick={() => router.push("/pages/others/map")} />
+                        </div>
+                    </div>
+
+                    {/* Fixed Categories */}
+                    <div className="w-full pb-1.5 bg-white">
+                        <div className="flex gap-2 px-2 overflow-x-auto whitespace-nowrap">
+                            <Button
+                                size={100}
+                                variant="outline"
+                                className={`rounded-lg px-6 py-2 font-bold active:scale-95 text-xs ${selectedCategory === "All" ? "bg-black text-white" : ""}`}
+                                onClick={() => setSelectedCategory("All")}
+                            >
+                                All
+                            </Button>
+                            {interestsList.map((category, index) => (
+                                <Button
+                                    key={index}
+                                    size={100}
+                                    variant="outline"
+                                    className={`rounded-lg px-6 py-2 font-bold active:scale-95 text-xs ${selectedCategory === category.name ? "bg-black text-white" : ""}`}
+                                    onClick={() => setSelectedCategory(category.name)}
+                                >
+                                    {category.name}
+                                </Button>
+                            ))}
                         </div>
                     </div>
                 </div>
             )}
 
+
             {/* News Posts */}
             <div>
                 {loading ? (
-                    <div className="flex items-center justify-center h-screen"><div className="loader"></div></div>
+                    <Placeholder />
                 ) : (
                     newsData.length > 0 ? (
                         newsData.map((news) => (
                             <div key={news._id} className="snap-start">
                                 <NewsPost news={news} key={news._id} onHide={handleHide} fullDescription={false} />
                             </div>
-                        ))) : (
+                        ))
+                    ) : (
                         <div className="flex flex-col gap-2 py-10">
                             <p className="text-center text-gray-500">No News Available.</p>
                         </div>
-
                     )
                 )}
+
             </div>
         </div>
     );

@@ -1,13 +1,14 @@
-import { UseFormSetValue } from "react-hook-form";
+import { UseFormSetValue, FieldErrors } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { RiUploadCloud2Line } from "react-icons/ri";
 import { useState, useEffect } from "react";
 import type { FormValues } from "../MainContent";
+import Image from "next/image";
 
 interface ImageUploaderProps {
     setValue: UseFormSetValue<FormValues>;
-    errors: any;
+    errors: FieldErrors<FormValues>;
     data: string[]; // post.images (URLs)
 }
 
@@ -44,7 +45,6 @@ export default function ImageUploader({ setValue, errors, data }: ImageUploaderP
         setNewImages(updatedNewImages);
         setValue("images", updatedNewImages);
 
-        // ✅ Reset file input to allow re-uploading same file again
         event.target.value = "";
     };
 
@@ -56,14 +56,14 @@ export default function ImageUploader({ setValue, errors, data }: ImageUploaderP
         setExistingImages(updated);
         setDeletedImages(updatedDeleted);
 
-        setValue("images", newImages); // Keep current new uploads
-        setValue("deletedImages", updatedDeleted); // Update deleted images
+        setValue("images", newImages);
+        setValue("deletedImages", updatedDeleted);
     };
 
     const removeNewImage = (index: number) => {
         const updated = newImages.filter((_, i) => i !== index);
         setNewImages(updated);
-        setValue("images", updated); // ✅ Only set updated list
+        setValue("images", updated);
     };
 
     return (
@@ -92,10 +92,12 @@ export default function ImageUploader({ setValue, errors, data }: ImageUploaderP
             {(existingImages.length > 0 || newImages.length > 0) && (
                 <div className="gap-2 mt-3 flex-wrap grid grid-cols-3">
                     {existingImages.map((url, index) => (
-                        <div key={`existing-${index}`} className="relative col-span-1 h-40 object-cover">
-                            <img
+                        <div key={`existing-${index}`} className="relative col-span-1 h-40">
+                            <Image
                                 src={url}
                                 alt={`existing-preview-${index}`}
+                                width={300}
+                                height={160}
                                 className="w-full h-40 object-cover rounded-md"
                             />
                             <button
@@ -109,10 +111,13 @@ export default function ImageUploader({ setValue, errors, data }: ImageUploaderP
                     ))}
 
                     {newImages.map((img, index) => (
-                        <div key={`new-${index}`} className="relative col-span-1 h-40 object-cover">
-                            <img
+                        <div key={`new-${index}`} className="relative col-span-1 h-40">
+                            <Image
                                 src={URL.createObjectURL(img)}
                                 alt={`new-preview-${index}`}
+                                width={300}
+                                height={160}
+                                unoptimized
                                 className="w-full h-40 object-cover rounded-md"
                             />
                             <button

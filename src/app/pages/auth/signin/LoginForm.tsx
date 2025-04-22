@@ -86,7 +86,7 @@ const LoginForm = () => {
                         Sign In
                     </button>
                     <p className="text-base text-gray-600 font-medium">
-                        Don't have an account?{" "}
+                        Don&#39;t have an account?{" "}
                         <Link href="./signup" className="text-green-600 font-semibold">
                             Sign Up
                         </Link>

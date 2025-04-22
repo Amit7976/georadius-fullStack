@@ -42,12 +42,12 @@ const NewsPost = ({ news, onHide, fullDescription }: { news: any; fullDescriptio
                 {/* Header */}
                 <div className="flex justify-between items-center px-2">
                     <div className="flex items-start gap-2">
-                        <Link href={"/" + news.creatorName} className="mt-1 shrink-0 w-9 h-9">
+                        <Link href={"/" + news.creatorName} target="_blank" className="mt-1 shrink-0 w-9 h-9">
                             <Image src={news.creatorImage} alt="Profile" width={40} height={40} priority className="rounded-full w-9 h-9 aspect-square" />
                         </Link>
                         <div>
                             <div className="flex items-center gap-2">
-                                <Link href={"/" + news.creatorName}><span className="font-bold">{news.creatorName}</span></Link>
+                                <Link href={"/" + news.creatorName} target="_blank"><span className="font-bold">{news.creatorName}</span></Link>
                                 <span className="text-gray-500 text-sm">-</span>
                                 <span className="text-gray-500 text-xs">{formatTimeAgo(news.createdAt)}</span>
                             </div>

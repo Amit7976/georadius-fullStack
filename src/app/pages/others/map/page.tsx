@@ -1,11 +1,18 @@
 "use client";
 import { useEffect } from 'react';
+import type { OlaMaps } from 'olamaps-web-sdk';
+
+declare global {
+    interface Window {
+        OlaMaps: OlaMaps;
+    }
+}
 
 
 function Page() {
     useEffect(() => {
-        // Declare olaMaps outside to make it accessible in cleanup
-        let olaMaps: any;
+       
+        let olaMaps: Record<string, any>;
 
         // Dynamically import the OlaMaps SDK
         import('olamaps-web-sdk').then((module) => {

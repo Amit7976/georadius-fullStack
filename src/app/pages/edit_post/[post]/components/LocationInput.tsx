@@ -1,32 +1,85 @@
 "use client";
 import { IoLocation } from "react-icons/io5";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogTrigger,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from "@/components/ui/dialog";
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { getAddress, getCoordinates } from "@/src/helpers/AddressFunc";
 import debounce from "lodash.debounce";
+import {
+    UseFormRegister,
+    UseFormSetValue,
+    FieldErrors,
+    FieldValues,
+} from "react-hook-form";
+import { FormValues } from "../MainContent";
 
-interface LocationInputProps {
-    register: any;
-    setValue: any;
-    errors: any;
-    data?: any; // Optional post prop for pre-filling data
+interface Prediction {
+    description: string;
 }
 
-export default function LocationInput({ register, setValue, errors, data }: LocationInputProps) {
+
+interface LocationInputProps {
+    register: UseFormRegister<FormValues>;
+    setValue: UseFormSetValue<FormValues>;
+    errors: FieldErrors;
+    data?: {
+        location?: string;
+        latitude?: number;
+        longitude?: number;
+    };
+}
+
+export default function LocationInput({
+    register,
+    setValue,
+    errors,
+    data,
+}: LocationInputProps) {
     const [open, setOpen] = useState(false);
-    const [inputValue, setInputValue] = useState(data.location);
+    const [inputValue, setInputValue] = useState(data?.location || "");
     const [error, setError] = useState<string | null>(null);
     const [customLocation, setCustomLocation] = useState(false);
     const [suggestions, setSuggestions] = useState<string[]>([]);
-    const [latitude, setLatitude] = useState<number | null>(data.latitude || null); // Pre-fill with data prop if available
-    const [longitude, setLongitude] = useState<number | null>(data.longitude || null); // Pre-fill with data prop if available
-    const [location, setLocation] = useState(data?.location || null); // Pre-fill with data prop if available
+    const [latitude, setLatitude] = useState<number | null>(
+        data?.latitude || null
+    );
+    const [longitude, setLongitude] = useState<number | null>(
+        data?.longitude || null
+    );
+    const [location, setLocation] = useState<string | null>(
+        data?.location || null
+    );
 
     const router = useRouter();
 
-    console.log("Component Rendered");
+    // ✅ Fetch Current Location
+    const handleGetLocation = useCallback(async () => {
+        console.log("Fetching current location...");
+        const currentLocation = await getAddress();
+        console.log("Location fetched:", currentLocation);
+
+        setLocation(currentLocation);
+        setInputValue(currentLocation);
+        setError(null);
+        setCustomLocation(false);
+
+        const coordinates = await getCoordinates(currentLocation);
+        if (coordinates) {
+            setLatitude(coordinates.latitude);
+            setLongitude(coordinates.longitude);
+            setValue("location", currentLocation);
+            setValue("latitude", coordinates.latitude);
+            setValue("longitude", coordinates.longitude);
+        }
+    }, [setValue]);
 
     useEffect(() => {
         console.log("Checking location permissions...");
@@ -42,30 +95,9 @@ export default function LocationInput({ register, setValue, errors, data }: Loca
                 handleGetLocation();
             }
         });
-    }, []);
+    }, [handleGetLocation, router]);
 
-    // ✅ Fetch Current Location
-    const handleGetLocation = async () => {
-        console.log("Fetching current location...");
-        const location = await getAddress();
-        console.log("Location fetched:", location);
-        setLocation(location);
-        setInputValue(location);
-        setError(null);
-        setCustomLocation(false);
-
-        // ✅ Update Form Values with Address & Coordinates
-        const coordinates = await getCoordinates(location);
-        if (coordinates) {
-            setLatitude(coordinates.latitude);
-            setLongitude(coordinates.longitude);
-            setValue("location", location);
-            setValue("latitude", coordinates.latitude);
-            setValue("longitude", coordinates.longitude);
-        }
-    };
-
-    // ✅ Fetch Coordinates for Custom Address
+    // ✅ Fetch Coordinates for Custom Location
     const fetchCoordinatesForCustomLocation = async (customAddress: string) => {
         console.log("Fetching coordinates for custom address:", customAddress);
         const coordinates = await getCoordinates(customAddress);
@@ -74,43 +106,48 @@ export default function LocationInput({ register, setValue, errors, data }: Loca
             setLongitude(coordinates.longitude);
             console.log("📍 Coordinates:", coordinates);
 
-            // ✅ Update Form Values with Address & Coordinates
             setValue("location", customAddress);
             setValue("latitude", coordinates.latitude);
             setValue("longitude", coordinates.longitude);
         }
     };
 
-    // ✅ Fetch Location Suggestions from Ola Maps API
-    const fetchLocationSuggestions = async (query: string) => {
+    // ✅ Fetch suggestions from Ola Maps
+    const fetchLocationSuggestions = useCallback(async (query: string) => {
         if (!query.trim()) {
             setSuggestions([]);
             return;
         }
 
         const API_KEY = "txBOleR58lHkyz1Aio6WJc5zPW223xIabWR3Yd4k";
-        const url = `https://api.olamaps.io/places/v1/autocomplete?input=${encodeURIComponent(query)}&api_key=${API_KEY}`;
+        const url = `https://api.olamaps.io/places/v1/autocomplete?input=${encodeURIComponent(
+            query
+        )}&api_key=${API_KEY}`;
 
         try {
             console.log("🔍 Fetching suggestions from:", url);
-            const response = await fetch(url, { method: "GET" });
+            const response = await fetch(url);
             const data = await response.json();
             console.log("📜 API Response Data:", data);
 
             if (data.predictions) {
-                setSuggestions(data.predictions.map((item: any) => item.description));
+                setSuggestions(
+                    (data.predictions as Prediction[]).map((item) => item.description)
+                );
             } else {
                 setSuggestions([]);
             }
-        } catch (error) {
-            console.error("❌ Error fetching suggestions:", error);
+        } catch (err) {
+            console.error("❌ Error fetching suggestions:", err);
         }
-    };
+    }, []);
 
-    // ✅ Debounce Input Changes
-    const debouncedFetchSuggestions = useCallback(debounce(fetchLocationSuggestions, 300), []);
+    const debouncedFetchSuggestions = useCallback(
+        debounce((value: string) => fetchLocationSuggestions(value), 300),
+        [fetchLocationSuggestions]
+    );
 
-    // ✅ Handle Input Change
+    // ✅ Handle input change
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setInputValue(value);
@@ -123,18 +160,23 @@ export default function LocationInput({ register, setValue, errors, data }: Loca
                 <IoLocation className="text-blue-500 text-xl shrink-0" />
                 <Dialog open={open} onOpenChange={setOpen}>
                     <DialogTrigger asChild>
-                        <button type="button" className="text-blue-500 font-bold text-left">
-                            {location ? location : "Fetching location..."} {" "}
+                        <button
+                            type="button"
+                            className="text-blue-500 font-bold text-left"
+                        >
+                            {location ? location : "Fetching location..."}{" "}
                             <span className="text-gray-400">(click to change)</span>
                         </button>
                     </DialogTrigger>
 
                     <DialogContent className={""}>
                         <DialogHeader className={""}>
-                            <DialogTitle className="text-lg font-bold mb-3">Enter New Location</DialogTitle>
+                            <DialogTitle className="text-lg font-bold mb-3">
+                                Enter New Location
+                            </DialogTitle>
                         </DialogHeader>
 
-                        {/* ✅ Autocomplete Input */}
+                        {/* ✅ Input with autocomplete */}
                         <input
                             type="text"
                             {...register("location")}
@@ -143,9 +185,13 @@ export default function LocationInput({ register, setValue, errors, data }: Loca
                             placeholder="Type location here..."
                             className="h-14 border-2 w-full px-4 rounded-lg"
                         />
-                        {errors.location && <p className="text-red-500 text-sm">{errors.location.message}</p>}
+                        {errors.location && (
+                            <p className="text-red-500 text-sm">
+                                {errors.location.message as string}
+                            </p>
+                        )}
 
-                        {/* ✅ Show Suggestions */}
+                        {/* ✅ Suggestions */}
                         {suggestions.length > 0 && (
                             <ul className="bg-white border rounded-lg mt-2 max-h-40 overflow-auto">
                                 {suggestions.map((suggestion, index) => (
@@ -169,11 +215,11 @@ export default function LocationInput({ register, setValue, errors, data }: Loca
                                 size={100}
                                 variant="primary"
                                 onClick={() => {
-                                    console.log("Saving custom location:", inputValue);
                                     if (!inputValue.trim()) {
                                         setError("Location cannot be empty.");
                                         return;
                                     }
+                                    console.log("Saving custom location:", inputValue);
                                     setLocation(inputValue);
                                     setCustomLocation(true);
                                     fetchCoordinatesForCustomLocation(inputValue);
@@ -189,15 +235,17 @@ export default function LocationInput({ register, setValue, errors, data }: Loca
                 </Dialog>
             </div>
 
-            {/* ✅ Show Latitude & Longitude */}
+            {/* ✅ Coordinates display */}
             {latitude !== null && longitude !== null && (
-                <p className="text-gray-600 text-sm">📍 Lat: {latitude}, Lng: {longitude}</p>
+                <p className="text-gray-600 text-sm">
+                    📍 Lat: {latitude}, Lng: {longitude}
+                </p>
             )}
 
-            {/* ✅ Error Message */}
+            {/* ✅ Error message */}
             {error && <p className="text-red-500 text-sm">{error}</p>}
 
-            {/* ✅ Reset Button */}
+            {/* ✅ Reset to current location */}
             {customLocation && (
                 <Button
                     size={100}

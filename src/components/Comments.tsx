@@ -219,7 +219,7 @@ const Comments = ({ news_id }: { news_id: string }) => {
             <div className={`ml-${level * 4} border-gray-200 pl-4 mt-5`}>
                 <div className="flex items-start gap-3">
                     {comment.profileImage && (
-                        <Link href={"/" + comment.username}>
+                        <Link href={"/" + comment.username} target='_blank'>
                             <img
                                 src={comment.profileImage}
                                 alt={comment.username}
@@ -228,11 +228,11 @@ const Comments = ({ news_id }: { news_id: string }) => {
                         </Link>
                     )}
                     <div className="flex-1">
-                        <Link href={"/" + comment.username}><p className="text-sm font-semibold">{comment.username}</p></Link>
+                        <Link href={"/" + comment.username} target='_blank'><p className="text-sm font-semibold">{comment.username}</p></Link>
                         {comment.replyingToUsername && (
                             <p className="text-xs text-gray-500">
                                 Replying to
-                                <Link href={"/" + comment.replyingToUsername}>
+                                <Link href={"/" + comment.replyingToUsername} target='_blank'>
                                 @{comment.replyingToUsername}
                                 </Link>
                             </p>
