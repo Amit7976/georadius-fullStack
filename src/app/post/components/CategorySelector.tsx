@@ -5,25 +5,29 @@ import { useEffect } from "react";
 import { UseFormSetValue, FieldErrors } from "react-hook-form";
 import type { FormValues } from "../MainContent";
 
-
 interface CategorySelectorProps {
     selectedCategories: string[];
     setSelectedCategories: React.Dispatch<React.SetStateAction<string[]>>;
-    setValue: UseFormSetValue<FormValues>; // ✅ Correct type
-    register: any;
-    errors: FieldErrors<FormValues>; // ✅ Correct error type
+    setValue: UseFormSetValue<FormValues>;
+    errors: FieldErrors<FormValues>;
 }
 
-export default function CategorySelector({ selectedCategories, setSelectedCategories, setValue, register, errors }: CategorySelectorProps) {
+export default function CategorySelector({
+    selectedCategories,
+    setSelectedCategories,
+    setValue,
+    errors,
+}: CategorySelectorProps) {
     const toggleCategory = (category: string) => {
-        setSelectedCategories((prev: string[]) => {
-            const updated = prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category];
-            setValue("categories", updated); // ✅ No TypeScript error now
+        setSelectedCategories((prev) => {
+            const updated = prev.includes(category)
+                ? prev.filter((c) => c !== category)
+                : [...prev, category];
+            setValue("categories", updated);
             return updated;
         });
     };
 
-    // ✅ Ensure validation runs on component update
     useEffect(() => {
         setValue("categories", selectedCategories);
     }, [selectedCategories, setValue]);
@@ -38,7 +42,7 @@ export default function CategorySelector({ selectedCategories, setSelectedCatego
                 {interestsList.map((category) => (
                     <Button
                         size={100}
-                        className={"text-xs py-3"}
+                        className="text-xs py-3"
                         key={category.name}
                         variant={selectedCategories.includes(category.name) ? "default" : "outline"}
                         onClick={() => toggleCategory(category.name)}
@@ -48,7 +52,6 @@ export default function CategorySelector({ selectedCategories, setSelectedCatego
                 ))}
             </div>
 
-            {/* ✅ Error Message */}
             {errors.categories && (
                 <p className="text-red-500 text-sm">Please select at least one category.</p>
             )}

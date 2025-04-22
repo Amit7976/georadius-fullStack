@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import ImageSlider from "@/src/components/ImageSlider";
@@ -37,7 +37,7 @@ export default function CategoryPage() {
         );
     };
 
-    const fetchCategoryPosts = async (lat: number, lng: number) => {
+    const fetchCategoryPosts = useCallback(async (lat: number, lng: number) => {
         const r = parseInt(radius);
         const latMin = lat - r / 111;
         const latMax = lat + r / 111;
@@ -49,7 +49,7 @@ export default function CategoryPage() {
         );
         const data = await res.json();
         setPosts(data);
-    };
+    }, [name, radius]);
 
     useEffect(() => {
         if ("geolocation" in navigator) {

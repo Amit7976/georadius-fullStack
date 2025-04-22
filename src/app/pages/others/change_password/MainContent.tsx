@@ -123,7 +123,7 @@ export default function ChangePassword() {
                         type="password"
                         {...register("newPassword")}
                         placeholder="Enter new password"
-                        onChange={({ e }: any) => checkPasswordStrength(e.target.value)}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => checkPasswordStrength(e.target.value)}
                     />
                     {errors.newPassword && (
                         <p className="text-red-500">{errors.newPassword.message}</p>

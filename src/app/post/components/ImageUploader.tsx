@@ -1,14 +1,15 @@
-import { UseFormSetValue } from "react-hook-form";
+import { FieldErrors, UseFormSetValue } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { RiUploadCloud2Line } from "react-icons/ri";
 import { useState } from "react";
 import type { FormValues } from "../MainContent";
+import Image from "next/image";
 
 
 interface ImageUploaderProps {
     setValue: UseFormSetValue<FormValues>;
-    errors: any;
+    errors: FieldErrors;
 }
 
 export default function ImageUploader({ setValue, errors }: ImageUploaderProps) {
@@ -18,7 +19,7 @@ export default function ImageUploader({ setValue, errors }: ImageUploaderProps) 
         const files = event.target.files;
         if (!files) return;
 
-        let selectedFiles = Array.from(files);
+        const selectedFiles = Array.from(files);
 
         // Max 3 images allowed
         if (selectedFiles.length + selectedImages.length > 3) {
@@ -62,7 +63,7 @@ export default function ImageUploader({ setValue, errors }: ImageUploaderProps) 
                 <div className="gap-2 mt-3 flex-wrap grid grid-cols-3">
                     {selectedImages.map((img, index) => (
                         <div key={index} className="relative col-span-1 h-40 object-cover">
-                            <img src={URL.createObjectURL(img)} alt={`preview-${index}`} className="w-full h-40 object-cover rounded-md" />
+                            <Image width={100} height={100} src={URL.createObjectURL(img)} alt={`preview-${index}`} className="w-full h-40 object-cover rounded-md" />
                             <button
                                 type="button"
                                 className="absolute top-0 right-0 bg-red-500 text-white font-extrabold rounded-full w-5 h-5 flex items-center justify-center text-xs"
@@ -74,7 +75,7 @@ export default function ImageUploader({ setValue, errors }: ImageUploaderProps) 
                     ))}
                 </div>
             )}
-            {errors.images && <p className="text-red-500">{errors.images.message}</p>}
+            {errors.images && <p className="text-red-500">{String(errors.images.message)}</p>}
         </div>
     );
 }

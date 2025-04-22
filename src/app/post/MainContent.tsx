@@ -72,7 +72,7 @@ export default function MainContent() {
 
             // ✅ Append images if available
             if (values.images && values.images.length > 0) {
-                values.images.forEach((image, index) => {
+                values.images.forEach((image) => {
                     formData.append(`images`, image);
                 });
             }
@@ -118,7 +118,6 @@ export default function MainContent() {
                 selectedCategories={selectedCategories}
                 setSelectedCategories={setSelectedCategories}
                 setValue={setValue}
-                register={register}
                 errors={errors}
             />
             <ImageUploader setValue={setValue} errors={errors} />

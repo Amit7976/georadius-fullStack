@@ -2,15 +2,26 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { TbBookmark, TbBookmarkFilled } from "react-icons/tb";
 
-const SaveButton = ({ news }: { news: any }) => {
-    const [saved, setSaved] = useState(false);
-    const [loading, setLoading] = useState(false);
+
+
+interface News {
+    _id: string;
+    isSaved: boolean;
+}
+
+interface SavedButtonProps {
+    news: News;
+}
+
+const SaveButton = ({ news }: SavedButtonProps) => {
+    const [saved, setSaved] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
         if (news.isSaved) setSaved(true);
     }, [news]);
 
-    const handleSave = async () => {
+    const handleSave = async (): Promise<void> => {
         if (loading) return;
 
         const newSavedState = !saved ? 1 : 0;
@@ -23,13 +34,11 @@ const SaveButton = ({ news }: { news: any }) => {
                 body: JSON.stringify({ postId: news._id, save: newSavedState }),
             });
 
-            const data = await response.json();
-
             if (response.ok) {
                 setSaved(!saved);
             }
         } catch (error) {
-            console.log("Network error!");
+            console.log("Network error! " + error);
         } finally {
             setLoading(false);
         }
@@ -37,7 +46,7 @@ const SaveButton = ({ news }: { news: any }) => {
 
     return (
         <Button className={""} size="icon" variant="ghost" disabled={loading} onClick={handleSave}>
-            {saved ? <TbBookmarkFilled className="size-5 text-yellow-500" /> : <TbBookmark className="size-6" />}
+            {saved ? <TbBookmarkFilled className="size-6 text-yellow-500" /> : <TbBookmark className="size-6" />}
         </Button>
     );
 };

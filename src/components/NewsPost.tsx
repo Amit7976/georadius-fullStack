@@ -1,8 +1,7 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
-import { MessageCircle, MoreHorizontal, Pencil, Trash } from "lucide-react";
+import { MessageCircle, MoreHorizontal, Pencil } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { formatNumber } from "../helpers/formatNumber";
@@ -19,8 +18,33 @@ import DeleteButton from "./DeleteButton";
 import Link from "next/link";
 import { TbReport } from "react-icons/tb";
 
+interface News {
+    _id: string;
+    title: string;
+    description: string;
+    latitude?: number;
+    longitude?: number;
+    creatorName: string;
+    creatorImage: string;
+    createdAt: string;
+    location: string;
+    likes: number;
+    comments: number;
+    categories: string[];
+    images: string[];
+    commentsCount: number;
+    currentUserProfile: boolean;
+    // Add these
+    upvoteCount: number;
+    downvoteCount: number;
+    isUserUpvote: boolean;
+    isUserDownvote: boolean;
+    isSaved: boolean;
+}
 
-const NewsPost = ({ news, onHide, fullDescription }: { news: any; fullDescription: any; onHide: (id: number) => void }) => {
+
+
+const NewsPost = ({ news, onHide, fullDescription }: { news:News; fullDescription: boolean; onHide: (id: number) => void }) => {
     const [distance, setDistance] = useState<string | null>(null);
 
     console.log("📰 News Post Data:", news);
@@ -29,9 +53,13 @@ const NewsPost = ({ news, onHide, fullDescription }: { news: any; fullDescriptio
     const [showDescription, setShowDescription] = useState(fullDescription);
 
     useEffect(() => {
-        getDistanceFromCurrentLocation(news.latitude, news.longitude)
-            .then(({ formattedDistance }) => setDistance(formattedDistance))
-            .catch(() => setDistance("Location not available"));
+        if (news.latitude !== undefined && news.longitude !== undefined) {
+            getDistanceFromCurrentLocation(news.latitude, news.longitude)
+                .then(({ formattedDistance }) => setDistance(formattedDistance))
+                .catch(() => setDistance("Location not available"));
+        } else {
+            setDistance("Location not available");
+        }
     }, [news.latitude, news.longitude]);
 
 
@@ -80,14 +108,14 @@ const NewsPost = ({ news, onHide, fullDescription }: { news: any; fullDescriptio
                                             </Link>
                                         ))}
                                     </div>
-                                    <HideButton postId={news._id} onHide={onHide} />
-                                    <QrButton postId={news._id} />
+                                    <HideButton postId={Number(news._id)} onHide={onHide} />
+                                    <QrButton postId={Number(news._id)} />
                                     {news.currentUserProfile ? (
                                         <>
                                             <Link href={"/pages/edit_post/" + news._id} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100 items-center font-semibold">
                                                 <Pencil /> Edit
                                             </Link>
-                                            <DeleteButton postId={news._id} onHide={onHide} />
+                                            <DeleteButton postId={Number(news._id)} onHide={onHide} />
                                         </>
                                     ) : (
                                         <>
@@ -135,7 +163,7 @@ const NewsPost = ({ news, onHide, fullDescription }: { news: any; fullDescriptio
                             <DrawerContent className={""} aria-describedby={undefined}>
                                 <DrawerHeader className="p-4 overflow-scroll">
                                     <DrawerTitle className="text-lg font-semibold text-center mb-1">Comments</DrawerTitle>
-                                    <Comment news_id={news._id} />
+                                    <Comment news_id={String(news._id)} />
                                 </DrawerHeader>
                             </DrawerContent>
                         </Drawer>

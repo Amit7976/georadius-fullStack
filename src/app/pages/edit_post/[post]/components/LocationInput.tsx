@@ -9,22 +9,20 @@ import {
     DialogTitle,
     DialogFooter,
 } from "@/components/ui/dialog";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { getAddress, getCoordinates } from "@/src/helpers/AddressFunc";
 import debounce from "lodash.debounce";
 import {
     UseFormRegister,
     UseFormSetValue,
-    FieldErrors,
-    FieldValues,
+    FieldErrors
 } from "react-hook-form";
 import { FormValues } from "../MainContent";
 
 interface Prediction {
     description: string;
 }
-
 
 interface LocationInputProps {
     register: UseFormRegister<FormValues>;
@@ -37,6 +35,7 @@ interface LocationInputProps {
     };
 }
 
+
 export default function LocationInput({
     register,
     setValue,
@@ -48,19 +47,13 @@ export default function LocationInput({
     const [error, setError] = useState<string | null>(null);
     const [customLocation, setCustomLocation] = useState(false);
     const [suggestions, setSuggestions] = useState<string[]>([]);
-    const [latitude, setLatitude] = useState<number | null>(
-        data?.latitude || null
-    );
-    const [longitude, setLongitude] = useState<number | null>(
-        data?.longitude || null
-    );
-    const [location, setLocation] = useState<string | null>(
-        data?.location || null
-    );
+    const [latitude, setLatitude] = useState<number | null>(data?.latitude || null);
+    const [longitude, setLongitude] = useState<number | null>(data?.longitude || null);
+    const [location, setLocation] = useState<string | null>(data?.location || null);
 
     const router = useRouter();
 
-    // ✅ Fetch Current Location
+    // ✅ Fetch current location
     const handleGetLocation = useCallback(async () => {
         console.log("Fetching current location...");
         const currentLocation = await getAddress();
@@ -97,7 +90,7 @@ export default function LocationInput({
         });
     }, [handleGetLocation, router]);
 
-    // ✅ Fetch Coordinates for Custom Location
+    // ✅ Fetch coordinates for custom location
     const fetchCoordinatesForCustomLocation = async (customAddress: string) => {
         console.log("Fetching coordinates for custom address:", customAddress);
         const coordinates = await getCoordinates(customAddress);
@@ -112,40 +105,39 @@ export default function LocationInput({
         }
     };
 
-    // ✅ Fetch suggestions from Ola Maps
-    const fetchLocationSuggestions = useCallback(async (query: string) => {
-        if (!query.trim()) {
-            setSuggestions([]);
-            return;
-        }
+    // ✅ Debounced fetch suggestions
 
-        const API_KEY = "txBOleR58lHkyz1Aio6WJc5zPW223xIabWR3Yd4k";
-        const url = `https://api.olamaps.io/places/v1/autocomplete?input=${encodeURIComponent(
-            query
-        )}&api_key=${API_KEY}`;
-
-        try {
-            console.log("🔍 Fetching suggestions from:", url);
-            const response = await fetch(url);
-            const data = await response.json();
-            console.log("📜 API Response Data:", data);
-
-            if (data.predictions) {
-                setSuggestions(
-                    (data.predictions as Prediction[]).map((item) => item.description)
-                );
-            } else {
+    const debouncedFetchSuggestions = useMemo(() =>
+        debounce(async (query: string) => {
+            if (!query.trim()) {
                 setSuggestions([]);
+                return;
             }
-        } catch (err) {
-            console.error("❌ Error fetching suggestions:", err);
-        }
-    }, []);
 
-    const debouncedFetchSuggestions = useCallback(
-        debounce((value: string) => fetchLocationSuggestions(value), 300),
-        [fetchLocationSuggestions]
-    );
+            const API_KEY = "txBOleR58lHkyz1Aio6WJc5zPW223xIabWR3Yd4k";
+            const url = `https://api.olamaps.io/places/v1/autocomplete?input=${encodeURIComponent(
+                query
+            )}&api_key=${API_KEY}`;
+
+            try {
+                console.log("🔍 Fetching suggestions from:", url);
+                const response = await fetch(url);
+                const data = await response.json();
+                console.log("📜 API Response Data:", data);
+
+                if (data.predictions) {
+                    setSuggestions(
+                        (data.predictions as Prediction[]).map((item) => item.description)
+                    );
+                } else {
+                    setSuggestions([]);
+                }
+            } catch (err) {
+                console.error("❌ Error fetching suggestions:", err);
+            }
+        }, 300)
+        , []);
+
 
     // ✅ Handle input change
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -259,3 +251,4 @@ export default function LocationInput({
         </div>
     );
 }
+ 

@@ -10,10 +10,11 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FaArrowLeftLong, FaCross } from "react-icons/fa6";
+import { FaArrowLeftLong } from "react-icons/fa6";
 import { HiOutlineChevronRight } from "react-icons/hi2";
 import { RiUploadCloud2Line } from "react-icons/ri";
 import { toast } from "sonner";
+import Image from "next/image";
 
 const issueSchema = z.object({
     description: z.string().min(5, "Description must be at least 5 characters"),
@@ -46,7 +47,12 @@ const MainContent: React.FC<MainContentProps> = ({ id }) => {
 
 
 
-    const onSubmit = async (values: any) => {
+    interface FormValues {
+        description: string;
+        photos?: File[];
+    }
+
+    const onSubmit = async (values: FormValues): Promise<void> => {
         const formData = new FormData();
 
         // Add description
@@ -58,12 +64,12 @@ const MainContent: React.FC<MainContentProps> = ({ id }) => {
         }
 
         // Append selected images
-        selectedImages.forEach((image, index) => {
+        selectedImages.forEach((image: File) => {
             formData.append("photos", image); // backend should accept multiple 'photos'
         });
 
         try {
-            const res = await fetch("/api/post/report", {
+            const res: Response = await fetch("/api/post/report", {
                 method: "POST",
                 body: formData,
             });
@@ -78,7 +84,7 @@ const MainContent: React.FC<MainContentProps> = ({ id }) => {
             } else {
                 console.error("Failed to submit issue");
             }
-        } catch (err) {
+        } catch (err: unknown) {
             console.error("Error submitting issue:", err);
         }
     };
@@ -93,7 +99,7 @@ const MainContent: React.FC<MainContentProps> = ({ id }) => {
         const files = event.target.files;
         if (!files) return;
 
-        let selectedFiles = Array.from(files);
+        const selectedFiles = Array.from(files);
 
         // Restrict max selection to 6 images
         if (selectedFiles.length > 3) {
@@ -140,11 +146,17 @@ const MainContent: React.FC<MainContentProps> = ({ id }) => {
                                 <FormField
                                     control={form.control}
                                     name="description"
-                                    render={({ field }: any) => (
+                                    render={(field: {
+                                        field: {
+                                            value: string;
+                                            onChange: (value: string) => void;
+                                            onBlur: () => void;
+                                        };
+                                    }) => (
                                         <FormItem className="">
                                             <FormLabel className="text-lg font-bold text-black">Description</FormLabel>
                                             <FormControl>
-                                                <Textarea className="h-40 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0" placeholder="Describe the issue in detail..." {...field} />
+                                                <Textarea className="h-40 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0" placeholder="Describe the issue in detail..." {...field.field} />
                                             </FormControl>
                                             <FormMessage className="" />
                                         </FormItem>
@@ -154,9 +166,9 @@ const MainContent: React.FC<MainContentProps> = ({ id }) => {
                                     <FormLabel className="text-lg font-bold text-black">Upload media files</FormLabel>
                                     <FormControl>
                                         <div className="relative">
-                                            <div className="h-20 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0 flex items-center justify-center flex-col gap-2 rounded-lg">
+                                            <div className="h-20 border-2 focus-visible:ring-green-500 p-2 focus-visible:outline-0 focus-visible:border-0 flex items-center justify-center flex-col gap-2 rounded-lg">
                                                 <RiUploadCloud2Line className="text-3xl" />
-                                                <p className="text-gray-500 text-xs">
+                                                <p className="text-gray-500 text-xs px-10 text-center">
                                                     Max file size: 2MB, accepted formats: JPG, JPEG, PNG, GIF
                                                 </p>
                                             </div>
@@ -172,10 +184,12 @@ const MainContent: React.FC<MainContentProps> = ({ id }) => {
                                     {/* Image Previews with Remove Button */}
                                     {selectedImages.length > 0 && (
                                         <div className="gap-2 mt-3 flex-wrap grid grid-cols-3">
-                                            {selectedImages.map((img, index) => (
+                                            {selectedImages.map((img: File, index: number) => (
                                                 <div key={index} className="relative col-span-1 h-40 object-cover">
-                                                    <img
+                                                    <Image
                                                         src={URL.createObjectURL(img)}
+                                                        width={100}
+                                                        height={100}
                                                         alt={`preview-${index}`}
                                                         className="w-full h-40 object-cover rounded-md"
                                                     />

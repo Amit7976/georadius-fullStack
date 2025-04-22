@@ -45,7 +45,7 @@ function MainContent() {
 
         <h2 className='text-xl font-semibold mt-16 mb-6'>4. PRIVACY & SECURITY</h2>
         <p className='text-lg font-normal my-6'>Do not share personal information of yourself or others (phone numbers, addresses, financial details, etc.).</p>
-        <p className='text-lg font-normal my-6'>Respect others' privacy rights and avoid doxing or exposing personal data.</p>
+        <p className='text-lg font-normal my-6'>Respect others&#39; privacy rights and avoid doxing or exposing personal data.</p>
 
 
         <h2 className='text-xl font-semibold mt-16 mb-6'>5. NO SPAM OR PROMOTIONAL CONTENT</h2>

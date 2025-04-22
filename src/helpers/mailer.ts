@@ -66,8 +66,13 @@ export const sendEmail = async ({ email }: { email: string }) => {
     console.log("📨 Mail Response:", mailResponse);
 
     return mailResponse;
-  } catch (error: any) {
-    console.error("❌ Error sending email:", error.message);
-    throw new Error(error.message);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("❌ Error sending email:", error.message);
+      throw new Error(error.message);
+    } else {
+      console.error("❌ Error sending email:", error);
+      throw new Error("An unknown error occurred.");
+    }
   }
 };

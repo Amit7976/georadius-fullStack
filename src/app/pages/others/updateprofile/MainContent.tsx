@@ -92,23 +92,30 @@ export default function MainContent() {
 
 
     // Handle form submission
-    const onSubmit = async (data: any) => {
+    interface ProfileFormData {
+        username: string;
+        fullName: string;
+        phoneNumber?: string;
+        dob: string;
+        location: string;
+        bio: string;
+        profileImage: string;
+    }
+
+    const onSubmit = async (data: ProfileFormData) => {
         if (isSubmitting) return;
         setIsSubmitting(true);
 
         try {
-
             const formData = new FormData();
             formData.append("username", data.username);
             formData.append("fullName", data.fullName);
-            formData.append("phoneNumber", data.phoneNumber);
+            formData.append("phoneNumber", data.phoneNumber || "");
             formData.append("dob", data.dob);
             formData.append("location", data.location); // Use the resolved address
             formData.append("bio", data.bio);
 
             console.log("📤 Sending Form Data:", formData);
-
-
 
             // **Check if user selected a new file**
             if (selectedFile) {
@@ -124,7 +131,7 @@ export default function MainContent() {
                 body: formData,
             });
 
-            const result = await response.json();
+            const result: { error?: string } = await response.json();
             if (!response.ok) throw new Error(result.error || "Profile update failed");
 
             console.log("✅ Profile updated successfully!", result);

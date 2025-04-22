@@ -7,7 +7,7 @@ import { useGeolocation } from "../hooks/useGeolocation";
 
 function Page() {
     const { isVerified, loading } = useAuthVerification();
-    const [data, setData] = useState<any>(null);
+    const [data, setData] = useState(null);
     const [loadingPosts, setLoadingPosts] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const location = useGeolocation();

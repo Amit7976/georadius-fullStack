@@ -3,12 +3,23 @@ import { useState } from "react";
 import { Send } from "lucide-react";
 import { formatNumber } from "../helpers/formatNumber";
 
-const ShareButton = ({ news }: { news: any }) => {
-    const [loading, setLoading] = useState(false);
-    const [toastMessage, setToastMessage] = useState("");
-    const [shareCount, setShareCount] = useState(news.share || 0);
+interface News {
+    _id: string;
+    title: string;
+    description: string;
+    share?: number;
+}
 
-    const handleShare = async () => {
+interface ShareButtonProps {
+    news: News;
+}
+
+const ShareButton = ({ news }: ShareButtonProps) => {
+    const [loading, setLoading] = useState<boolean>(false);
+    const [shareCount, setShareCount] = useState<number>(news.share || 0);
+
+
+    const handleShare = async (): Promise<void> => {
         if (loading) return;
 
         // 🟢 Web Share API Supported?
@@ -24,23 +35,20 @@ const ShareButton = ({ news }: { news: any }) => {
                 await updateShareCount();
             } catch (error) {
                 console.error("Share failed:", error);
-                setToastMessage("Sharing cancelled!");
             }
         } else {
             // 🚨 Fallback: Copy Link to Clipboard (for unsupported browsers)
             try {
                 await navigator.clipboard.writeText(`${window.location.origin}/news/${news._id}`);
-                setToastMessage("Link copied to clipboard!");
                 await updateShareCount(); // ✅ Update share count after copying link
             } catch (error) {
                 console.error("Clipboard error:", error);
-                setToastMessage("Failed to copy link!");
             }
         }
     };
 
     // 🔹 Update share count in the database
-    const updateShareCount = async () => {
+    const updateShareCount = async (): Promise<void> => {
         setLoading(true);
         try {
             const response = await fetch("/api/post/share", {
@@ -51,13 +59,9 @@ const ShareButton = ({ news }: { news: any }) => {
 
             if (response.ok) {
                 setShareCount((prev: number) => prev + 1);
-                setToastMessage("Post shared successfully!");
-            } else {
-                const data = await response.json();
-                setToastMessage(data.error || "Something went wrong!");
             }
         } catch (error) {
-            setToastMessage("Network error!");
+            console.log(error);
         } finally {
             setLoading(false);
         }

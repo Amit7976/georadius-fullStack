@@ -1,10 +1,11 @@
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
+import { FormValues } from "../MainContent"; // 👈 import your form values
 
 interface DescriptionInputProps {
-    register: UseFormRegister<any>;
-    errors: FieldErrors;
+    register: UseFormRegister<FormValues>;
+    errors: FieldErrors<FormValues>;
 }
 
 export default function DescriptionInput({ register, errors }: DescriptionInputProps) {
@@ -18,11 +19,10 @@ export default function DescriptionInput({ register, errors }: DescriptionInputP
                 className="h-40 ring-2 ring-gray-400"
                 placeholder="Describe the news in detail..."
             />
-            {errors.description && 
-                typeof errors.description?.message === "string" && (
+            {errors.description &&
+                typeof errors.description.message === "string" && (
                     <p className="text-red-500">{errors.description.message}</p>
-                )
-            }
+                )}
         </div>
     );
 }

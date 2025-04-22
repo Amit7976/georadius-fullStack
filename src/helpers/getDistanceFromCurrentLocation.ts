@@ -51,7 +51,7 @@ export const getDistanceFromCurrentLocation = async (
 
           console.log("Haversine formula 'c' value:", c);
 
-          let distance = R * c; // Distance in km
+          const distance = R * c; // Distance in km
           console.log("Calculated distance (km):", distance);
 
           // Format distance

@@ -1,10 +1,13 @@
 import { auth } from "@/src/auth";
 import { connectToDatabase } from "@/src/lib/utils";
 import { Post } from "@/src/models/postModel";
+import { UserProfile } from "@/src/models/UserProfileModel";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
-
+interface UserProfileType {
+  saved: string[];
+}
 export async function GET(req: NextRequest) {
 
   console.log("====================================");
@@ -39,6 +42,18 @@ export async function GET(req: NextRequest) {
         { status: 400 }
       );
     }
+
+    const userProfile = await UserProfile.findOne(
+          { userId },
+          { saved: 1 }
+        ).lean<UserProfileType>();
+    
+        console.log("📌 UserProfile Data:", userProfile);
+    
+        if (!userProfile) {
+          console.error("[ERROR] User not found");
+          return NextResponse.json({ error: "User not found" }, { status: 404 });
+        }
 
 
     console.log("📍 Coordinates:", { lat, lng });
@@ -123,10 +138,12 @@ export async function GET(req: NextRequest) {
     console.log("📝 Posts fetched:", posts.length);
 
 
-    const enrichedPosts = posts.map((post) => ({
-      ...post,
-      currentUserProfile: userId && post.userId?.toString() === userId,
-    }));
+   const enrichedPosts = posts.map((post) => ({
+     ...post,
+     currentUserProfile: userId && post.userId?.toString() === userId,
+     isSaved: userProfile.saved.includes(post._id.toString()),
+   }));
+
 
 
     console.log("🔚 [END] Nearby Posts API - Returning posts");

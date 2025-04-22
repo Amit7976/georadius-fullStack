@@ -16,13 +16,6 @@ const LoadDb = async () => {
   }
 };
 
-// INTERFACE FOR USER DATA
-interface UserData {
-  fullname: string;
-  email: string;
-  googleId?: string;
-}
-
 export const { auth, handlers, signIn, signOut } = NextAuth({
   providers: [
     GoogleProvider({
@@ -190,7 +183,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           console.log(image);
           console.log("====================================");
 
-          let userProfile = await UserProfile.create({
+          const userProfile = await UserProfile.create({
             userId: alreadyUser._id,
             fullname: name,
             profileImage: image,

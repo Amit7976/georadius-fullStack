@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { IoHomeOutline, IoHome, IoFlashOutline, IoFlash } from "react-icons/io5";
@@ -24,7 +24,7 @@ export default function BottomNavigation() {
     const [activeTab, setActiveTab] = useState(currentTab);
     const [isVisible, setIsVisible] = useState(true);
     const [userName, setUserName] = useState<string | null>(null); // State to hold the fetched username
-    let lastScrollY = 0;
+    const lastScrollY = useRef(0);
 
     const tabs = [
         { key: "home", name: "Home", icon: IoHomeOutline, icon2: IoHome, component: <HomePage /> },
@@ -34,16 +34,20 @@ export default function BottomNavigation() {
         { key: userName, name: "Profile", icon: FaUser, icon2: FaUser, component: <ProfilePage /> },
     ];
 
+
     useEffect(() => {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
-            setIsVisible(currentScrollY < lastScrollY || currentScrollY === 0);
-            lastScrollY = currentScrollY;
+
+            // Compare with last known scroll position
+            setIsVisible(currentScrollY < lastScrollY.current || currentScrollY === 0);
+            lastScrollY.current = currentScrollY; // 👈 update the ref value
         };
 
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
 
     // ✅ Fetch username from the server when the component mounts
     useEffect(() => {

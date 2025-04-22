@@ -4,11 +4,36 @@ import { useEffect, useState } from "react";
 import { use } from "react"; // <-- for unwrapping the `params` Promise
 import NewsPost from "@/src/components/NewsPost";
 
+
+interface News {
+    _id: string;
+    title: string;
+    description: string;
+    latitude?: number;
+    longitude?: number;
+    creatorName: string;
+    creatorImage: string;
+    createdAt: string;
+    location: string;
+    likes: number;
+    comments: number;
+    categories: string[];
+    images: string[];
+    commentsCount: number;
+    currentUserProfile: boolean;
+    // Add these
+    upvoteCount: number;
+    downvoteCount: number;
+    isUserUpvote: boolean;
+    isUserDownvote: boolean;
+    isSaved: boolean;
+}
+
+
 export default function SinglePostPage({ params }: { params: Promise<{ post: string }> }) {
     const { post } = use(params); // ✅ Unwrap the Promise
 
-    const [newsData, setNewsData] = useState<{ _id: string }[]>([]);
-    const [userData, setUserData] = useState({ currentUserProfile: false });
+    const [newsData, setNewsData] = useState<News[]>([]);
 
     useEffect(() => {
         const fetchPost = async () => {
@@ -21,8 +46,7 @@ export default function SinglePostPage({ params }: { params: Promise<{ post: str
 
                 const data = await res.json();
                 if (data?.post) {
-                    setNewsData([data.post]);
-                    setUserData({ currentUserProfile: data.currentUserProfile });
+                    setNewsData([data.post as News]);
                 }
             } catch (err) {
                 console.error("Error fetching post:", err);
@@ -38,13 +62,12 @@ export default function SinglePostPage({ params }: { params: Promise<{ post: str
 
     return (
         <div>
-            {newsData.map((news: any) => (
+            {newsData.map((news) => (
                 <NewsPost
                     news={news}
                     key={news._id}
                     onHide={handleHide}
                     fullDescription={true}
-                    currentUserProfile={userData.currentUserProfile}
                 />
             ))}
         </div>

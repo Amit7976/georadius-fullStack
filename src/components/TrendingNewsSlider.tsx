@@ -1,17 +1,16 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, EffectFade } from 'swiper/modules';
+import React, { useEffect, useState } from 'react';
 import 'swiper/css';
-import 'swiper/css/pagination';
 import 'swiper/css/navigation';
-import Link from 'next/link';
+import 'swiper/css/pagination';
+import { Autoplay } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import useAuthVerification from '../app/hooks/useAuthVerification';
+import { useGeolocation } from '../app/hooks/useGeolocation';
 import { formatTimeAgo } from '../helpers/formatTimeAgo';
 import { getDistanceFromCurrentLocation } from '../helpers/getDistanceFromCurrentLocation';
-import { useGeolocation } from '../app/hooks/useGeolocation';
 
 type TrendingNewsSliderProps = {
     range: number;
@@ -20,7 +19,17 @@ type TrendingNewsSliderProps = {
 const TrendingNewsSlider: React.FC<TrendingNewsSliderProps> = ({ range }) => {
 
     const { isVerified, loading } = useAuthVerification();
-    const [data, setData] = useState<any[]>([]);
+    type NewsPost = {
+        _id: string;
+        title: string;
+        images?: string[];
+        creatorName?: string;
+        createdAt?: string;
+        latitude: number;
+        longitude: number;
+    };
+
+    const [data, setData] = useState<NewsPost[]>([]);
     const [loadingPosts, setLoadingPosts] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [distances, setDistances] = useState<Record<string, string>>({});
@@ -41,9 +50,9 @@ const TrendingNewsSlider: React.FC<TrendingNewsSliderProps> = ({ range }) => {
                 console.log('====================================');
                 const distanceResults: Record<string, string> = {};
                 await Promise.all(
-                    json.map(async (post: any) => {
+                    json.map(async (post: { _id: string; latitude: number; longitude: number }) => {
                         try {
-                            const { formattedDistance } = await getDistanceFromCurrentLocation(
+                            const { formattedDistance }: { formattedDistance: string } = await getDistanceFromCurrentLocation(
                                 post.latitude,
                                 post.longitude
                             );
@@ -86,7 +95,7 @@ const TrendingNewsSlider: React.FC<TrendingNewsSliderProps> = ({ range }) => {
     return (
         <div className="py-2 pr-0">
             <Swiper spaceBetween={0} slidesPerView={1} parallax={true} modules={[Autoplay]}>
-                {data.map((news: any, index: number) => (
+                {data.map((news, index: number) => (
                     <SwiperSlide key={news._id || index}>
                         <div className="w-full h-80 relative overflow-hidden select-none">
                             {/* Nested Swiper for images */}

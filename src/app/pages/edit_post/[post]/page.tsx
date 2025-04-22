@@ -7,7 +7,7 @@ import { useParams } from 'next/navigation';
 function Page() {  // Renamed to uppercase "Page"
   const params = useParams();
   const { isVerified, loading } = useAuthVerification();
-  const [post, setPost] = useState<any>(null);  // Set type to 'any' or more specific type later
+  const [post, setPost] = useState(null);  // Set type to 'any' or more specific type later
 
   // Updated fetchPostById to use string type for postId
   async function fetchPostById(postId: string) {  // Type postId as string
@@ -24,8 +24,12 @@ function Page() {  // Renamed to uppercase "Page"
       if (!res.ok) throw new Error(data.error || "Failed to fetch post");
 
       return data.post; // 🔥 Successfully got post
-    } catch (err: any) {
-      console.error("Error:", err.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Error:", err.message);
+      } else {
+        console.error("Error:", err);
+      }
       throw err;
     }
   }

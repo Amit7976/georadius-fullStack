@@ -75,11 +75,11 @@ export default function SearchInput({ queryParam = "" }: SearchInputProps) {
                     type="text"
                     placeholder="Search for users, posts, location..."
                     value={query}
-                    onChange={(e: any) => {
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setQuery(e.target.value);
                         setHasTyped(true);
                     }}
-                    onKeyDown={handleKeyDown}
+                    onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => handleKeyDown(e)}
                     className="h-14 font-semibold border-0 ring-0 outline-none focus-visible:ring-0 focus-visible:outline-0 focus-visible:border-0"
                 />
                 {query && (

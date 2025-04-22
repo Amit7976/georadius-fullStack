@@ -9,26 +9,26 @@ import { useGeolocation } from "@/src/app/hooks/useGeolocation";
 function MainContent() {
   const router = useRouter();
   const [locationStatus, setLocationStatus] = useState<string>("Click Allow to get location");
-  const [permissionState, setPermissionState] = useState<string>("checking...");
+  const location = useGeolocation();
 
   useEffect(() => {
     if ("permissions" in navigator) {
       navigator.permissions.query({ name: "geolocation" }).then((result) => {
-        setPermissionState(result.state);
+        setLocationStatus(result.state);
 
         if (result.state === "granted") {
           router.replace("/");
         }
 
         result.onchange = () => {
-          setPermissionState(result.state);
+          setLocationStatus(result.state);
           if (result.state === "granted") {
             router.replace("/");
           }
         };
       });
     } else {
-      setPermissionState("not supported");
+      setLocationStatus("not supported");
     }
   }, [router]);
 
@@ -39,7 +39,6 @@ function MainContent() {
     }
     
 
-    const location = useGeolocation();
 
     if (location) {
       setLocationStatus(`Lat: ${location.lat.toFixed(2)}, Lng: ${location.lng.toFixed(2)}`);

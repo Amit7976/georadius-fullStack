@@ -60,7 +60,7 @@ const Address: React.FC<AddressProps> = ({ location }) => {
           const data = await response.json();
           console.log('API Response Data:', data);
 
-          let name = data.results[0].formatted_address;
+          const name = data.results[0].formatted_address;
 
           if (name) {
             setAddress(name);

@@ -3,13 +3,22 @@ import { useEffect, useState } from "react";
 import { BiDislike, BiLike, BiSolidDislike, BiSolidLike } from "react-icons/bi";
 import { formatNumber } from "../helpers/formatNumber";
 
-const VoteButtons = ({ news }: { news: any }) => {
-    const [vote, setVote] = useState(0); // 0 = No vote, 1 = Upvote, 2 = Downvote
-    const [loading, setLoading] = useState(false);
+
+interface News {
+    _id: string;
+    upvoteCount: number;
+    downvoteCount: number;
+    isUserUpvote: boolean;
+    isUserDownvote: boolean;
+}
+
+const VoteButtons = ({ news }: { news: News }) => {
+    const [vote, setVote] = useState<number>(0); // 0 = No vote, 1 = Upvote, 2 = Downvote
+    const [loading, setLoading] = useState<boolean>(false);
 
     // 🔹 Store vote counts in state
-    const [upvoteCount, setUpvoteCount] = useState(news.upvoteCount);
-    const [downvoteCount, setDownvoteCount] = useState(news.downvoteCount);
+    const [upvoteCount, setUpvoteCount] = useState<number>(news.upvoteCount);
+    const [downvoteCount, setDownvoteCount] = useState<number>(news.downvoteCount);
 
     // 🔹 Set initial vote state based on user interaction
     useEffect(() => {
@@ -30,8 +39,6 @@ const VoteButtons = ({ news }: { news: any }) => {
                 body: JSON.stringify({ postId: news._id, vote: newVote }),
             });
 
-            const data = await response.json();
-
             if (response.ok) {
                 // ✅ Update vote state
                 setVote(newVote);
@@ -41,7 +48,7 @@ const VoteButtons = ({ news }: { news: any }) => {
                 setDownvoteCount((prev: number) => prev + (newVote === 2 ? 1 : vote === 2 ? -1 : 0));
             }
         } catch (error) {
-            console.log("Network error!");
+            console.log("Network error! " + error);
         } finally {
             setLoading(false);
         }

@@ -22,7 +22,6 @@ export default function MainContent() {
     const {
         register,
         handleSubmit,
-        watch,
         formState: { errors },
     } = useForm<TwoFAFormValues>({
         resolver: zodResolver(twoFASchema),

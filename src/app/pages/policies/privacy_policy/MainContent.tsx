@@ -21,7 +21,7 @@ function MainContent() {
       <div className='p-4'>
         <h1 className='text-6xl font-extrabold my-5'>Privacy Policy</h1>
         <p className='text-lg font-semibold my-6'>Effective Date: 01/01/2025</p>
-        <p className='text-lg font-normal my-6'>Welcome to <Link href={"/"} className='text-green-600 font-semibold'>GeoRadiusNews</Link> ("we," "our," or "us"). Your privacy is important to us. This Privacy Policy explains how we collect, use, store, and protect your information in compliance with Indian data protection laws, including the Information Technology Act, 2000, and Personal Data Protection Bill (PDPB), 2019 (if enacted). By using our application, you agree to the terms of this Privacy Policy.</p>
+        <p className='text-lg font-normal my-6'>Welcome to <Link href={"/"} className='text-green-600 font-semibold'>GeoRadiusNews</Link> (&#34;we,&#34; &#34;our,&#34; or &#34;us&#34;). Your privacy is important to us. This Privacy Policy explains how we collect, use, store, and protect your information in compliance with Indian data protection laws, including the Information Technology Act, 2000, and Personal Data Protection Bill (PDPB), 2019 (if enacted). By using our application, you agree to the terms of this Privacy Policy.</p>
         
         
         <h2 className='text-xl font-semibold mt-16 mb-6'>1. Information We Collect</h2>
@@ -46,7 +46,7 @@ function MainContent() {
         <h3 className='text-lg font-semibold mt-10 mb-6'>c) Device & Usage Information</h3>
         <p className='text-lg font-normal my-6'>We may collect:</p>
         <ul>
-          <li className='text-lg font-normal my-6'><b>Device Information:</b> Details such as device model, OS version, and unique device identifiers help us optimize the app's performance across different devices.</li>
+          <li className='text-lg font-normal my-6'><b>Device Information:</b> Details such as device model, OS version, and unique device identifiers help us optimize the app&#39;s performance across different devices.</li>
           <li className='text-lg font-normal my-6'><b>App Usage Data:</b> Information about time spent on the app, features accessed, and interactions allow us to understand user preferences and enhance user experience.</li>
           <li className='text-lg font-normal my-6'><b>Error Logs & Crash Reports:</b> If an issue occurs within the app, we collect crash reports to diagnose and resolve technical problems efficiently.</li>
         </ul>

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { EyeOff } from "lucide-react";
@@ -8,7 +8,7 @@ const HideButton = ({ postId, onHide }: { postId: number; onHide: (id: number) =
     const [open, setOpen] = useState(false);
 
     const handleHidePost = () => {
-        let hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");
+        const hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");
 
         if (!hiddenPosts.includes(postId)) {
             hiddenPosts.push(postId);

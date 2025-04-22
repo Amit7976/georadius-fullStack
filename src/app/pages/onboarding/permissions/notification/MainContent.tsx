@@ -19,7 +19,7 @@ function MainContent() {
         router.replace("/");
       }
     }
-  }, []);
+  }, [router]);
 
   const requestNotificationPermission = () => {
     if (!("Notification" in window)) {

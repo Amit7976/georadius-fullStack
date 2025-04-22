@@ -1,40 +1,61 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import { Pagination } from "swiper/modules";
-import { formatDistanceToNow } from "date-fns";
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
-import { HiDotsVertical } from "react-icons/hi";
-import { BiDislike, BiLike, BiSolidDislike, BiSolidLike } from "react-icons/bi";
-import { formatNumber } from "@/src/helpers/formatNumber";
-import VoteButtons from "@/src/components/VoteButtons";
-import { formatTimeAgo } from "@/src/helpers/formatTimeAgo";
+import DeleteButton from "@/src/components/DeleteButton";
 import HideButton from "@/src/components/HideButton";
 import QrButton from "@/src/components/QrButton";
+import VoteButtons from "@/src/components/VoteButtons";
+import { formatTimeAgo } from "@/src/helpers/formatTimeAgo";
+import { Pencil } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import { MoreHorizontal, Pencil } from "lucide-react";
-import DeleteButton from "@/src/components/DeleteButton";
+import { useEffect, useState } from "react";
+import { HiDotsVertical } from "react-icons/hi";
 import { TbReport } from "react-icons/tb";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 
-export default function MainContent({ posts }: any) {
+interface Post {
+    _id: string;
+    title: string;
+    description: string;
+    latitude?: number;
+    longitude?: number;
+    creatorName: string;
+    creatorImage: string;
+    createdAt: string;
+    location: string;
+    likes: number;
+    comments: number;
+    categories: string[];
+    images: string[];
+    commentsCount: number;
+    currentUserProfile: boolean;
+    // Add these
+    upvoteCount: number;
+    downvoteCount: number;
+    isUserUpvote: boolean;
+    isUserDownvote: boolean;
+    isSaved: boolean;
+}
 
-    const [newsData, setNewsData] = useState<any[]>([]);
+
+
+export default function MainContent({ posts }: { posts: Post[] }) {
+
+    const [newsData, setNewsData] = useState<Post[]>([]);
 
     useEffect(() => {
         const hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");
-        const filteredNews = posts.filter((news: any) => !hiddenPosts.includes(news._id));
+        const filteredNews = posts.filter((news: Post) => !hiddenPosts.includes(news._id));
         setNewsData(filteredNews);
     }, [posts]); // ✅ Run only when `userPosts.posts` changes
 
     const handleHide = (postId: number) => {
-        setNewsData(prevNews => prevNews.filter(news => news._id !== postId));
+        setNewsData(prevNews => prevNews.filter(news => news._id !== postId.toString()));
 
-        let hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");
+        const hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");
         if (!hiddenPosts.includes(postId)) {
             hiddenPosts.push(postId);
             localStorage.setItem("hideNews", JSON.stringify(hiddenPosts));
@@ -51,16 +72,16 @@ export default function MainContent({ posts }: any) {
                     pagination={{ clickable: true }}
                     className="h-[92vh] w-full"
                 >
-                    {newsData.map((post: any) => (
+                    {newsData.map((post) => (
                         (post.images.length) > 0 && (
-                            <SwiperSlide key={post.id} className="relative flex items-center justify-center w-full">
+                            <SwiperSlide key={post._id} className="relative flex items-center justify-center w-full">
                                 <Swiper
                                     direction="horizontal"
                                     slidesPerView={1}
                                     pagination={{ clickable: true }}
                                     className="h-[92vh] w-full z-10"
                                 >
-                                    {post.images.map((image: any) => (
+                                    {post.images.map((image: string) => (
                                         <SwiperSlide key={image} className="relative flex items-center justify-center w-full">
                                             <Image src={image} alt={post.title} layout="fill" sizes="full" objectFit="cover" priority />
                                         </SwiperSlide>
@@ -85,14 +106,14 @@ export default function MainContent({ posts }: any) {
                                                             </Link>
                                                         ))}
                                                     </div>
-                                                    <HideButton postId={post._id} onHide={() => handleHide(post._id)} />
-                                                    <QrButton postId={post._id} />
+                                                    <HideButton postId={Number(post._id)} onHide={() => handleHide(Number(post._id))} />
+                                                    <QrButton postId={Number(post._id)} />
                                                     {post.currentUserProfile ? (
                                                         <>
                                                             <Link href={"/pages/edit_post/" + post._id} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100 items-center font-semibold">
                                                                 <Pencil /> Edit
                                                             </Link>
-                                                            <DeleteButton postId={post._id} onHide={() => handleHide(post._id)} />
+                                                            <DeleteButton postId={Number(post._id)} onHide={() => handleHide(Number(post._id))} />
                                                         </>
                                                     ) : (
                                                         <>

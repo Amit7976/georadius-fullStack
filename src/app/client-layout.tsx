@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import BottomNavigation from "../components/BottomNavigation";
 import { Toaster } from "sonner";
@@ -10,8 +10,11 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     const [showBottomNav, setShowBottomNav] = useState(false);
     const pathname = usePathname();
 
-    const allowedRoutes = ["/", "/home", "/post", "/rapid", "/search"];
-    if (userName) allowedRoutes.push("/" + userName);
+    const allowedRoutes = useMemo(() => {
+        const baseRoutes = ["/", "/home", "/post", "/rapid", "/search"];
+        if (userName) baseRoutes.push("/" + userName);
+        return baseRoutes;
+    }, [userName]);
 
     // Remove localStorage on refresh
     useEffect(() => {
@@ -48,7 +51,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         return () => clearTimeout(timeout);
     }, [pathname, userName, allowedRoutes]);
 
-    // ✅ Instead of conditionally rendering <main>, we always render and just hide contents
+
     const isMainHidden = allowedRoutes.includes(pathname);
     console.log("AllowedRoutes:", allowedRoutes);
     console.log("Route:", pathname);

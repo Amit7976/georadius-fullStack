@@ -1,19 +1,10 @@
-'use client';
-import React from 'react';
-import MainContent from './MainContent';
-import useAuthVerification from '../../../hooks/useAuthVerification';
-import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
+import ReportAnIssueClient from './ReportAnIssueClient';
 
-function Page() {
-    const { isVerified, loading } = useAuthVerification();
-    const searchParams = useSearchParams();
-    const id = searchParams.get('id'); // Get 'id' from URL
-
-    if (loading) {
-        return <div className="flex items-center justify-center h-screen"><div className="loader"></div></div>;
-    }
-
-    return isVerified ? <MainContent id={id} /> : null;
+export default function ReportAnIssuePage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <ReportAnIssueClient />
+        </Suspense>
+    );
 }
-
-export default Page;

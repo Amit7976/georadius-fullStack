@@ -7,11 +7,11 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogFooter,
-    DialogTrigger,
+    DialogFooter
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import Link from 'next/link';
+import Image from 'next/image';
 
 
 interface CommentType {
@@ -220,7 +220,9 @@ const Comments = ({ news_id }: { news_id: string }) => {
                 <div className="flex items-start gap-3">
                     {comment.profileImage && (
                         <Link href={"/" + comment.username} target='_blank'>
-                            <img
+                            <Image
+                                width={100}
+                                height={100}
                                 src={comment.profileImage}
                                 alt={comment.username}
                                 className="w-8 h-8 rounded-full"
@@ -233,7 +235,7 @@ const Comments = ({ news_id }: { news_id: string }) => {
                             <p className="text-xs text-gray-500">
                                 Replying to
                                 <Link href={"/" + comment.replyingToUsername} target='_blank'>
-                                @{comment.replyingToUsername}
+                                    @{comment.replyingToUsername}
                                 </Link>
                             </p>
                         )}

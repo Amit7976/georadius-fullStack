@@ -1,18 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import React, { useState } from 'react'
-import { FaAngleRight, FaRegUserCircle } from 'react-icons/fa'
-import { FaArrowLeftLong, FaChevronRight, FaLeftLong } from 'react-icons/fa6'
-import { HiOutlineChevronRight } from "react-icons/hi2";
-import { MdOutlineReport, MdPassword, MdSecurity } from "react-icons/md";
-import { FiSun } from "react-icons/fi";
-import { IoLanguage, IoLocationOutline, IoNotificationsOutline } from "react-icons/io5";
-import { SlQuestion } from "react-icons/sl";
-import { TbAuth2Fa } from "react-icons/tb";
-import Link from 'next/link';
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox"
+import { Checkbox } from "@/components/ui/checkbox";
+import Link from 'next/link';
+import { useRouter } from "next/navigation";
+import { useState } from 'react';
+import { FaArrowLeftLong } from 'react-icons/fa6';
+import { HiOutlineChevronRight } from "react-icons/hi2";
+import { MdPassword } from "react-icons/md";
+import { TbAuth2Fa } from "react-icons/tb";
 
 
 

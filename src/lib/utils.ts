@@ -1,5 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
-import mongoose, { connection } from "mongoose";
+import mongoose from "mongoose";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {

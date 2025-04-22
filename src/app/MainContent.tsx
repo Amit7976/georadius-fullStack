@@ -13,12 +13,31 @@ import Link from "next/link";
 
 const filterOptions = ["Nearby", "District", "Global"];
 
+
 interface NewsPostType {
-    _id: number;
+    _id: string;
     title: string;
     description: string;
-    // Add other properties of the news object as needed
+    latitude?: number;
+    longitude?: number;
+    creatorName: string;
+    creatorImage: string;
+    createdAt: string;
+    location: string;
+    likes: number;
+    comments: number;
+    categories: string[];
+    images: string[];
+    commentsCount: number;
+    currentUserProfile: boolean;
+    // Add these
+    upvoteCount: number;
+    downvoteCount: number;
+    isUserUpvote: boolean;
+    isUserDownvote: boolean;
+    isSaved: boolean;
 }
+
 
 export default function MainContent() {
     const [selectedFilter, setSelectedFilter] = useState("Nearby");
@@ -35,7 +54,7 @@ export default function MainContent() {
 
 
     const handleHide = (postId: number) => {
-        setNewsData(prevNews => prevNews.filter(news => news._id !== postId));
+        setNewsData(prevNews => prevNews.filter(news => news._id !== postId.toString()));
 
         const hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");
         if (!hiddenPosts.includes(postId)) {
@@ -94,7 +113,6 @@ export default function MainContent() {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
             const screenHeight = window.innerHeight;
-            const categoriesTop = categoriesRef.current?.offsetTop || 0;
 
             // Scroll up
             if (currentScrollY > screenHeight && currentScrollY < lastScrollY.current) {
@@ -109,7 +127,7 @@ export default function MainContent() {
             if (currentScrollY === 0) {
                 setShowFixedHeader(false);
             }
-         
+
             lastScrollY.current = currentScrollY;
         };
 
