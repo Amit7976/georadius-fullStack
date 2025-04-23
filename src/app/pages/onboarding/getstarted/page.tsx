@@ -15,8 +15,14 @@ function Page() {
         const response = await fetch("/api/authentication");
         const data = await response.json();
 
+        console.log('====================================');
+        console.log(data);
+        console.log('====================================');
+
         if (data.user) {
           setIsAuthenticated(true);
+          console.log("this is redirecting...");
+          
           router.replace("/");
         }
       } catch (error) {
@@ -28,6 +34,12 @@ function Page() {
 
     checkAuth();
   }, [router]);
+
+
+  console.log('====================================');
+  console.log("this is get started");
+  console.log('====================================');
+
 
   if (loading) {
     return <div className="flex items-center justify-center h-screen"><div className="loader"></div></div>;

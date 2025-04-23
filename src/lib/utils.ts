@@ -7,28 +7,36 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 
-let isConnected = false;
+let cached = (global as any).mongoose || { conn: null, promise: null };
 
 export const connectToDatabase = async () => {
-  if (isConnected) {
-    return;
+  if (cached.conn) {
+    return cached.conn;
+  }
+
+  if (!cached.promise) {
+    const uri = process.env.MONGO_URI as string;
+
+    if (!uri) {
+      throw new Error("Missing MONGO_URI");
+    }
+
+    cached.promise = mongoose.connect(uri, {
+      dbName: "geoRadius",
+      bufferCommands: false,
+      serverSelectionTimeoutMS: 10000,
+    });
   }
 
   try {
-    const db = await mongoose.connect(process.env.MONGO_URI as string, {
-      dbName: "geoRadius",
-    });
-
-    isConnected = true;
-
-    console.log("====================================");
-    console.log(`✅ Connected to MongoDB: ${db.connection.host}`);
-    console.log("====================================");
+    cached.conn = await cached.promise;
+    console.log(`✅ Connected to MongoDB: ${cached.conn.connection.host}`);
   } catch (error) {
-    console.log("====================================");
-    console.log("❌ Error connecting to MongoDB:");
-    console.log(error);
-    console.log("====================================");
-    throw new Error("MongoDB connection failed");
+    console.error("❌ MongoDB connection failed:", error);
+    cached.promise = null;
+    throw error;
   }
+
+  (global as any).mongoose = cached;
+  return cached.conn;
 };
