@@ -6,20 +6,27 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+// Patch global for type-safe caching
+const globalWithMongoose = global as typeof global & {
+  mongoose: {
+    conn: typeof mongoose | null;
+    promise: Promise<typeof mongoose> | null;
+  };
+};
 
-let cached = (global as any).mongoose || { conn: null, promise: null };
+if (!globalWithMongoose.mongoose) {
+  globalWithMongoose.mongoose = { conn: null, promise: null };
+}
+
+const cached = globalWithMongoose.mongoose;
 
 export const connectToDatabase = async () => {
-  if (cached.conn) {
-    return cached.conn;
-  }
+  if (cached.conn) return cached.conn;
 
   if (!cached.promise) {
     const uri = process.env.MONGO_URI as string;
 
-    if (!uri) {
-      throw new Error("Missing MONGO_URI");
-    }
+    if (!uri) throw new Error("❌ Missing MONGO_URI");
 
     cached.promise = mongoose.connect(uri, {
       dbName: "geoRadius",
@@ -37,6 +44,5 @@ export const connectToDatabase = async () => {
     throw error;
   }
 
-  (global as any).mongoose = cached;
   return cached.conn;
 };

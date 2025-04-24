@@ -7,7 +7,7 @@ import { Toaster } from "sonner";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const [userName, setUserName] = useState<string | null>(null);
-    const [showBottomNav, setShowBottomNav] = useState<boolean | false>(false);
+    const [showBottomNav, setShowBottomNav] = useState(false);
     const pathname = usePathname();
 
     const allowedRoutes = useMemo(() => {
@@ -47,7 +47,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         const timeout = setTimeout(() => {
             const shouldShow = allowedRoutes.includes(pathname);
             setShowBottomNav(shouldShow);
-        }, 0);
+        }, 1000); // keep it short
         return () => clearTimeout(timeout);
     }, [pathname, userName, allowedRoutes]);
 
