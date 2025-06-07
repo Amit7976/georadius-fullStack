@@ -6,6 +6,19 @@ import { compare } from "bcryptjs";
 import { connectToDatabase } from "./lib/utils";
 import { UserProfile } from "./models/UserProfileModel";
 
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      email: string;
+      name?: string | null;
+      image?: string | null;
+      profileExists: boolean;
+    };
+  }
+}
+
 // DATABASE CONNECTION FUNCTION
 const LoadDb = async () => {
   try {
@@ -88,43 +101,17 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
       if (user) {
         session.user.id = user._id.toString();
-      }
 
+        // ✅ Check if user profile exists
+        const userProfile = await UserProfile.findOne({ userId: user._id });
+        session.user.profileExists = !!userProfile;
+      } else {
+        session.user.profileExists = false;
+      }
+  
       return session;
     },
-    // signIn: async ({ user, account }) => {
-    //   await LoadDb();
-
-    //   const { email, id } = user as any;
-    //   const provider = account?.provider;
-
-    //   let candidate = await User.findOne({ email });
-
-    //   if (!candidate) {
-    //     const { fullname } = user as any;
-
-    //     const newUser: UserData = { fullname, email };
-
-    //     if (provider === "google") {
-    //       newUser.googleId = id;
-    //     }
-
-    //     candidate = await User.create(newUser);
-
-    //     await UserProfile.create({ userId: candidate._id });
-
-    //     return true;
-    //   }
-
-    //   if (provider === "google" && !candidate.googleId) {
-    //     throw new Error(
-    //       `${email} is not associated with a Google account. Please try signing in with a different method.`
-    //     );
-    //   }
-
-    //   return true;
-    // },
-
+   
     signIn: async ({ user, account }) => {
       console.log("====================================");
       console.log("Google");

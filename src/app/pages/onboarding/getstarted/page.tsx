@@ -1,51 +1,16 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import MainContent from "./MainContent";
+export default async function Home() {
+  const cookieStore = await cookies();
+  const onboarding = cookieStore.get("onboarding")?.value;
+  const NPS = cookieStore.get("NPS")?.value;
+  const LPS = cookieStore.get("LPS")?.value;
 
-function Page() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await fetch("/api/authentication");
-        const data = await response.json();
-
-        console.log('====================================');
-        console.log(data);
-        console.log('====================================');
-
-        if (data.user) {
-          setIsAuthenticated(true);
-          console.log("this is redirecting...");
-          
-          router.replace("/");
-        }
-      } catch (error) {
-        console.error("Error checking authentication", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, [router]);
-
-
-  console.log('====================================');
-  console.log("this is get started");
-  console.log('====================================');
-
-
-  if (loading) {
-    return <div className="flex items-center justify-center h-screen"><div className="loader"></div></div>;
+  if (onboarding) {
+    if (!LPS) redirect("/pages/onboarding/permissions/location");
+    if (!NPS) redirect("/pages/onboarding/permissions/notification");
   }
 
-  return !isAuthenticated ? <MainContent /> : null;
+  return <MainContent />;
 }
-
-export default Page;

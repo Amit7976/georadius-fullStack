@@ -1,29 +1,33 @@
 "use client"
-import Image from "next/image";
-import React, { useState, useEffect } from "react";
-import { FaLocationDot } from "react-icons/fa6";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import { useGeolocation } from "@/src/app/hooks/useGeolocation";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { FaLocationDot } from "react-icons/fa6";
 
 function MainContent() {
   const router = useRouter();
-  const [locationStatus, setLocationStatus] = useState<string>("Click Allow to get location");
+  const [locationStatus, setLocationStatus] = useState<string>("");
   const location = useGeolocation();
 
   useEffect(() => {
     if ("permissions" in navigator) {
       navigator.permissions.query({ name: "geolocation" }).then((result) => {
-        setLocationStatus(result.state);
-
         if (result.state === "granted") {
-          router.replace("/");
+          const expires = new Date();
+          expires.setFullYear(expires.getFullYear() + 10);
+          document.cookie = `LPS=true; expires=${expires.toUTCString()}; path=/;`;
+          router.replace("/pages/onboarding/permissions/notification");
         }
 
         result.onchange = () => {
           setLocationStatus(result.state);
           if (result.state === "granted") {
-            router.replace("/");
+            const expires = new Date();
+            expires.setFullYear(expires.getFullYear() + 10);
+            document.cookie = `LPS=true; expires=${expires.toUTCString()}; path=/;`;
+            router.replace("/pages/onboarding/permissions/notification");
           }
         };
       });
@@ -32,20 +36,32 @@ function MainContent() {
     }
   }, [router]);
 
-  const requestLocation = () => {
-    if (!("geolocation" in navigator)) {
-      setLocationStatus("Geolocation not supported in this browser");
+
+  const handleSkip = () => {
+    document.cookie = `LPS=true; path=/;`;
+    router.replace("/pages/onboarding/permissions/notification");
+  };
+
+  // Request location and on success set long term cookie (10 years)
+  const requestLocationPermission = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation not supported");
       return;
     }
-    
 
-
-    if (location) {
-      setLocationStatus(`Lat: ${location.lat.toFixed(2)}, Lng: ${location.lng.toFixed(2)}`);
-      console.log(`User Location: Lat ${location.lat}, Lng ${location.lng}`);
-      router.replace("/");
-    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const expires = new Date();
+        expires.setFullYear(expires.getFullYear() + 10);
+        document.cookie = `LPS=true; expires=${expires.toUTCString()}; path=/;`;
+        router.replace("/pages/onboarding/permissions/notification");
+      },
+      (error) => {
+        alert("Location permission denied or error.");
+      }
+    );
   };
+
 
   return (
     <div className="flex items-center justify-around flex-col space-y-4 h-[94.3vh]">
@@ -65,26 +81,26 @@ function MainContent() {
           We need your location to deliver the most accurate, real-time news on the go.
         </p>
 
-        <button
-          type="button"
-          className="bg-green-600 active:bg-green-500 active:scale-95 px-20 py-4 mt-4 text-white text-xl font-bold rounded-md flex items-center justify-center gap-2"
-          onClick={requestLocation}
+        <Button
+          className="bg-green-600 active:bg-green-500 active:scale-95 mt-4 text-white text-xl font-bold rounded-full flex items-center justify-center gap-2 w-2/4 h-14"
+          onClick={requestLocationPermission}
         >
           Allow
           <FaLocationDot className="text-2xl" />
           Location
-        </button>
+        </Button>
 
-        <p className="text-md font-semibold text-gray-700 mt-2">{locationStatus}</p>
+        <p>{locationStatus != 'granted' && locationStatus}</p>
 
-        <div className="flex items-center justify-center">
-          <Link
-            href="/home"
-            className="text-black text-lg font-extrabold"
-            onClick={() => localStorage.setItem("LPS", "true")} // LOCATION PERMISSION SKIPPED
+        <div className="flex items-center justify-center fixed top-3 right-3">
+          <Button
+            variant={'ghost'}
+            size={'sm'}
+            className="text-black text-sm font-extrabold bg-gray-100 px-5 py-1.5 rounded-full active:scale-95 duration-300 cursor-pointer"
+            onClick={handleSkip}
           >
             Skip
-          </Link>
+          </Button>
         </div>
       </div>
     </div>

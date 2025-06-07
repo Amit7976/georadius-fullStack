@@ -2,146 +2,47 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { auth } from "@/src/auth";
 
 const useAuthVerification = () => {
   const router = useRouter();
-  const [isVerified, setIsVerified] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [isVerified, setIsVerified] = useState(() => {
+    // Initial state from cache (fast!)
+    return localStorage.getItem("isVerified") === "true";
+  });
+  const [loading, setLoading] = useState(!isVerified);
 
   useEffect(() => {
+    if (isVerified) {
+      // Already verified, no need to run again
+      setLoading(false);
+      return;
+    }
+
     const checkAuthAndPermissions = async () => {
       try {
-        console.log("====================================");
-        console.log("Starting the verification process...");
-        console.log("====================================");
+        console.log("=== Starting verification process ===");
 
-        // ✅ Step 1: Check onboarding status
-        if (typeof window !== "undefined") {
-          const onboarding = localStorage.getItem("onboarding");
-
-          console.log("====================================");
-          console.log("Onboarding Status:", onboarding);
-          console.log("====================================");
-
-          if (!onboarding) {
-            console.log("====================================");
-            console.log("Redirecting to Get Started page...");
-            console.log("====================================");
-            router.replace("/pages/onboarding/getstarted");
-            return;
-          }
-
-          // ✅ Step 2: Check LPS and NPS
-          const NPS = localStorage.getItem("NPS");
-          const LPS = localStorage.getItem("LPS");
-
-          console.log("====================================");
-          console.log("NPS:", NPS, " | LPS:", LPS);
-          console.log("====================================");
-
-          if (!LPS && "permissions" in navigator) {
-            try {
-              console.log("====================================");
-              console.log("Checking location permission...");
-              console.log("====================================");
-
-              const locationPermission = await navigator.permissions.query({
-                name: "geolocation",
-              });
-              console.log(
-                "Location Permission State:",
-                locationPermission.state
-              );
-              if (locationPermission.state !== "granted") {
-                console.log("====================================");
-                console.log("Redirecting to location permissions page...");
-                console.log("====================================");
-
-                router.replace("/pages/onboarding/permissions/location");
-                return;
-              }
-            } catch (error) {
-              console.log("====================================");
-              console.warn("Geolocation permission check failed", error);
-              console.log("====================================");
-            }
-          }
-
-          if (
-            !NPS &&
-            typeof Notification !== "undefined" &&
-            Notification.permission !== "granted"
-          ) {
-            console.log("====================================");
-            console.log("Redirecting to notification permissions page...");
-            console.log("====================================");
-            router.replace("/pages/onboarding/permissions/notification");
-            return;
-          }
-        }
-
-        // ✅ Step 3: Check authentication
-        const response = await fetch("/api/authentication");
-        const data = await response.json();
-
-        console.log("====================================");
-        console.log(data);
-        console.log("====================================");
-
-        if (!data.user) {
-          console.log("====================================");
-          console.log("User not found, redirecting to signin...");
-          console.log("====================================");
-          router.replace("/pages/auth/signin");
+        if (typeof window === "undefined") {
+          setLoading(false);
           return;
         }
-
-        console.log("====================================");
-        console.log("User authenticated successfully.");
-        console.log("====================================");
-
-
 
         
-        // ✅ Step 4: Check if user profile exists
-        const profileResponse = await fetch("/api/userProfile/exist");
-        const profileData = await profileResponse.json(); // Parse response
 
-        console.log(profileData); // Debugging
-
-        if (!profileData.exists) {
-          // Explicitly check if profile exists
-          console.log("====================================");
-          console.log(
-            "User profile not found, redirecting to createProfile..."
-          );
-          console.log("====================================");
-          router.replace("/pages/onboarding/createprofile");
-          return;
-        } else {
-          console.log("====================================");
-          console.log("User profile found, proceeding...");
-          console.log("====================================");
-        }
-
-
-
-        console.log("====================================");
-        console.log("User verification complete. Proceeding...");
-        console.log("====================================");
-
+        // Cache the result to speed up next loads
+        localStorage.setItem("isVerified", "true");
         setIsVerified(true);
+        console.log("=== User verified successfully ===");
       } catch (error) {
-        console.log("====================================");
-        console.error("Error in verification process:", error);
-        console.log("====================================");
+        console.error("Error during verification:", error);
       } finally {
         setLoading(false);
       }
     };
 
     checkAuthAndPermissions();
-  }, [router]);
+  }, [router, isVerified]);
 
   return { isVerified, loading };
 };

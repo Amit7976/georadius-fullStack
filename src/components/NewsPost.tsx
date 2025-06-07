@@ -66,7 +66,7 @@ const NewsPost = ({ news, onHide, fullDescription }: { news:News; fullDescriptio
 
     return (
         <div key={String(news._id)}>
-            <Card className="w-full my-0 border-0 shadow-none gap-4 select-none">
+            <Card className="w-full my-0 border-0 shadow-none gap-4 select-none rounded-none">
                 {/* Header */}
                 <div className="flex justify-between items-center px-2">
                     <div className="flex items-start gap-2">

@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { credentialsLogin } from "../actions/login";
 import { toast } from "sonner"
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 
 const LoginForm = () => {
@@ -78,13 +79,13 @@ const LoginForm = () => {
                     </div>
                 </div>
 
-                <div className="flex flex-col space-y-6 text-center my-12 w-full px-5">
-                    <button
+                <div className="flex flex-col space-y-6 items-center my-12 w-full px-5">
+                    <Button
                         type="submit"
-                        className="bg-green-600 active:bg-green-500 active:scale-95 duration-300 text-white font-bold py-2 px-4 rounded-md my-5 w-full h-16"
+                        className="bg-green-600 active:bg-green-500 active:scale-95 mt-4 text-white text-xl font-bold rounded-full flex items-center justify-center gap-2 w-2/4 h-14"
                     >
                         Sign In
-                    </button>
+                    </Button>
                     <p className="text-base text-gray-600 font-medium">
                         Don&#39;t have an account?{" "}
                         <Link href="./signup" className="text-green-600 font-semibold">

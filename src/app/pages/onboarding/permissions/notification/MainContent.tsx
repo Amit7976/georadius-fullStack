@@ -3,8 +3,8 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { FaRegBell } from "react-icons/fa";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 function MainContent() {
   const router = useRouter();
@@ -13,10 +13,11 @@ function MainContent() {
   useEffect(() => {
     if ("Notification" in window) {
       const permission = Notification.permission;
-      setPermissionStatus(permission);
-
       if (permission === "granted") {
-        router.replace("/");
+        const expires = new Date();
+        expires.setFullYear(expires.getFullYear() + 10);
+        document.cookie = `NPS=true; expires=${expires.toUTCString()}; path=/;`;
+        router.replace("/pages/auth/signin");
       }
     }
   }, [router]);
@@ -30,14 +31,26 @@ function MainContent() {
     Notification.requestPermission().then((permission) => {
       setPermissionStatus(permission);
       if (permission === "granted") {
+        // Set cookie for 10 years
+        const expires = new Date();
+        expires.setFullYear(expires.getFullYear() + 10);
+        document.cookie = `NPS=true; expires=${expires.toUTCString()}; path=/;`;
+
+        // Show welcome notification
         new Notification("Notifications Enabled", {
           body: "You will receive breaking news updates!",
           icon: "/icons/notification.png",
         });
 
-        router.replace("/");
+        router.replace("/pages/auth/signin");
       }
     });
+  };
+
+  const handleSkip = () => {
+    // Set session cookie (browser close = delete)
+    document.cookie = `NPS=true; path=/;`;
+    router.replace("/pages/auth/signin");
   };
 
   return (
@@ -52,31 +65,34 @@ function MainContent() {
       />
 
       <div>{/* EMPTY DIV FOR SPACING */}</div>
+
       <div className="flex items-center justify-center flex-col space-y-4 text-center bg-gray-50 px-10 pt-20 pb-14 rounded-t-[5rem] w-full bottom-0 absolute">
         <h1 className="text-3xl font-extrabold">Notification Permission</h1>
         <p className="text-xl font-semibold text-gray-600">
           We need your permission to send you notifications about breaking news or updates.
         </p>
 
-        <button
-          type="button"
-          className="bg-green-600 active:bg-green-500 active:scale-95 px-20 py-4 mt-4 text-white text-xl font-bold rounded-md flex items-center justify-center gap-2"
+        <Button
+          className="bg-green-600 active:bg-green-500 active:scale-95 mt-4 text-white text-xl font-bold rounded-full flex items-center justify-center gap-2 w-2/4 h-14"
           onClick={requestNotificationPermission}
           disabled={permissionStatus === "granted"}
         >
-          {permissionStatus === "granted" ? "Enabled" : "Turn"}
-          <FaRegBell className="text-2xl" />
-          {permissionStatus === "granted" ? "" : "On"}
-        </button>
+          Turn
+          <FaRegBell className="text-5xl" />
+          On
+        </Button>
 
-        <div className="flex items-center justify-center">
-          <Link
-            href="/home"
-            className="text-black text-lg font-extrabold"
-            onClick={() => localStorage.setItem("NPS", "true")} // NOTIFICATION PERMISSION SKIPPED
+        <p className="capitalize text-red-500 font-bold">{(permissionStatus != 'granted' && permissionStatus != 'default') && permissionStatus}</p>
+
+
+        <div className="flex items-center justify-center fixed top-3 right-3">
+          <Button
+            variant={"ghost"}
+            className="text-black text-sm font-extrabold bg-gray-100 px-5 py-1.5 rounded-full active:scale-95 duration-300 cursor-pointer"
+            onClick={handleSkip}
           >
             Skip
-          </Link>
+          </Button>
         </div>
       </div>
     </div>

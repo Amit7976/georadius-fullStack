@@ -1,7 +1,6 @@
-// app/layout.tsx
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import ClientLayout from "./client-layout";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,10 +22,11 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ClientLayout>
-          {children}
-        </ClientLayout>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased max-w-lg relative mx-auto bg-gray-200`}>
+        <main className="bg-white">
+            {children}
+        </main>
+        <Toaster richColors position="top-center" expand={false} closeButton />
       </body>
     </html>
   );

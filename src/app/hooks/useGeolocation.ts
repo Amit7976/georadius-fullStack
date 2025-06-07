@@ -13,7 +13,7 @@ export function useGeolocation() {
           });
         },
         (error) => {
-          console.error("Geolocation error:", error);
+        
         },
         {
           enableHighAccuracy: true,

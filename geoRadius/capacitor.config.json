@@ -1,0 +1,10 @@
+{
+  "appId": "com.georadius.app",
+  "appName": "geoRadiusNews",
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false
+    }
+  }
+}

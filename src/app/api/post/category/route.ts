@@ -56,9 +56,9 @@ export async function GET(req: NextRequest) {
     }
 
     const posts = await Post.find(query)
-      .sort({ updatedAt: -1 })
+      .sort({ createdAt: -1 })
       .select(
-        "_id title description images location latitude longitude updatedAt"
+        "_id title description images location latitude longitude updatedAt createdAt"
       );
 
     console.log(`✅ Found ${posts.length} posts`);

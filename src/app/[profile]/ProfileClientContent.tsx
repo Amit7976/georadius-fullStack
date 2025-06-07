@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import MainContent from "./MainContent";
 import useAuthVerification from "../hooks/useAuthVerification";
+import BottomNavigation from "@/src/components/BottomNavigation";
 
 type Props = {
     profile: string;
@@ -125,11 +126,14 @@ function ProfileClientContent({ profile }: Props) {
     }
 
     return (
-        <MainContent
-            username={profile}
-            userData={userData}
-            userPosts={{ posts: newsData }}
-        />
+        <>
+            <MainContent
+                username={profile}
+                userData={userData}
+                userPosts={{ posts: newsData }}
+            />
+            <BottomNavigation />
+        </>
     );
 }
 

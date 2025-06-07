@@ -1,17 +1,23 @@
-"use client";
-
-import React from "react";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { auth } from "../auth";
 import MainContent from "./MainContent";
-import useAuthVerification from "./hooks/useAuthVerification";
+export default async function Home() {
+  const cookieStore = await cookies(); // await is required here
+  const onboarding = cookieStore.get("onboarding")?.value;
+  const NPS = cookieStore.get("NPS")?.value;
+  const LPS = cookieStore.get("LPS")?.value;
 
-const Home = () => {
-  const { isVerified, loading } = useAuthVerification();
+  if (!onboarding) redirect("/pages/onboarding/getstarted");
+  if (!LPS) redirect("/pages/onboarding/permissions/location");
+  if (!NPS) redirect("/pages/onboarding/permissions/notification");
 
-  if (loading) {
-    return <div className="flex items-center justify-center h-screen"><div className="loader"></div></div>;
+  const session = await auth();
+  if (!session?.user) redirect("/pages/auth/signin");
+
+  if (session.user.profileExists === false) {
+    redirect("/pages/onboarding/createprofile");
   }
 
-  return isVerified ? <MainContent /> : null;
-};
-
-export default Home;
+  return <MainContent />;
+}

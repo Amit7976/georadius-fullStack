@@ -74,7 +74,7 @@ export default function MainContent() {
         const fetchNearbyPosts = async (latitude: number, longitude: number) => {
             setLoading(true);
             try {
-                const res = await fetch(`/api/main/category?category=${selectedCategory}&lat=${latitude}&lng=${longitude}&range=${range}&limit=5`);
+                const res = await fetch(`/api/main/category?category=${selectedCategory}&lat=${latitude}&lng=${longitude}&range=${range}&limit=50`);
                 const json = await res.json();
 
                 console.log('====================================');
@@ -246,49 +246,51 @@ export default function MainContent() {
             </div>
 
             {showFixedHeader && (
-                <div className="fixed top-0 left-0 w-full bg-white shadow-md z-50 transition-transform duration-300">
-                    {/* Header */}
-                    <div className="flex justify-between items-center p-3 pb-2">
-                        <Select value={selectedFilter} onValueChange={setSelectedFilter}>
-                            <SelectTrigger className="w-fit border-0 text-2xl font-bold shadow-none px-0 scale-90">
-                                <SelectValue placeholder="Select Filter" />
-                            </SelectTrigger>
-                            <SelectContent className={""}>
-                                {filterOptions.map((option) => (
-                                    <SelectItem key={option} value={option} className="text-xl font-semibold py-2">
-                                        {option}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                <div className="fixed left-0 top-0 w-full flex justify-center z-50">
+                    <div className="w-full max-w-lg bg-white shadow-md transition-transform duration-300">
+                        {/* Header */}
+                        <div className="flex justify-between items-center p-3 pb-2">
+                            <Select value={selectedFilter} onValueChange={setSelectedFilter}>
+                                <SelectTrigger className="w-fit border-0 text-2xl font-bold shadow-none px-0 scale-90">
+                                    <SelectValue placeholder="Select Filter" />
+                                </SelectTrigger>
+                                <SelectContent className={""}>
+                                    {filterOptions.map((option) => (
+                                        <SelectItem key={option} value={option} className="text-xl font-semibold py-2">
+                                            {option}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
 
-                        <div className="flex items-center gap-4 pr-1">
-                            <IoMapOutline className="text-3xl scale-95" onClick={() => router.push("/pages/others/map")} />
+                            <div className="flex items-center gap-4 pr-1">
+                                <IoMapOutline className="text-3xl scale-95" onClick={() => router.push("/pages/others/map")} />
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Fixed Categories */}
-                    <div className="w-full pb-1.5 bg-white">
-                        <div className="flex gap-2 px-2 overflow-x-auto whitespace-nowrap">
-                            <Button
-                                size={100}
-                                variant="outline"
-                                className={`rounded-lg px-6 py-2 font-bold active:scale-95 text-xs ${selectedCategory === "All" ? "bg-black text-white" : ""}`}
-                                onClick={() => setSelectedCategory("All")}
-                            >
-                                All
-                            </Button>
-                            {interestsList.map((category, index) => (
+                        {/* Fixed Categories */}
+                        <div className="w-full pb-1.5 bg-white">
+                            <div className="flex gap-2 px-2 overflow-x-auto whitespace-nowrap">
                                 <Button
-                                    key={index}
                                     size={100}
                                     variant="outline"
-                                    className={`rounded-lg px-6 py-2 font-bold active:scale-95 text-xs ${selectedCategory === category.name ? "bg-black text-white" : ""}`}
-                                    onClick={() => setSelectedCategory(category.name)}
+                                    className={`rounded-lg px-6 py-2 font-bold active:scale-95 text-xs ${selectedCategory === "All" ? "bg-black text-white" : ""}`}
+                                    onClick={() => setSelectedCategory("All")}
                                 >
-                                    {category.name}
+                                    All
                                 </Button>
-                            ))}
+                                {interestsList.map((category, index) => (
+                                    <Button
+                                        key={index}
+                                        size={100}
+                                        variant="outline"
+                                        className={`rounded-lg px-6 py-2 font-bold active:scale-95 text-xs ${selectedCategory === category.name ? "bg-black text-white" : ""}`}
+                                        onClick={() => setSelectedCategory(category.name)}
+                                    >
+                                        {category.name}
+                                    </Button>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>

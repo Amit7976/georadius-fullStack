@@ -87,7 +87,7 @@ export default function BottomNavigation() {
                 ))}
 
                 {/* ✅ Scroll Hide/Show Navigation Bar */}
-                <TabsList className={`fixed bottom-0 w-full bg-white flex justify-around p-2 pt-0 rounded-none z-50 h-auto transition-transform duration-300 ${isVisible ? "translate-y-0" : "translate-y-full"}`}>
+                <TabsList className={`fixed bottom-0 w-full max-w-lg bg-white flex justify-around p-2 pt-0 rounded-none z-50 h-auto transition-transform duration-300 ${isVisible ? "translate-y-0" : "translate-y-full"}`}>
                     {tabs.map(({ key, name, icon: Icon, icon2: Icon2 }) => (
                         <TabsTrigger key={key} value={key} className={`flex flex-col items-center flex-1 active:bg-gray-100 p-2 ${activeTab === key ? "border-t-[3px] border-green-500" : "border-t-1"}`}>
                             {activeTab === key ? <Icon2 size={24} className="text-green-600" /> : <Icon size={24} className="text-gray-400" />}

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import useAuthVerification from "../hooks/useAuthVerification";
 import MainContent from "./MainContent";
 import { useGeolocation } from "../hooks/useGeolocation";
+import BottomNavigation from "@/src/components/BottomNavigation";
 
 function Page() {
     const { isVerified, loading } = useAuthVerification();
@@ -42,6 +43,7 @@ function Page() {
     return isVerified && data ? (
         <>
             <MainContent posts={data} />
+            <BottomNavigation />
         </>
     ) : null;
 }

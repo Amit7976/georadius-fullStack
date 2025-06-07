@@ -1,39 +1,41 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import MainContent from "./MainContent";
+import { auth } from "@/src/auth";
 
-function Page() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await fetch("/api/authentication");
-        const data = await response.json();
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        if (data.user) {
-          setIsAuthenticated(true);
-          router.replace("/");
-        }
-      } catch (error) {
-        console.error("Error checking authentication", error);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    checkAuth();
-  }, [router]);
+export default async function page() {
 
-  if (loading) {
-    return <div className="flex items-center justify-center h-screen"><div className="loader"></div></div>;
+
+  // GET DATA FORM SESSION
+  const session = await auth()
+  const user = session?.user
+  console.log("Home -> user", user)
+
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+  if (session?.user) {
+    redirect("/")
   }
 
-  return !isAuthenticated ? <MainContent /> : null;
-}
 
-export default Page;
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+  return (
+    <>
+      <>
+        <MainContent />
+      </>
+    </>
+  );
+}
