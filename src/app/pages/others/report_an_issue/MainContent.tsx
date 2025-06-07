@@ -129,7 +129,7 @@ const MainContent: React.FC<MainContentProps> = ({ id }) => {
                 <p className="text-gray-600 mb-6 text-lg font-medium">Select an issue below to help us fix the issue and improve our services</p>
                 <div className="space-y-3">
                     {issues.map((issue) => (
-                        <Button variant={"primary"} size={100} key={issue} className="w-full h-14 flex justify-between gap-10 text-lg" onClick={() => { setSelectedIssue(issue); setModalOpen(true); }}>
+                        <Button variant={"primary"} key={issue} className="w-full h-14 flex justify-between gap-10 text-lg" onClick={() => { setSelectedIssue(issue); setModalOpen(true); }}>
                             {issue}
                             <HiOutlineChevronRight className='text-2xl text-gray-500 font-light' />
                         </Button>
@@ -210,7 +210,7 @@ const MainContent: React.FC<MainContentProps> = ({ id }) => {
                                     <Button
                                         type="submit"
                                         variant={'primary'}
-                                        size={20}
+
                                         className='w-full h-14 border-2 border-gray-500 active:scale-95 text-gray-500 text-lg font-semibold py-3 rounded-lg'
                                     >
                                         Save

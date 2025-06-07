@@ -190,7 +190,7 @@ const MainContent = () => {
                             <Button
                                 type="button"
                                 variant={'primary'}
-                                size={20}
+
                                 onClick={() => setLanguageModal(false)}
                                 className='w-full h-14 border-2 border-gray-500 active:scale-95 text-gray-500 text-lg font-semibold py-3 rounded-lg'
                             >
@@ -222,7 +222,7 @@ const MainContent = () => {
                             <Button
                                 type="button"
                                 variant={'primary'}
-                                size={20}
+
                                 onClick={() => setNotificationModal(false)}
                                 className='w-full h-14 border-2 border-gray-500 active:scale-95 text-gray-500 text-lg font-semibold py-3 rounded-lg'
                             >
@@ -238,13 +238,13 @@ const MainContent = () => {
                             <DialogTitle className="text-lg font-bold mb-5">Display Preferences</DialogTitle>
                         </DialogHeader>
                         <div className="flex flex-col gap-2">
-                            <Button className='w-full h-14 border-2 border-gray-500 focus-visible:text-white text-lg font-semibold py-3 rounded-lg' size={100} variant={displayMode === "system" ? "default" : "outline"} onClick={() => setDisplayMode("system")}>
+                            <Button className='w-full h-14 border-2 border-gray-500 focus-visible:text-white text-lg font-semibold py-3 rounded-lg' variant={displayMode === "system" ? "default" : "outline"} onClick={() => setDisplayMode("system")}>
                                 System Default
                             </Button>
-                            <Button className='w-full h-14 border-2 border-gray-500 focus-visible:text-white text-lg font-semibold py-3 rounded-lg' size={100} variant={displayMode === "light" ? "default" : "outline"} onClick={() => setDisplayMode("light")}>
+                            <Button className='w-full h-14 border-2 border-gray-500 focus-visible:text-white text-lg font-semibold py-3 rounded-lg' variant={displayMode === "light" ? "default" : "outline"} onClick={() => setDisplayMode("light")}>
                                 Light Mode
                             </Button>
-                            <Button className='w-full h-14 border-2 border-gray-500 focus-visible:text-white text-lg font-semibold py-3 rounded-lg' size={100} variant={displayMode === "dark" ? "default" : "outline"} onClick={() => setDisplayMode("dark")}>
+                            <Button className='w-full h-14 border-2 border-gray-500 focus-visible:text-white text-lg font-semibold py-3 rounded-lg' variant={displayMode === "dark" ? "default" : "outline"} onClick={() => setDisplayMode("dark")}>
                                 Dark Mode
                             </Button>
                         </div>
@@ -252,7 +252,7 @@ const MainContent = () => {
                             <Button
                                 type="button"
                                 variant={'primary'}
-                                size={20}
+
                                 onClick={() => setDisplayModal(false)}
                                 className='w-full h-14 border-2 bg-green-500 active:scale-95 text-white text-lg font-bold py-3 rounded-lg'
                             >
@@ -281,7 +281,7 @@ const MainContent = () => {
                             <Button
                                 type="button"
                                 variant={'primary'}
-                                size={20}
+
                                 onClick={() => setRadiusModal(false)}
                                 className='w-full h-14 border-2 border-gray-500 active:scale-95 text-gray-500 text-lg font-semibold py-3 rounded-lg'
                             >

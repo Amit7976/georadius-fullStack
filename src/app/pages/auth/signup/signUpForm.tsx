@@ -6,6 +6,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { credentialsSignUp } from "../actions/register";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -133,12 +134,12 @@ const SignUpForm = () => {
                 </div>
 
                 <div className="flex flex-col space-y-6 text-center my-12 w-full px-5">
-                    <button
+                    <Button
                         type="submit"
                         className="bg-green-600 active:bg-green-500 active:scale-95 duration-300 text-white font-bold py-2 px-4 rounded-md my-5 w-full h-16"
                     >
                         Sign Up
-                    </button>
+                    </Button>
                     <p className="text-base text-gray-600 font-medium">
                         Already have an account?{" "}
                         <Link href="./signin" className="text-green-600 font-semibold">

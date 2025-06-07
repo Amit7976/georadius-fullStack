@@ -253,7 +253,7 @@ export default function MainContent() {
                         </div>
                         <Button
                             className={"h-14 border-2 px-2 flex-1"}
-                            size={100}
+
                             type="button"
                             variant="outline"
                             onClick={handleGetLocation}
@@ -275,7 +275,7 @@ export default function MainContent() {
                 <div className="w-full p-6">
                     <Button
                         type="submit"
-                        size={100}
+
                         variant={"primary"}
                         disabled={isSubmitting}
                         className="w-full bg-green-600 active:bg-green-400 active:scale-95 duration-300 h-16 text-white text-lg font-bold rounded-full"

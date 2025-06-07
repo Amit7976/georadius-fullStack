@@ -5,14 +5,14 @@ import { QrCode } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 
-const QrButton = ({ postId }: { postId: number }) => {
+const QrButton = ({ postId }: { postId: string }) => {
     const [open, setOpen] = useState(false);
     const shareUrl = `${window.location.origin}/news/${postId}`;
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button size={100} variant="ghost" className="flex gap-3 w-full p-3 text-lg cursor-pointer justify-start rounded-md text-gray-700 hover:bg-gray-100">
+                <Button variant="ghost" className="flex gap-3 w-full p-3 text-lg cursor-pointer justify-start rounded-md text-gray-700 hover:bg-gray-100">
                     <QrCode className="size-5" /> Make QR
                 </Button>
             </DialogTrigger>

@@ -138,7 +138,6 @@ export default function MainContent({
                 {userData.currentUserProfile && (
                     <Button
                         variant="primary"
-                        size={100}
                         onClick={() => router.push("/pages/others/updateprofile")}
                         className="bg-gray-200 w-full flex-1 h-10 text-gray-600 font-semibold text-sm active:scale-95"
                     >
@@ -148,7 +147,6 @@ export default function MainContent({
 
                 <Button
                     variant="primary"
-                    size={100}
                     onClick={handleShare}
                     className="bg-gray-200 w-full flex-1 h-10 text-gray-600 font-semibold text-sm active:scale-95"
                 >

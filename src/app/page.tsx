@@ -1,9 +1,11 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { auth } from "../auth";
+import { auth } from "@/src/auth";
 import MainContent from "./MainContent";
+
+
 export default async function Home() {
-  const cookieStore = await cookies(); // await is required here
+  const cookieStore = await cookies();
   const onboarding = cookieStore.get("onboarding")?.value;
   const NPS = cookieStore.get("NPS")?.value;
   const LPS = cookieStore.get("LPS")?.value;
@@ -15,9 +17,13 @@ export default async function Home() {
   const session = await auth();
   if (!session?.user) redirect("/pages/auth/signin");
 
-  if (session.user.profileExists === false) {
+  if (session.user.username === false) {
     redirect("/pages/onboarding/createprofile");
   }
 
-  return <MainContent />;
+  return (
+    <>
+      <MainContent />
+    </>
+  );
 }

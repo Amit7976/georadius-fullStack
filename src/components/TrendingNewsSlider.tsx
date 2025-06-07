@@ -7,7 +7,6 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { Autoplay } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import useAuthVerification from '../app/hooks/useAuthVerification';
 import { useGeolocation } from '../app/hooks/useGeolocation';
 import { formatTimeAgo } from '../helpers/formatTimeAgo';
 import { getDistanceFromCurrentLocation } from '../helpers/getDistanceFromCurrentLocation';
@@ -18,7 +17,6 @@ type TrendingNewsSliderProps = {
 
 const TrendingNewsSlider: React.FC<TrendingNewsSliderProps> = ({ range }) => {
 
-    const { isVerified, loading } = useAuthVerification();
     type NewsPost = {
         _id: string;
         title: string;
@@ -33,11 +31,12 @@ const TrendingNewsSlider: React.FC<TrendingNewsSliderProps> = ({ range }) => {
     const [loadingPosts, setLoadingPosts] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [distances, setDistances] = useState<Record<string, string>>({});
-    const location = useGeolocation();
+    let location = useGeolocation();
 
     useEffect(() => {
-        if (!isVerified) return;
-        if (!location) return;
+        if (!location) {
+            location = { lat: 26.92, lng: 75.78 } //Default Jaipur Latitude & Longitude
+        };
 
 
         const fetchNearbyPosts = async (latitude: number, longitude: number) => {
@@ -74,9 +73,9 @@ const TrendingNewsSlider: React.FC<TrendingNewsSliderProps> = ({ range }) => {
 
 
         fetchNearbyPosts(location.lat, location.lng);
-    }, [location, isVerified, range]);
+    }, [location, range]);
 
-    if (loading || loadingPosts) return (
+    if (loadingPosts) return (
         <>
             <div className="py-2 pr-0">
                 <Swiper spaceBetween={0} slidesPerView={1} parallax={true} modules={[Autoplay]}>

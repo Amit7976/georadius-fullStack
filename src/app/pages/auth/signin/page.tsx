@@ -13,12 +13,9 @@ export default async function page() {
   // GET DATA FORM SESSION
   const session = await auth()
   const user = session?.user
-  console.log("Home -> user", user)
 
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 
 
   if (session?.user) {

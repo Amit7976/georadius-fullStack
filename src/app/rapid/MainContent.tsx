@@ -14,6 +14,7 @@ import { HiDotsVertical } from "react-icons/hi";
 import { TbReport } from "react-icons/tb";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { useGeolocation } from "../hooks/useGeolocation";
 
 
 interface Post {
@@ -42,15 +43,22 @@ interface Post {
 
 
 
-export default function MainContent({ posts }: { posts: Post[] }) {
+export default function MainContent() {
 
     const [newsData, setNewsData] = useState<Post[]>([]);
+    const [posts, setPosts] = useState([]);
+    const [loadingPosts, setLoadingPosts] = useState(true);
+    const [height, setHeight] = useState(94);
+    const [error, setError] = useState<string | null>(null);
+    let location = useGeolocation();
+
+
 
     useEffect(() => {
         const hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");
         const filteredNews = posts.filter((news: Post) => !hiddenPosts.includes(news._id));
         setNewsData(filteredNews);
-    }, [posts]); // ✅ Run only when `userPosts.posts` changes
+    }, [posts]);
 
     const handleHide = (postId: number) => {
         setNewsData(prevNews => prevNews.filter(news => news._id !== postId.toString()));
@@ -63,6 +71,35 @@ export default function MainContent({ posts }: { posts: Post[] }) {
     };
 
 
+    useEffect(() => {
+        if (!location) {
+            location = { lat: 26.92, lng: 75.78 } //Default Jaipur Latitude & Longitude
+        };
+
+        const fetchNearbyPosts = async (latitude: number, longitude: number) => {
+            try {
+                const res = await fetch(`/api/rapid/nearby?lat=${latitude}&lng=${longitude}`);
+                const json = await res.json();
+                setPosts(json);
+            } catch (err) {
+                console.error("API fetch error:", err);
+                setError("Failed to fetch nearby posts.");
+            } finally {
+                setLoadingPosts(false);
+            }
+        };
+
+
+
+        fetchNearbyPosts(location.lat, location.lng);
+
+
+    }, [location]);
+   
+
+    if (loadingPosts) return <div className="flex items-center justify-center h-[94vh]"><div className="loader"></div></div>;
+    if (error) return <p className="text-red-500">{error}</p>;
+
     return (
         <>
             <div className="bg-neutral-800">
@@ -70,7 +107,7 @@ export default function MainContent({ posts }: { posts: Post[] }) {
                     direction="vertical"
                     slidesPerView={1}
                     pagination={{ clickable: true }}
-                    className="h-[92vh] w-full"
+                    className="h-[94vh] w-full"
                 >
                     {newsData.map((post) => (
                         (post.images.length) > 0 && (
@@ -79,7 +116,7 @@ export default function MainContent({ posts }: { posts: Post[] }) {
                                     direction="horizontal"
                                     slidesPerView={1}
                                     pagination={{ clickable: true }}
-                                    className="h-[92vh] w-full z-10"
+                                    className="w-full h-[94vh] z-10"
                                 >
                                     {post.images.map((image: string) => (
                                         <SwiperSlide key={image} className="relative flex items-center justify-center w-full">
@@ -118,7 +155,7 @@ export default function MainContent({ posts }: { posts: Post[] }) {
                                                     ) : (
                                                         <>
                                                             <Link href={"/" + post.creatorName} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100 items-center font-semibold">
-                                                                    <Image src={post.creatorImage} alt="Profile" width={40} height={40} priority className="rounded-full size-5" /> View Profile
+                                                                <Image src={post.creatorImage} alt="Profile" width={40} height={40} priority className="rounded-full size-5" /> View Profile
                                                             </Link>
                                                             <Link href={`/pages/others/report_an_issue?id=${post._id}`} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100">
                                                                 <TbReport className="size-6" /> Report
@@ -132,7 +169,7 @@ export default function MainContent({ posts }: { posts: Post[] }) {
                                     </Drawer>
                                 </div>
 
-                                <div className="absolute bottom-0 left-0 w-full bg-gradient-to-b to-[#00000080] h-full p-5 pb-8 text-white flex flex-col justify-end z-50 pointer-events-none">
+                                <div className="absolute bottom-0 left-0 w-full bg-gradient-to-b to-[#00000090] h-full p-5 pb-16 text-white flex flex-col justify-end z-50 pointer-events-none">
 
                                     <h2 className="text-4xl font-bold pr-10">{post.title}</h2>
 

@@ -15,7 +15,6 @@ const ProviderLogout = () => {
 
     return (
       <Button
-        size={100}
         variant={"primary"}
         onClick={handleLogout}
         className="relative flex flex-row items-center h-12 w-full justify-start rounded-xl focus:outline-none bg-green-500 hover:bg-green-700 text-white duration-300"

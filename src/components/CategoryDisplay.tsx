@@ -21,7 +21,7 @@ const CategoryDisplay = ({ categories }: { categories: string[] }) => {
                             <p className="text-sm text-white font-bold rounded-full border-2 w-fit px-4 py-1.5 text-shadow-black">
                                 {categories[0]}
                             </p>
-                            <Button variant="primary" size={100} className={""} onClick={() => setShowAll(true)}>
+                            <Button variant="primary" className={""} onClick={() => setShowAll(true)}>
                                 <ChevronRight className="text-gray-400 size-6" />
                             </Button>
                         </>
@@ -47,7 +47,7 @@ const CategoryDisplay = ({ categories }: { categories: string[] }) => {
                                 {category}
                             </p>
                         ))}
-                        <Button variant="primary" size={100} className={""} onClick={() => setShowAll(false)}>
+                        <Button variant="primary" className={""} onClick={() => setShowAll(false)}>
                             <ChevronLeft className="text-gray-400 size-6" />
                         </Button>
                     </motion.div>

@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import MainContent from "./MainContent";
-import useAuthVerification from "../hooks/useAuthVerification";
-import BottomNavigation from "@/src/components/BottomNavigation";
 
 type Props = {
     profile: string;
@@ -43,8 +41,6 @@ interface UserData {
 }
 
 function ProfileClientContent({ profile }: Props) {
-    const { isVerified, loading } = useAuthVerification();
-
     const [userData, setUserData] = useState<UserData | null>(null);
     const [newsData, setNewsData] = useState<News[] | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -83,7 +79,7 @@ function ProfileClientContent({ profile }: Props) {
                 const formattedPosts: News[] = postsArray.map((item): News => ({
                     _id: item._id.toString(),
                     title: item.title,
-                    description: item.content || "",
+                    description: item.description || "",
                     latitude: item.latitude ?? undefined,
                     longitude: item.longitude ?? undefined,
                     creatorName: item.creatorName || "Unknown",
@@ -113,7 +109,7 @@ function ProfileClientContent({ profile }: Props) {
             });
     }, [profile]);
 
-    if (loading || !isVerified || !userData || !newsData) {
+    if (!userData || !newsData) {
         return (
             <div className="flex items-center justify-center h-screen">
                 <div className="loader"></div>
@@ -132,7 +128,6 @@ function ProfileClientContent({ profile }: Props) {
                 userData={userData}
                 userPosts={{ posts: newsData }}
             />
-            <BottomNavigation />
         </>
     );
 }

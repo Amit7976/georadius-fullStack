@@ -9,7 +9,7 @@ import {
     DialogTitle,
     DialogFooter,
 } from "@/components/ui/dialog";
-import { useState, useEffect, useCallback, useMemo} from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { getAddress, getCoordinates } from "@/src/helpers/AddressFunc";
 import debounce from "lodash.debounce";
@@ -204,7 +204,7 @@ export default function LocationInput({
 
                         <DialogFooter className="mt-3">
                             <Button
-                                size={100}
+
                                 variant="primary"
                                 onClick={() => {
                                     if (!inputValue.trim()) {
@@ -240,7 +240,7 @@ export default function LocationInput({
             {/* ✅ Reset to current location */}
             {customLocation && (
                 <Button
-                    size={100}
+
                     variant="primary"
                     onClick={handleGetLocation}
                     className="w-full h-12 bg-gray-600 text-white font-bold mt-2"

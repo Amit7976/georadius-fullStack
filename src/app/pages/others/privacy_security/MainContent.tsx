@@ -99,7 +99,7 @@ function MainContent() {
                             <Button
                                 type="button"
                                 variant={'primary'}
-                                size={20}
+
                                 disabled={deactivation}
                                 className='w-full h-14 border-2 border-gray-500 active:scale-95 text-gray-500 text-lg font-semibold py-3 rounded-lg'
                             >
@@ -121,7 +121,6 @@ function MainContent() {
                             <Button
                                 type="submit"
                                 variant={'primary'}
-                                size={20}
                                 disabled={removeAccount}
                                 className="w-full bg-red-500 active:bg-red-400 active:scale-95 duration-300 h-16 text-white text-lg font-bold rounded-lg"
                             >

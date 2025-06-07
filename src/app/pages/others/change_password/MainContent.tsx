@@ -161,7 +161,7 @@ export default function ChangePassword() {
                     <Button
                         type="button"
                         variant={'primary'}
-                        size={20}
+
                         onClick={generateSecurePassword}
                         className="w-1/2 border-2 border-green-600 text-green-600 text-base font-semibold py-3 rounded-lg"
                     >
@@ -188,7 +188,7 @@ export default function ChangePassword() {
                 <Button
                     type="submit"
                     variant={'primary'}
-                    size={20}
+
                     className="w-full bg-green-600 active:bg-green-400 active:scale-95 duration-300 h-16 text-white text-lg font-bold rounded-full"
                 >
                     Update Password

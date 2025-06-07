@@ -30,7 +30,6 @@ interface NewsPostType {
     images: string[];
     commentsCount: number;
     currentUserProfile: boolean;
-    // Add these
     upvoteCount: number;
     downvoteCount: number;
     isUserUpvote: boolean;
@@ -49,7 +48,7 @@ export default function MainContent() {
     const lastScrollY = useRef(0);
     const categoriesRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
-    const location = useGeolocation();
+    let location = useGeolocation();
 
 
 
@@ -63,8 +62,11 @@ export default function MainContent() {
         }
     };
 
+
     useEffect(() => {
-        if (!location) return;
+        if (!location) {
+            location = { lat: 26.92, lng: 75.78 } //Default Jaipur Latitude & Longitude
+        };
         const range = selectedFilter === "Nearby"
             ? 50
             : selectedFilter === "District"
@@ -83,7 +85,7 @@ export default function MainContent() {
 
                 const hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");
                 const filteredNews: NewsPostType[] = json.filter((news: NewsPostType) => !hiddenPosts.includes(news._id));
-                setNewsData(filteredNews);
+                setNewsData(json);
 
             } catch (err) {
                 console.error("API fetch error:", err);
@@ -224,7 +226,6 @@ export default function MainContent() {
             <div ref={categoriesRef} className="w-full py-2 bg-white">
                 <div className="flex gap-2 px-2 overflow-x-auto whitespace-nowrap">
                     <Button
-                        size={100}
                         variant="outline"
                         className={`rounded-lg px-6 py-2 font-bold active:scale-95 text-xs ${selectedCategory === "All" ? "bg-black text-white" : ""}`}
                         onClick={() => setSelectedCategory("All")}
@@ -234,7 +235,6 @@ export default function MainContent() {
                     {interestsList.map((category, index) => (
                         <Button
                             key={index}
-                            size={100}
                             variant="outline"
                             className={`rounded-lg px-6 py-2 font-bold active:scale-95 text-xs ${selectedCategory === category.name ? "bg-black text-white" : ""}`}
                             onClick={() => setSelectedCategory(category.name)}
@@ -272,7 +272,6 @@ export default function MainContent() {
                         <div className="w-full pb-1.5 bg-white">
                             <div className="flex gap-2 px-2 overflow-x-auto whitespace-nowrap">
                                 <Button
-                                    size={100}
                                     variant="outline"
                                     className={`rounded-lg px-6 py-2 font-bold active:scale-95 text-xs ${selectedCategory === "All" ? "bg-black text-white" : ""}`}
                                     onClick={() => setSelectedCategory("All")}
@@ -282,7 +281,6 @@ export default function MainContent() {
                                 {interestsList.map((category, index) => (
                                     <Button
                                         key={index}
-                                        size={100}
                                         variant="outline"
                                         className={`rounded-lg px-6 py-2 font-bold active:scale-95 text-xs ${selectedCategory === category.name ? "bg-black text-white" : ""}`}
                                         onClick={() => setSelectedCategory(category.name)}
@@ -316,6 +314,7 @@ export default function MainContent() {
                 )}
 
             </div>
+
         </div>
     );
 }

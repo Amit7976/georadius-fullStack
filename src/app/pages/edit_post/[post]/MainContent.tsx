@@ -1,3 +1,4 @@
+"use client"
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -45,24 +46,58 @@ interface MainContentProps {
     };
 }
 
-export default function MainContent({ post }: MainContentProps) {
-    const [selectedCategories, setSelectedCategories] = useState<string[]>(post.categories || []);
+export default function MainContent() {
     const [processing, setProcessing] = useState(false);
     const router = useRouter();
+    const [post, setPost] = useState<MainContentProps["post"]>({
+        _id: "",
+        title: "",
+        description: "",
+        location: "",
+        latitude: 0,
+        longitude: 0,
+        categories: [],
+        images: [],
+    });
+    const [selectedCategories, setSelectedCategories] = useState<string[]>(post.categories || []);
+ 
 
     const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            title: post.title,
-            description: post.description,
-            location: post.location,
-            longitude: post.longitude,
-            latitude: post.latitude,
-            categories: post.categories,
-            images: post.images,
+            title: "",
+            description: "",
+            location: "",
+            longitude: 0,
+            latitude: 0,
+            categories: [],
+            images: [],
             deletedImages: [],
         },
     });
+    
+    useEffect(() => {
+        const storedData = sessionStorage.getItem("editNewsData");
+        if (storedData) {
+            const parsedData = JSON.parse(storedData);
+            setPost(parsedData);
+            reset({
+                title: parsedData.title,
+                description: parsedData.description,
+                location: parsedData.location,
+                latitude: parsedData.latitude,
+                longitude: parsedData.longitude,
+                categories: parsedData.categories,
+                images: parsedData.images || [],
+                deletedImages: [],
+            });
+            setSelectedCategories(parsedData.categories || []);
+        } else {
+            console.warn("No edit data in sessionStorage. Consider fetching...");
+        }
+    }, [reset]);
+
+
 
     useEffect(() => {
         console.log("Current Errors:", errors);
@@ -138,10 +173,9 @@ export default function MainContent({ post }: MainContentProps) {
             )}
 
             <Button
-                size={100}
                 variant={"</div>primary"}
                 disabled={processing}
-                type="submit" // Keep this as is because it's the default submit behavior
+                type="submit"
                 onClick={handleSubmit(onSubmit)} // Remove onClick for simplicity
                 className="w-full bg-green-600 active:bg-green-400 active:scale-95 h-16 text-white text-lg font-bold rounded-lg"
             >

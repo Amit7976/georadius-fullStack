@@ -77,7 +77,7 @@ function MainContent() {
 
                         <div className="pt-3 flex gap-5 flex-col items-center">
                             <Button
-                                size={100}
+
                                 type="submit"
                                 variant={'default'}
                                 className="h-12 px-10 bg-green-600 text-base rounded-full duration-500 border-white shadow border-2"

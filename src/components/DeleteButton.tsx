@@ -35,7 +35,7 @@ const DeleteButton = ({ postId, onHide }: { postId: number; onHide: (id: number)
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button size={100} variant="ghost" className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-red-500 hover:bg-gray-100">
+                <Button variant="ghost" className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-red-500 hover:bg-gray-100">
                     <Trash /> Delete
                 </Button>
             </DialogTrigger>
@@ -45,8 +45,8 @@ const DeleteButton = ({ postId, onHide }: { postId: number; onHide: (id: number)
                 </DialogHeader>
                 <p className="text-sm text-gray-500 text-center">This action cannot be undone.</p>
                 <div className="flex justify-center gap-4 mt-4">
-                    <Button size={100} className={"w-full py-2 flex-1 cursor-pointer"} variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-                    <Button size={100} className={"w-full py-2 flex-1 cursor-pointer"} variant="destructive" onClick={handleDelete} disabled={loading}>
+                    <Button className={"w-full py-2 flex-1 cursor-pointer"} variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+                    <Button className={"w-full py-2 flex-1 cursor-pointer"} variant="destructive" onClick={handleDelete} disabled={loading}>
                         {loading ? "Deleting..." : "Confirm"}
                     </Button>
                 </div>

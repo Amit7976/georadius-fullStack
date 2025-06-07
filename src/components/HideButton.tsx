@@ -22,7 +22,7 @@ const HideButton = ({ postId, onHide }: { postId: number; onHide: (id: number) =
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button size={100} variant="ghost" className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100">
+                <Button variant="ghost" className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100">
                     <EyeOff /> Hide
                 </Button>
             </DialogTrigger>
@@ -33,8 +33,8 @@ const HideButton = ({ postId, onHide }: { postId: number; onHide: (id: number) =
                 </DialogHeader>
                 <p className="text-sm text-gray-500 text-center">You won’t see this News anymore.</p>
                 <div className="flex justify-center gap-4 mt-4">
-                    <Button className={"w-full py-2 flex-1 cursor-pointer"} size={100} variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-                    <Button className={"w-full py-2 flex-1 cursor-pointer"} size={100} variant="destructive" onClick={handleHidePost}>Confirm</Button>
+                    <Button className={"w-full py-2 flex-1 cursor-pointer"} variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+                    <Button className={"w-full py-2 flex-1 cursor-pointer"} variant="destructive" onClick={handleHidePost}>Confirm</Button>
                 </div>
             </DialogContent>
         </Dialog>

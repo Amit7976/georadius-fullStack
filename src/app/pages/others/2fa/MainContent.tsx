@@ -71,7 +71,7 @@ export default function MainContent() {
                 <div className="w-full p-6">
                     <Button
                         type="submit"
-                        size={100}
+
                         variant={"primary"}
                         className="w-full bg-green-600 active:bg-green-400 active:scale-95 duration-300 h-16 text-white text-lg font-bold rounded-full"
                     >

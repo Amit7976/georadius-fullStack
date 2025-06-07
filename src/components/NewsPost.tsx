@@ -17,6 +17,8 @@ import VoteButtons from "./VoteButtons";
 import DeleteButton from "./DeleteButton";
 import Link from "next/link";
 import { TbReport } from "react-icons/tb";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 interface News {
     _id: string;
@@ -64,6 +66,13 @@ const NewsPost = ({ news, onHide, fullDescription }: { news:News; fullDescriptio
 
 
 
+    const router = useRouter();
+
+    const handleEditClick = () => {
+        sessionStorage.setItem("editNewsData", JSON.stringify(news));
+        router.push(`/pages/edit_post/${news._id}`);
+      };
+    
     return (
         <div key={String(news._id)}>
             <Card className="w-full my-0 border-0 shadow-none gap-4 select-none rounded-none">
@@ -96,7 +105,7 @@ const NewsPost = ({ news, onHide, fullDescription }: { news:News; fullDescriptio
                         <DrawerTrigger>
                             <MoreHorizontal className="text-gray-600 cursor-pointer" />
                         </DrawerTrigger>
-                        <DrawerContent className={""} aria-describedby={undefined}>
+                        <DrawerContent className={"max-w-lg mx-auto"} aria-describedby={undefined}>
                             <div className="p-4">
                                 <DrawerTitle className="text-lg font-semibold text-center mb-4">Options</DrawerTitle>
                                 <div className="space-y-3 mb-10">
@@ -109,12 +118,17 @@ const NewsPost = ({ news, onHide, fullDescription }: { news:News; fullDescriptio
                                         ))}
                                     </div>
                                     <HideButton postId={Number(news._id)} onHide={onHide} />
-                                    <QrButton postId={Number(news._id)} />
+                                    <QrButton postId={news._id} />
                                     {news.currentUserProfile ? (
                                         <>
-                                            <Link href={"/pages/edit_post/" + news._id} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100 items-center font-semibold">
+                                            <Button
+                                                variant="ghost"
+                                                onClick={handleEditClick}
+                                                className="flex gap-3 w-full p-3 h-12 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100 items-center font-semibold"
+                                            >
                                                 <Pencil /> Edit
-                                            </Link>
+                                            </Button>
+
                                             <DeleteButton postId={Number(news._id)} onHide={onHide} />
                                         </>
                                     ) : (

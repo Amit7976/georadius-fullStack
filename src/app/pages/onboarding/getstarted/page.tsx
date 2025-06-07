@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import MainContent from "./MainContent";
-export default async function Home() {
+export default async function page() {
   const cookieStore = await cookies();
   const onboarding = cookieStore.get("onboarding")?.value;
   const NPS = cookieStore.get("NPS")?.value;

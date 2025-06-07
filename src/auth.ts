@@ -14,7 +14,7 @@ declare module "next-auth" {
       email: string;
       name?: string | null;
       image?: string | null;
-      profileExists: boolean;
+      username: string | boolean;
     };
   }
 }
@@ -93,6 +93,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/pages/auth/signin",
   },
+
   callbacks: {
     async session({ session, token }) {
       await LoadDb();
@@ -101,12 +102,16 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
       if (user) {
         session.user.id = user._id.toString();
+        
+        const userProfile = await UserProfile.findOne(
+          { userId: user._id },
+          { username: 1 } // Only fetch username
+        );
 
-        // ✅ Check if user profile exists
-        const userProfile = await UserProfile.findOne({ userId: user._id });
-        session.user.profileExists = !!userProfile;
+        session.user.username = userProfile ? userProfile.username : false;
+        
       } else {
-        session.user.profileExists = false;
+        session.user.username = false;
       }
   
       return session;

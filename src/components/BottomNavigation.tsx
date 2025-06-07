@@ -1,103 +1,76 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useRouter, usePathname } from "next/navigation";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { IoHomeOutline, IoHome, IoFlashOutline, IoFlash } from "react-icons/io5";
 import { MdAddBox, MdOutlineAddBox } from "react-icons/md";
-import { CgSearchLoading, CgSearch } from "react-icons/cg";
+import { CgSearch, CgSearchLoading } from "react-icons/cg";
 import { FaUser } from "react-icons/fa";
-import HomePage from "@/src/app/page";
-import RapidPage from "@/src/app/rapid/page";
-import PostPage from "@/src/app/post/page";
-import SearchPage from "@/src/app/search/page";
-import ProfilePage from "@/src/app/[profile]/page";
+import { FaRegUser } from "react-icons/fa";
 
 
-
-export default function BottomNavigation() {
-    const router = useRouter();
+export default function BottomNavigation({ username }: { username: string | boolean }) {
     const pathname = usePathname();
-
-    // ✅ Extract tab from URL or default to "home"
-    const currentTab = pathname.split("/")[1] || "home";
-    const [activeTab, setActiveTab] = useState(currentTab);
     const [isVisible, setIsVisible] = useState(true);
-    const [userName, setUserName] = useState<string | null>(null); // State to hold the fetched username
     const lastScrollY = useRef(0);
 
+    // Determine current tab from pathname
+    const currentTab = (() => {
+        const path = pathname.split("/")[1];
+        if (path === username) return "profile";
+        return path || "home";
+    })();
+
     const tabs = [
-        { key: "home", name: "Home", icon: IoHomeOutline, icon2: IoHome, component: <HomePage /> },
-        { key: "rapid", name: "Rapid", icon: IoFlashOutline, icon2: IoFlash, component: <RapidPage /> },
-        { key: "post", name: "Post", icon: MdOutlineAddBox, icon2: MdAddBox, component: <PostPage /> },
-        { key: "search", name: "Search", icon: CgSearch, icon2: CgSearchLoading, component: <SearchPage /> },
-        { key: userName, name: "Profile", icon: FaUser, icon2: FaUser, component: <ProfilePage /> },
+        { key: "home", name: "Home", icon: IoHomeOutline, icon2: IoHome, href: "/home" },
+        { key: "rapid", name: "Rapid", icon: IoFlashOutline, icon2: IoFlash, href: "/rapid" },
+        { key: "post", name: "Post", icon: MdOutlineAddBox, icon2: MdAddBox, href: "/post" },
+        { key: "search", name: "Search", icon: CgSearch, icon2: CgSearchLoading, href: "/search" },
+        { key: "profile", name: "Profile", icon: FaRegUser, icon2: FaUser, href: `/${username}` },
     ];
 
-
+    // Hide nav on scroll down, show on scroll up
     useEffect(() => {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
-
-            // Compare with last known scroll position
             setIsVisible(currentScrollY < lastScrollY.current || currentScrollY === 0);
-            lastScrollY.current = currentScrollY; // 👈 update the ref value
+            lastScrollY.current = currentScrollY;
         };
 
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-
-    // ✅ Fetch username from the server when the component mounts
-    useEffect(() => {
-        const fetchUserName = async () => {
-            try {
-                const response = await fetch("/api/userProfile/username"); // Adjust the endpoint as needed
-                if (response.status !== 204) {
-                    const data = await response.json();
-                    if (data.username) {
-                        setUserName(data.username);
-                    } else {
-                        console.error("Username not found.");
-                    }
-                }
-            } catch (error) {
-                console.error("Failed to fetch username:", error);
-            }
-        };
-
-        fetchUserName();
-    }, []);
-
-    // ✅ Update URL on tab change
-    const handleTabChange = (tab: string) => {
-        setActiveTab(tab);
-        router.replace(`/${tab}`, { scroll: false }); // Prevents page reload
-    };
-
     return (
-        <div className="flex flex-col h-screen">
-            {/* ✅ ShadCN Tabs for Navigation */}
-            <Tabs value={activeTab} onValueChange={handleTabChange} className="flex-grow">
-                {tabs.map(({ key, component }) => (
-                    <TabsContent key={key} value={key} className="h-full">
-                        {component}
-                    </TabsContent>
-                ))}
+        <nav
+            className={`fixed bottom-0 w-full max-w-lg bg-white flex justify-around p-2 h-[6vh] pt-0 rounded-none z-50 transition-transform duration-300 ${isVisible ? "translate-y-0" : "translate-y-full"
+                }`}
+        >
+            {tabs.map(({ key, name, icon: Icon, icon2: Icon2, href }) => {
+                const isActive = currentTab === key;
 
-                {/* ✅ Scroll Hide/Show Navigation Bar */}
-                <TabsList className={`fixed bottom-0 w-full max-w-lg bg-white flex justify-around p-2 pt-0 rounded-none z-50 h-auto transition-transform duration-300 ${isVisible ? "translate-y-0" : "translate-y-full"}`}>
-                    {tabs.map(({ key, name, icon: Icon, icon2: Icon2 }) => (
-                        <TabsTrigger key={key} value={key} className={`flex flex-col items-center flex-1 active:bg-gray-100 p-2 ${activeTab === key ? "border-t-[3px] border-green-500" : "border-t-1"}`}>
-                            {activeTab === key ? <Icon2 size={24} className="text-green-600" /> : <Icon size={24} className="text-gray-400" />}
-                            <span className={`text-xs font-bold mt-0.5 ${activeTab === key ? "text-green-600" : "text-gray-400"}`}>
+                return (
+                    <Link key={key} href={href} scroll={false} className="flex-1">
+                        <div
+                            className={`flex flex-col items-center p-2 lg:p-1 ${isActive ? "border-t-[3px] border-green-500" : "border-t-1"
+                                }`}
+                        >
+                            {isActive ? (
+                                <Icon2 className="text-green-600 text-[5vw] sm:text-xl" />
+                            ) : (
+                                <Icon className="text-gray-400 text-[5vw] sm:text-xl" />
+                            )}
+                            <span
+                                className={`text-[2.3vw] sm:text-xs font-bold mt-0.5 ${isActive ? "text-green-600" : "text-gray-400"
+                                    }`}
+                            >
                                 {name}
                             </span>
-                        </TabsTrigger>
-                    ))}
-                </TabsList>
-            </Tabs>
-        </div>
+                        </div>
+                    </Link>
+                );
+            })}
+        </nav>
     );
 }

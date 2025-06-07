@@ -3,6 +3,7 @@ import Image from "next/image";
 import { FcGoogle } from "react-icons/fc";
 import { handleSignIn } from "../actions/server";
 import LoginForm from "./LoginForm";
+import { Button } from "@/components/ui/button";
 
 function MainContent() {
   return (
@@ -17,13 +18,13 @@ function MainContent() {
         </div>
 
         <form action={handleSignIn} className="flex flex-col mt-5 text-center w-full px-10">
-          <button
+          <Button
             type="submit"
-            className="bg-white text-black active:scale-95 duration-300 flex items-center justify-center w-full h-14 rounded-xl border-2 border-black gap-2 font-semibold"
+            className="bg-white text-black active:scale-95 duration-300 flex items-center justify-center w-full h-14 rounded-xl border-2 border-black hover:bg-gray-100 gap-2 font-semibold"
           >
             <FcGoogle className="text-xl mb-0.5" />
             Sign Up with Google
-          </button>
+          </Button>
         </form>
 
         <LoginForm />

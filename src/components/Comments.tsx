@@ -242,7 +242,7 @@ const Comments = ({ news_id }: { news_id: string }) => {
                         <p className="text-gray-800 mt-1">{comment.comment}</p>
 
                         <div className="flex gap-3 mt-2 text-xs text-gray-600">
-                            <Button variant={"ghost"} size={100} className=""
+                            <Button variant={"ghost"} className=""
                                 onClick={() => {
                                     setReplyingTo({
                                         parentId: comment.parentCommentId || comment._id,
@@ -252,16 +252,16 @@ const Comments = ({ news_id }: { news_id: string }) => {
                             >
                                 Reply
                             </Button>
-                            <Button variant={"ghost"} size={100}
+                            <Button variant={"ghost"}
                                 onClick={() => handleLike(comment._id)}
                                 className={comment.likes ? "text-green-700 font-semibold" : ""}
                             >
                                 {comment.likes ? 'Liked' : 'Like'}
                             </Button>
                             {currentUser?.username === comment.username ? (
-                                <Button variant={"ghost"} size={100} className="" onClick={() => handleDelete(comment._id)}>Delete</Button>
+                                <Button variant={"ghost"} className="" onClick={() => handleDelete(comment._id)}>Delete</Button>
                             ) : (
-                                <Button variant={"ghost"} size={100}
+                                <Button variant={"ghost"}
                                     onClick={() => handleReport(comment._id)}
                                     className={comment.reports ? "text-red-700 font-semibold" : ""}
                                 >
@@ -288,7 +288,7 @@ const Comments = ({ news_id }: { news_id: string }) => {
                     {replyingTo && (
                         <div className="text-sm text-gray-500 mb-1">
                             Replying to @{replyingTo.replyingToUsername}
-                            <Button variant={"ghost"} size={100}
+                            <Button variant={"ghost"}
                                 onClick={() => setReplyingTo(null)}
                                 className="ml-2 text-red-500 text-xs"
                             >
@@ -304,7 +304,7 @@ const Comments = ({ news_id }: { news_id: string }) => {
                             rows={1}
                             onChange={e => setInput(e.target.value)}
                         />
-                        <Button variant={"ghost"} size={100} className="px-4 bg-green-500 text-xs text-white" onClick={handleSubmit}>
+                        <Button variant={"ghost"} className="px-4 bg-green-500 text-xs text-white" onClick={handleSubmit}>
                             {replyingTo ? 'Reply' : 'Comment'}
                         </Button>
                     </div>
@@ -328,8 +328,8 @@ const Comments = ({ news_id }: { news_id: string }) => {
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className={"flex items-center justify-center gap-4 mt-4 flex-row"}>
-                        <Button size={100} className="flex-1 w-full py-2" variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-                        <Button size={100} className="flex-1 w-full py-2" variant="destructive" onClick={confirmDelete}>Delete</Button>
+                        <Button className="flex-1 w-full py-2" variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+                        <Button className="flex-1 w-full py-2" variant="destructive" onClick={confirmDelete}>Delete</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

@@ -1,18 +1,27 @@
-"use client";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { auth } from "@/src/auth";
+import MainContent from "./MainContent";
 
-import React from 'react'
-import MainContent from './MainContent'
-import useAuthVerification from '../hooks/useAuthVerification';
-import BottomNavigation from '@/src/components/BottomNavigation';
 
-function Page() {
-    const { isVerified, loading } = useAuthVerification();
+export default async function page() {
 
-    if (loading) {
-        return (<div className="flex items-center justify-center h-screen"><div className="loader"></div></div>);
+    const cookieStore = await cookies();
+
+    const LPS = cookieStore.get("LPS")?.value;
+
+    if (!LPS) redirect("/pages/onboarding/permissions/location");
+
+    const session = await auth();
+    if (!session?.user) redirect("/pages/auth/signin");
+
+    if (session.user.username === false) {
+        redirect("/pages/onboarding/createprofile");
     }
 
-    return isVerified ? (<><MainContent /><BottomNavigation /></>) : null;
+    return (
+        <>
+            <MainContent />
+        </>
+    );
 }
-
-export default Page

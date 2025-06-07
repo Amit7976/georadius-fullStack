@@ -1,3 +1,4 @@
+"use client"
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import interestsList from "@/public/json/interestList.json";
@@ -41,7 +42,7 @@ export default function CategorySelector({
             <div className="grid grid-cols-3 gap-2">
                 {interestsList.map((category) => (
                     <Button
-                        size={100}
+
                         className="text-xs py-3"
                         key={category.name}
                         variant={selectedCategories.includes(category.name) ? "default" : "outline"}
