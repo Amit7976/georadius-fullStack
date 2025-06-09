@@ -1,15 +1,15 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import HeadingHeader from "@/src/components/HeadingHeader";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { FaArrowLeftLong } from "react-icons/fa6";
 
 const twoFASchema = z.object({
     password: z.string().min(6, "Current password is required"),
@@ -28,21 +28,15 @@ export default function MainContent() {
     });
 
     const [is2FAEnabled, setIs2FAEnabled] = useState(false);
-    const defaultEmail = "user@example.com"; // Replace with user's actual email later
+    const defaultEmail = "";
 
     const handleToggle2FA = () => setIs2FAEnabled((prev) => !prev);
     const router = useRouter();
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-center relative my-5">
-                <FaArrowLeftLong
-                    onClick={() => router.back()}
-                    className="text-lg absolute left-3 w-10 h-10 p-2.5 cursor-pointer"
-                />
+            <HeadingHeader heading="Two-Factor Authentication" />
 
-                <h1 className="text-xl font-bold">Two-Factor Authentication</h1>
-            </div>
             <form onSubmit={handleSubmit((data) => console.log(data))} className="space-y-6 p-6 my-10">
                 {/* Current Password */}
                 <div className="space-y-2">
@@ -71,12 +65,16 @@ export default function MainContent() {
                 <div className="w-full p-6">
                     <Button
                         type="submit"
-
+                        onClick={() => alert("Two-Factor Authentication (2FA) is currently not available.")}
                         variant={"primary"}
-                        className="w-full bg-green-600 active:bg-green-400 active:scale-95 duration-300 h-16 text-white text-lg font-bold rounded-full"
+                        disabled
+                        className="w-full bg-green-600 active:bg-green-400  duration-300 h-16 text-white text-lg font-bold rounded-full"
                     >
                         {is2FAEnabled ? "Enable 2FA" : "Disable 2FA"}
                     </Button>
+                    <p className="text-sm text-center mt-5 text-red-500 font-medium">
+                        <span className="text-gray-500">*</span>Two-Factor Authentication (2FA) is currently not available.
+                    </p>
                 </div>
             </form>
         </div>

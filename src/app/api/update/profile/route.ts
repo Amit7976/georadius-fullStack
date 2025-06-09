@@ -110,9 +110,8 @@ export async function PUT(req: Request) {
     );
 
 
-    const username = formData.get("username")?.toString() || "";
+   
     const fullName = formData.get("fullName")?.toString() || "";
-    const phoneNumber = formData.get("phoneNumber")?.toString() || "";
     const dob = formData.get("dob")
       ? new Date(formData.get("dob")!.toString())
       : null;
@@ -219,9 +218,7 @@ export async function PUT(req: Request) {
     const userProfile = await UserProfile.findOneAndUpdate(
       { userId },
       {
-        username,
         fullname: fullName,
-        phoneNumber,
         dob,
         location,
         bio,

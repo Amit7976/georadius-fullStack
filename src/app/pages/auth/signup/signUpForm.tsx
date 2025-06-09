@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { credentialsSignUp } from "../actions/register";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { LoaderLink } from "@/src/components/loaderLinks";
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,12 +35,14 @@ const SignUpForm = () => {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    const [loading, setLoading] = useState(false)
 
     return (
         <>
             <form
                 action={async (formData) => {
 
+                    setLoading(true);
                     // Extract form data
                     const fullname = formData.get("fullname") as string;
                     const email = formData.get("email") as string;
@@ -60,6 +64,7 @@ const SignUpForm = () => {
                         result.error.errors.forEach((error) =>
                             toast(error.message)
                         );
+                        setLoading(false);
                         return;
                     }
 
@@ -74,7 +79,8 @@ const SignUpForm = () => {
                     } else {
                         toast.error("Registration failed! " + error);
                     }
-
+                    
+                    setLoading(false);
                 }}
                 className="mt-10 w-full px-4"
             >
@@ -109,6 +115,10 @@ const SignUpForm = () => {
                                 type="email"
                                 name="email"
                                 id="email"
+                                onInput={(e: React.FormEvent<HTMLInputElement>) => {
+                                    const input = e.currentTarget;
+                                    input.value = input.value.replace(/\s/g, "");
+                                }}
                                 autoComplete="email"
                                 placeholder="Email"
                                 className="border-2 border-gray-200 rounded-md h-16 px-4 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
@@ -123,6 +133,10 @@ const SignUpForm = () => {
                                 type="password"
                                 name="password"
                                 id="password"
+                                onInput={(e: React.FormEvent<HTMLInputElement>) => {
+                                    const input = e.currentTarget;
+                                    input.value = input.value.replace(/\s/g, "");
+                                }}
                                 placeholder="Password"
                                 className="border-2 border-gray-200 rounded-md h-16 px-4 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
                             />
@@ -136,15 +150,16 @@ const SignUpForm = () => {
                 <div className="flex flex-col space-y-6 text-center my-12 w-full px-5">
                     <Button
                         type="submit"
-                        className="bg-green-600 active:bg-green-500 active:scale-95 duration-300 text-white font-bold py-2 px-4 rounded-md my-5 w-full h-16"
+                        className="bg-green-600 active:bg-green-500  duration-300 text-white font-bold py-2 px-4 rounded-md my-5 w-full h-16"
+                        disabled={loading}
                     >
-                        Sign Up
+                        {loading ? 'Loading...' : 'Sign Up'}
                     </Button>
                     <p className="text-base text-gray-600 font-medium">
                         Already have an account?{" "}
-                        <Link href="./signin" className="text-green-600 font-semibold">
+                        <LoaderLink href="./signin" className="text-green-600 font-semibold">
                             Sign In
-                        </Link>
+                        </LoaderLink>
                     </p>
                 </div>
             </form>

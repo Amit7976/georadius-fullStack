@@ -1,27 +1,17 @@
-"use client";
-
-import { useRouter } from "next/navigation";
+import HeadingHeader from '@/src/components/HeadingHeader'
+import { LoaderLink } from '@/src/components/loaderLinks'
 import Link from 'next/link'
-import React from 'react'
-import { FaArrowLeftLong } from 'react-icons/fa6'
 
 function MainContent() {
-      const router = useRouter();
-  
   return (
     <>
-      <div className='flex items-center justify-center relative my-5'>
-        <FaArrowLeftLong
-          onClick={() => router.back()}
-          className="text-lg absolute left-3 w-10 h-10 p-2.5 cursor-pointer"
-        />
+      
+      <HeadingHeader heading="Community Guidelines" />
 
-        <h1 className='text-xl font-bold'>Community Guidelines</h1>
-      </div>
       <div className='p-4'>
         <h1 className='text-6xl font-extrabold my-5'>Community Guidelines</h1>
         <p className='text-lg font-semibold my-6'>Effective Date: 01/01/2025</p>
-        <p className='text-lg font-normal my-6'>WELCOME TO <Link href={"/"} className='text-green-600 font-semibold'>GeoRadiusNews</Link> COMMUNITY</p>
+        <p className='text-lg font-normal my-6'>WELCOME TO <LoaderLink href={"/"} className='text-green-600 font-semibold'>GeoRadiusNews</LoaderLink> COMMUNITY</p>
         <p className='text-lg font-normal my-6'>Our goal is to create a safe, respectful, and informative space where users can engage with radius-based news relevant to their location. To maintain a healthy environment, all users must follow these Community Guidelines.</p>
 
 

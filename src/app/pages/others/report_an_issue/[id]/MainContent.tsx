@@ -1,20 +1,20 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
+import HeadingHeader from "@/src/components/HeadingHeader";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FaArrowLeftLong } from "react-icons/fa6";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { HiOutlineChevronRight } from "react-icons/hi2";
 import { RiUploadCloud2Line } from "react-icons/ri";
 import { toast } from "sonner";
-import Image from "next/image";
+import { z } from "zod";
 
 const issueSchema = z.object({
     description: z.string().min(5, "Description must be at least 5 characters"),
@@ -39,7 +39,11 @@ const MainContent: React.FC<MainContentProps> = ({ id }) => {
     const [selectedIssue, setSelectedIssue] = useState<string | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedImages, setSelectedImages] = useState<File[]>([]);
+    const [loader, setLoader] = useState(false);
 
+    console.log('====================================');
+    console.log("id: " + id);
+    console.log('====================================');
     const form = useForm({
         resolver: zodResolver(issueSchema),
         defaultValues: { description: "", photos: [] },
@@ -54,7 +58,7 @@ const MainContent: React.FC<MainContentProps> = ({ id }) => {
 
     const onSubmit = async (values: FormValues): Promise<void> => {
         const formData = new FormData();
-
+        setLoader(true);
         // Add description
         formData.append("description", values.description);
 
@@ -74,7 +78,8 @@ const MainContent: React.FC<MainContentProps> = ({ id }) => {
                 body: formData,
             });
 
-            if (res.ok) {
+            if (res) {
+                setLoader(false);
                 console.log("Issue submitted!");
                 toast.success("Report submitted!");
                 setModalOpen(false);
@@ -117,13 +122,9 @@ const MainContent: React.FC<MainContentProps> = ({ id }) => {
 
     return (
         <>
-            <div className='flex items-center justify-center relative my-5'>
-                <FaArrowLeftLong
-                    onClick={() => router.back()}
-                    className="text-lg absolute left-3 w-10 h-10 p-2.5 cursor-pointer"
-                />
-                <h1 className='text-xl font-bold'>Report an Issue</h1>
-            </div>
+
+            <HeadingHeader heading="Report an Issue" />
+
             <div className="p-5">
                 <h1 className="text-3xl font-bold mb-4">Report an Issue</h1>
                 <p className="text-gray-600 mb-6 text-lg font-medium">Select an issue below to help us fix the issue and improve our services</p>
@@ -210,10 +211,10 @@ const MainContent: React.FC<MainContentProps> = ({ id }) => {
                                     <Button
                                         type="submit"
                                         variant={'primary'}
-
-                                        className='w-full h-14 border-2 border-gray-500 active:scale-95 text-gray-500 text-lg font-semibold py-3 rounded-lg'
+                                        className='w-full h-14 border-2 border-gray-500  text-gray-500 text-lg font-semibold py-3 rounded-lg'
+                                        disabled={loader}
                                     >
-                                        Save
+                                        {loader ? 'Submitting...' : 'Save'}
                                     </Button>
                                 </div>
                             </form>

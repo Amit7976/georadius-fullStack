@@ -6,7 +6,6 @@ import { compare } from "bcryptjs";
 import { connectToDatabase } from "./lib/utils";
 import { UserProfile } from "./models/UserProfileModel";
 
-
 declare module "next-auth" {
   interface Session {
     user: {
@@ -46,47 +45,63 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         const password = credentials.password as string | undefined;
 
         if (!email || !password) {
-          console.log("====================================");
-          console.log("Please provide both email and password");
-          console.log("====================================");
           throw new Error("Please provide both email and password");
         }
 
         await LoadDb();
 
-        const user = await User.findOne({ email }).select("+password");
+        const user = await User.findOne({ email }).select(
+          "+password +tempPassword"
+        );
 
         console.log("====================================");
+        console.log(password);
+        console.log("====================================");
+        console.log("##====================================");
         console.log(user);
-        console.log("====================================");
+        console.log("##====================================");
 
-        if (!user || !user.password) {
-          console.log("====================================");
-          console.log("Invalid Email and Password");
-          console.log("====================================");
-          throw new Error("Invalid Email and Password");
+        if (!user) {
+          throw new Error("Invalid Email or Password");
         }
 
         let isMatch = await compare(password, user.password);
 
-        if (!isMatch) {
-          isMatch = await compare(password, user.tempPassword);
+        console.log("====================================");
+        console.log(isMatch);
+        console.log("====================================");
+        // If matches real password
+        if (isMatch) {
+          // Clear tempPassword if present
+          if (user.tempPassword) {
+            user.tempPassword = "";
+            await user.save();
+          }
+
+          return { fullname: user.fullname, email: user.email, id: user._id };
         }
 
-        if (!isMatch) {
+        // Else try matching temp password
+        if (user.tempPassword) {
           console.log("====================================");
-          console.log("Invalid Email and Password");
+          console.log("enter");
           console.log("====================================");
-          throw new Error("Invalid Email and Password");
+
+          let compareTemp = password === user.tempPassword;
+
+          console.log("1====================================");
+          console.log(compareTemp);
+          console.log("1====================================");
+
+          if (compareTemp) {
+            console.log("2====================================");
+            console.log(compareTemp);
+            console.log("2====================================");
+            return { fullname: user.fullname, email: user.email, id: user._id };
+          }
         }
-        console.log("====================================");
-        console.log(user.fullname);
-        console.log("====================================");
-        console.log(user.email);
-        console.log("====================================");
-        console.log(user._id);
-        console.log("====================================");
-        return { fullname: user.fullname, email: user.email, id: user._id };
+
+        throw new Error("Invalid Email or Password");
       },
     }),
   ],
@@ -102,21 +117,20 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
       if (user) {
         session.user.id = user._id.toString();
-        
+
         const userProfile = await UserProfile.findOne(
           { userId: user._id },
           { username: 1 } // Only fetch username
         );
 
         session.user.username = userProfile ? userProfile.username : false;
-        
       } else {
         session.user.username = false;
       }
-  
+
       return session;
     },
-   
+
     signIn: async ({ user, account }) => {
       console.log("====================================");
       console.log("Google");

@@ -9,22 +9,25 @@ const ProviderLogout = () => {
   const router = useRouter();
 
   const handleLogout = async () => {
-    await signOut({ redirect: false });
-    router.replace("/pages/auth/signin");
+
+    const signup = confirm("Are you Sure You want to Logout");
+
+    if (signup) {
+      await signOut({ redirect: false });
+      router.replace("/pages/auth/signin");
+    }
   };
 
-    return (
-      <Button
-        variant={"primary"}
-        onClick={handleLogout}
-        className="relative flex flex-row items-center h-12 w-full justify-start rounded-xl focus:outline-none bg-green-500 hover:bg-green-700 text-white duration-300"
-      >
-        <span className="inline-flex justify-center items-center ml-4">
-          <HiOutlineLogout className="w-6 h-6" />
-        </span>
-        <span className="ml-2 text-sm tracking-wide truncate">Logout</span>
-      </Button>
-    );
+  return (
+    <Button
+      variant={"primary"}
+      onClick={handleLogout}
+      className="w-full border-2 border-red-500 hover:bg-red-600 hover:text-white active:bg-red-600 active:text-white h-16 text-lg text-red-500 font-semibold"
+    >
+      <HiOutlineLogout className="size-6" />
+      <span>Logout</span>
+    </Button>
+  );
 };
 
 export default ProviderLogout;

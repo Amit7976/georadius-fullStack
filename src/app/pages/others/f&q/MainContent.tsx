@@ -1,11 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { Accordion, AccordionItem } from "@/components/ui/accordion";
-import { Card, CardContent } from "@/components/ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import HeadingHeader from "@/src/components/HeadingHeader";
 import axios from "axios";
-import { FaArrowLeftLong } from "react-icons/fa6";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const MainContent = () => {
     const [faqs, setFaqs] = useState<{ question: string; answer: string }[]>([]);
@@ -25,27 +24,21 @@ const MainContent = () => {
 
     return (
         <div className="bg-white">
-            <div className='flex items-center justify-center relative my-5'>
-                <FaArrowLeftLong
-                    onClick={() => router.back()}
-                    className="text-lg absolute left-3 w-10 h-10 p-2.5 cursor-pointer"
-                />
-                <h1 className='text-xl font-bold'>Frequently Asked Questions</h1>
-            </div>
+
+            <HeadingHeader heading="Frequently Asked Questions" />
+
             <div className="p-5">
                 <Accordion type="single" collapsible>
                     {faqs.map((faq, index) => (
-                        <AccordionItem className="my-6" key={index} value={String(index)}>
-                            <Card className="">
-                                <CardContent className="">
-                                    <h2 className="text-lg font-semibold">{faq.question}</h2>
-                                    <p className="text-gray-600">{faq.answer}</p>
-                                </CardContent>
-                            </Card>
+                        <AccordionItem className="mb-6" key={index} value={String(index)}>
+                            <AccordionTrigger className="text-lg font-semibold">{faq.question}</AccordionTrigger>
+                            <AccordionContent className="flex flex-col gap-4">
+                                {faq.answer}
+                            </AccordionContent>
                         </AccordionItem>
                     ))}
                 </Accordion>
-           </div>
+            </div>
         </div>
     );
 };

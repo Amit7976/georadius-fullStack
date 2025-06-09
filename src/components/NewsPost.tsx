@@ -1,24 +1,25 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { MessageCircle, MoreHorizontal, Pencil } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { TbReport } from "react-icons/tb";
 import { formatNumber } from "../helpers/formatNumber";
 import { formatTimeAgo } from "../helpers/formatTimeAgo";
 import { getDistanceFromCurrentLocation } from "../helpers/getDistanceFromCurrentLocation";
 import Comment from "./Comments";
+import DeleteButton from "./DeleteButton";
 import HideButton from "./HideButton";
 import ImageSlider from "./ImageSlider";
+import { LoaderLink } from "./loaderLinks";
 import QrButton from "./QrButton";
 import SaveButton from "./saveButton";
 import ShareButton from "./ShareButton";
 import VoteButtons from "./VoteButtons";
-import DeleteButton from "./DeleteButton";
-import Link from "next/link";
-import { TbReport } from "react-icons/tb";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 
 interface News {
     _id: string;
@@ -105,16 +106,16 @@ const NewsPost = ({ news, onHide, fullDescription }: { news:News; fullDescriptio
                         <DrawerTrigger>
                             <MoreHorizontal className="text-gray-600 cursor-pointer" />
                         </DrawerTrigger>
-                        <DrawerContent className={"max-w-lg mx-auto"} aria-describedby={undefined}>
+                        <DrawerContent className={""} aria-describedby={undefined}>
                             <div className="p-4">
                                 <DrawerTitle className="text-lg font-semibold text-center mb-4">Options</DrawerTitle>
                                 <div className="space-y-3 mb-10">
                                     {/* News Categories */}
                                     <div className="flex gap-2 px-4 flex-wrap">
                                         {news.categories.map((category: string, index: number) => (
-                                            <Link href={`/category/${category}`} key={index} className="bg-gray-200 rounded px-2 py-1 text-xs font-semibold text-gray-600 hover:text-green-500 cursor-pointer">
+                                            <LoaderLink href={`/category/${category}`} key={index} className="bg-gray-200 rounded px-2 py-1 text-xs font-semibold text-gray-600 hover:text-green-500 cursor-pointer">
                                                 {category}
-                                            </Link>
+                                            </LoaderLink>
                                         ))}
                                     </div>
                                     <HideButton postId={Number(news._id)} onHide={onHide} />
@@ -133,12 +134,12 @@ const NewsPost = ({ news, onHide, fullDescription }: { news:News; fullDescriptio
                                         </>
                                     ) : (
                                         <>
-                                            <Link href={"/" + news.creatorName} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100 items-center font-semibold">
+                                            <LoaderLink href={"/" + news.creatorName} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100 items-center font-semibold">
                                                     <Image src={news.creatorImage} alt="Profile" width={40} height={40} className="rounded-full size-5" priority /> View Profile
-                                            </Link>
-                                            <Link href={`/pages/others/report_an_issue?id=${news._id}`} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100">
+                                            </LoaderLink>
+                                            <LoaderLink href={`/pages/others/report_an_issue/${news._id}`} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100">
                                                 <TbReport className="size-6" /> Report
-                                            </Link>
+                                            </LoaderLink>
                                         </>
                                     )}
 

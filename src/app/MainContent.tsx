@@ -10,6 +10,7 @@ import { IoMapOutline } from "react-icons/io5";
 import TrendingNewsSlider from "../components/TrendingNewsSlider";
 import { useGeolocation } from "./hooks/useGeolocation";
 import Link from "next/link";
+import { LoaderLink } from "../components/loaderLinks";
 
 const filterOptions = ["Nearby", "District", "Global"];
 
@@ -206,9 +207,9 @@ export default function MainContent() {
             <div className="py-3 px-0">
                 <div className="flex justify-between items-end p-2">
                     <h2 className="text-3xl font-bold">Breaking <span className='text-green-500'>News!</span></h2>
-                    <Link href={'/pages/trendingNews'} className="text-xs font-bold pb-2 text-gray-500 active:scale-95">
+                    <LoaderLink href={'/pages/trendingNews'} className="text-xs font-bold pb-2 text-gray-500 active:scale-95">
                         View More
-                    </Link>
+                    </LoaderLink>
                 </div>
                 <TrendingNewsSlider
                     range={
@@ -227,7 +228,7 @@ export default function MainContent() {
                 <div className="flex gap-2 px-2 overflow-x-auto whitespace-nowrap">
                     <Button
                         variant="outline"
-                        className={`rounded-lg px-6 py-2 font-bold active:scale-95 text-xs ${selectedCategory === "All" ? "bg-black text-white" : ""}`}
+                        className={`rounded-lg px-6 py-2 font-bold text-xs ${selectedCategory === "All" ? "bg-black text-white" : ""}`}
                         onClick={() => setSelectedCategory("All")}
                     >
                         All
@@ -236,7 +237,7 @@ export default function MainContent() {
                         <Button
                             key={index}
                             variant="outline"
-                            className={`rounded-lg px-6 py-2 font-bold active:scale-95 text-xs ${selectedCategory === category.name ? "bg-black text-white" : ""}`}
+                            className={`rounded-lg px-6 py-2 font-bold text-xs ${selectedCategory === category.name ? "bg-black text-white" : ""}`}
                             onClick={() => setSelectedCategory(category.name)}
                         >
                             {category.name}
@@ -247,7 +248,7 @@ export default function MainContent() {
 
             {showFixedHeader && (
                 <div className="fixed left-0 top-0 w-full flex justify-center z-50">
-                    <div className="w-full max-w-lg bg-white shadow-md transition-transform duration-300">
+                    <div className="w-full bg-white shadow-md transition-transform duration-300">
                         {/* Header */}
                         <div className="flex justify-between items-center p-3 pb-2">
                             <Select value={selectedFilter} onValueChange={setSelectedFilter}>
@@ -273,7 +274,7 @@ export default function MainContent() {
                             <div className="flex gap-2 px-2 overflow-x-auto whitespace-nowrap">
                                 <Button
                                     variant="outline"
-                                    className={`rounded-lg px-6 py-2 font-bold active:scale-95 text-xs ${selectedCategory === "All" ? "bg-black text-white" : ""}`}
+                                    className={`rounded-lg px-6 py-2 font-bold text-xs ${selectedCategory === "All" ? "bg-black text-white" : ""}`}
                                     onClick={() => setSelectedCategory("All")}
                                 >
                                     All
@@ -282,7 +283,7 @@ export default function MainContent() {
                                     <Button
                                         key={index}
                                         variant="outline"
-                                        className={`rounded-lg px-6 py-2 font-bold active:scale-95 text-xs ${selectedCategory === category.name ? "bg-black text-white" : ""}`}
+                                        className={`rounded-lg px-6 py-2 font-bold text-xs ${selectedCategory === category.name ? "bg-black text-white" : ""}`}
                                         onClick={() => setSelectedCategory(category.name)}
                                     >
                                         {category.name}

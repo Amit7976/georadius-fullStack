@@ -1,9 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
 import { Toaster } from "sonner";
-import BottomNavigation from "../components/BottomNavigation";
 import { auth } from "../auth";
-import { redirect } from "next/navigation";
+import BottomNavigation from "../components/BottomNavigation";
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,8 +26,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="antialiased max-w-lg relative mx-auto bg-gray-200">
-        <main className="bg-white">
+      <body className="antialiased relative bg-white">
+        <main>
           {children}
           <BottomNavigation username={session?.user.username || false} />
         </main>

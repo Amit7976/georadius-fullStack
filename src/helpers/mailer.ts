@@ -13,10 +13,14 @@ export const sendEmail = async ({ email }: { email: string }) => {
 
     // ✅ Update User in Database (tempPassword Field)
     const updatedUser = await User.findOneAndUpdate(
-      { email }, // Find user by email
-      { $set: { tempPassword } }, // Save temporary password
+      { email },
+      { $set: { tempPassword } },
       { new: true }
     );
+
+    console.log('====================================');
+    console.log(updatedUser);
+    console.log('====================================');
 
     if (!updatedUser) {
       throw new Error("❌ User not found!");
@@ -24,35 +28,36 @@ export const sendEmail = async ({ email }: { email: string }) => {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // ✅ Nodemailer Transport
-   const transport = nodemailer.createTransport({
-     host: process.env.MAILTRAP_HOST,
-     port: parseInt(process.env.MAILTRAP_PORT || "2525"),
-     auth: {
-       user: process.env.MAILTRAP_USER,
-       pass: process.env.MAILTRAP_PASS,
-     },
-     tls: {
-       rejectUnauthorized: false, // 🔹 SSL issue fix
-     },
-   });
-
+    // ✅ Nodemailer Transport for Brevo SMTP
+    const transport = nodemailer.createTransport({
+      host: process.env.BREVO_SMTP_HOST || "smtp-relay.brevo.com",
+      port: parseInt(process.env.BREVO_SMTP_PORT || "587"),
+      auth: {
+        user: process.env.BREVO_SMTP_USER,
+        pass: process.env.BREVO_SMTP_PASS,
+      },
+      secure: false,
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // ✅ Email Content
     const mailOptions = {
-      from: '"GeoRadiusNews Support" <support@yourdomain.com>',
+      from: '"GeoRadius Support" <guptaamit60600@gmail.com>',
       to: email,
       subject: "🔐 Your Temporary Password",
       html: `
         <html>
-        <body>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6;">
             <p>Hello,</p>
-            <p>Your temporary password for login is:</p>
-            <h2>${tempPassword}</h2>
-            <p>Please change your password after logging in.</p>
-            <p>Best regards,<br>The GeoRadiusNews Team</p>
+            <p>Your temporary password for GeoRadiusNews is:</p>
+            <h2 style="color: #2E8B57;">${tempPassword}</h2>
+            <p>Please log in using this password and change it immediately for security.</p>
+            <p>If you did not request this, please ignore this email.</p>
+            <p>Regards,<br/>GeoRadiusNews Team</p>
         </body>
         </html>
       `,
@@ -67,12 +72,9 @@ export const sendEmail = async ({ email }: { email: string }) => {
 
     return mailResponse;
   } catch (error) {
-    if (error instanceof Error) {
-      console.error("❌ Error sending email:", error.message);
-      throw new Error(error.message);
-    } else {
-      console.error("❌ Error sending email:", error);
-      throw new Error("An unknown error occurred.");
-    }
+    const errMsg =
+      error instanceof Error ? error.message : "An unknown error occurred.";
+    console.error("❌ Error sending email:", errMsg);
+    throw new Error(errMsg);
   }
 };

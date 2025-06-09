@@ -130,7 +130,7 @@ export default function MainContent() {
                 </div>
             )}
 
-            <Button variant={"primary"} disabled={processing} type="submit" onClick={handleSubmit(onSubmit)} className="w-full bg-green-600 active:bg-green-400 active:scale-95 h-16 text-white text-lg font-bold rounded-lg">
+            <Button variant={"primary"} disabled={processing} type="submit" onClick={handleSubmit(onSubmit)} className="w-full bg-green-600 active:bg-green-400  h-16 text-white text-lg font-bold rounded-lg">
                 {processing ? "Processing...." : "Post News"}
             </Button>
         </div>

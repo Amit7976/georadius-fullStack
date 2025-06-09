@@ -1,11 +1,17 @@
-"use client";
-import React from 'react';
-import MainContent from '../../auth/actions/MainContent'
-import useAuthVerification from '../../../hooks/useAuthVerification';
+import { auth } from "@/src/auth";
+import { redirect } from "next/navigation";
+import MainContent from './MainContent';
 
-function Page() {
 
-    return <MainContent />
+export default async function page() {
+  
+  const session = await auth();
+  if (!session?.user) redirect("/pages/auth/signin");
+
+
+  return (
+    <>
+      <MainContent />
+    </>
+  );
 }
-
-export default Page;

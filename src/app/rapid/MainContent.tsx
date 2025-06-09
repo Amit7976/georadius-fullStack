@@ -15,6 +15,7 @@ import { TbReport } from "react-icons/tb";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useGeolocation } from "../hooks/useGeolocation";
+import { LoaderLink } from "@/src/components/loaderLinks";
 
 
 interface Post {
@@ -138,28 +139,28 @@ export default function MainContent() {
                                                     {/* News Categories */}
                                                     <div className="flex gap-2 px-4 flex-wrap">
                                                         {post.categories.map((category: string, index: number) => (
-                                                            <Link href={`/category/${category}`} key={index} className="bg-gray-200 rounded px-2 py-1 text-xs font-semibold text-gray-600 hover:text-green-500 cursor-pointer">
+                                                            <LoaderLink href={`/category/${category}`} key={index} className="bg-gray-200 rounded px-2 py-1 text-xs font-semibold text-gray-600 hover:text-green-500 cursor-pointer">
                                                                 {category}
-                                                            </Link>
+                                                            </LoaderLink>
                                                         ))}
                                                     </div>
                                                     <HideButton postId={Number(post._id)} onHide={() => handleHide(Number(post._id))} />
-                                                    <QrButton postId={Number(post._id)} />
+                                                    <QrButton postId={post._id} />
                                                     {post.currentUserProfile ? (
                                                         <>
-                                                            <Link href={"/pages/edit_post/" + post._id} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100 items-center font-semibold">
+                                                            <LoaderLink href={"/pages/edit_post/" + post._id} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100 items-center font-semibold">
                                                                 <Pencil /> Edit
-                                                            </Link>
+                                                            </LoaderLink>
                                                             <DeleteButton postId={Number(post._id)} onHide={() => handleHide(Number(post._id))} />
                                                         </>
                                                     ) : (
                                                         <>
-                                                            <Link href={"/" + post.creatorName} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100 items-center font-semibold">
+                                                            <LoaderLink href={"/" + post.creatorName} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100 items-center font-semibold">
                                                                 <Image src={post.creatorImage} alt="Profile" width={40} height={40} priority className="rounded-full size-5" /> View Profile
-                                                            </Link>
-                                                            <Link href={`/pages/others/report_an_issue?id=${post._id}`} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100">
+                                                            </LoaderLink>
+                                                            <LoaderLink href={`/pages/others/report_an_issue/${post._id}`} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100">
                                                                 <TbReport className="size-6" /> Report
-                                                            </Link>
+                                                            </LoaderLink>
                                                         </>
                                                     )}
 

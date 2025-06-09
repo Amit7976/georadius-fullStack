@@ -123,6 +123,37 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.5s ease-out forwards;
+  }
+  
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.5s ease-out;
+  }
+
 }
 @theme {
   --animate-spin-earth: spin-earth 10s linear infinite;
@@ -132,6 +163,16 @@
     }
   }
 }
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+  scroll-behavior: smooth;
+}
+
 /* HTML: <div class="loader"></div> */
 .loader {
   width: 40px;
@@ -146,12 +187,12 @@
   mask-composite: subtract;
   animation: l3 1s infinite linear;
 }
+
 @keyframes l3 {
   to {
     transform: rotate(1turn);
   }
 }
-
 
 .marker {
   height: 40px;
@@ -159,4 +200,10 @@
   background-image: url("/images/micPin.png");
   background-size: contain; /* optional, to fit the image */
   background-repeat: no-repeat; /* optional, prevents tiling */
+}
+
+@media (max-width: 640px) {
+  .animate-fade-in-up {
+    animation: fade-in-up 0.5s ease-out;
+  }
 }

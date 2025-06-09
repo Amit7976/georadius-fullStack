@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import axios from 'axios'
 import { FormEvent, useState } from 'react'
 import { z } from 'zod'
+import { useRouter } from 'next/navigation';
 
 
 const signupSchema = z.object({
@@ -15,7 +16,7 @@ const signupSchema = z.object({
 function MainContent() {
 
     const [loading, setLoading] = useState(false)
-
+    const router = useRouter();
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         setLoading(true)
@@ -39,6 +40,7 @@ function MainContent() {
 
             if (response.status === 200) {
                 toast("Password reset email sent successfully")
+                router.replace("/pages/auth/signin")
             } else {
                 toast("Failed to send Password reset email")
             }
@@ -57,21 +59,25 @@ function MainContent() {
     }
 
     return (
-        <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-lg text-center">
-                <div className="space-y-8">
+        <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
+            <div className="mx-auto text-center">
+                <div className="space-y-4">
                     <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-5xl">Forget Password</h1>
                     <p className="text-gray-500 text-lg">Enter your email to get your temporary password</p>
-                    <form onSubmit={handleSubmit} className="space-y-6 text-left">
+                    <form onSubmit={handleSubmit} className="space-y-6 text-left mt-6">
                         <div>
-                            <Label htmlFor="email" className="text-base font-medium pl-5">Email Address</Label>
+                            <Label htmlFor="email" className="text-base text-gray-500 font-medium pl-5">Email Address</Label>
                             <Input
                                 id="email"
                                 name="email"
                                 type="email"
-                                placeholder="example@example.com"
+                                onInput={(e: React.FormEvent<HTMLInputElement>) => {
+                                    const input = e.currentTarget;
+                                    input.value = input.value.replace(/\s/g, "");
+                                }}
+                                placeholder="example@gmail.com"
                                 required
-                                className="h-14 rounded-full mt-3 px-8 text-xl font-semibold tracking-wider border-[3px]"
+                                className="h-14 rounded-full mt-2 px-8 text-base font-semibold tracking-wider border-[3px]"
                             />
                         </div>
 

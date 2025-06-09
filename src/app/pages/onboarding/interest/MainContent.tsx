@@ -1,25 +1,47 @@
 "use client";
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import interestsList from "@/public/json/interestList.json";
+import { useEffect, useState } from "react";
 
 interface MainContentProps {
   interest: string[];
 }
 
-function MainContent({ interest }: MainContentProps) {
-  const router = useRouter();
-  const [selectedInterests, setSelectedInterests] = useState<string[]>(interest);
+function MainContent() {
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log("====================================");
-    console.log("Received Interests:", interest);
-    console.log("====================================");
+    const checkUserInterest = async () => {
+      try {
+        // 🔹 Fetch only interest array
+        console.log("====================================");
+        console.log("Fetching user interests...");
+        console.log("====================================");
 
-    setSelectedInterests(interest);
-  }, [interest]);
+        const userProfileRes = await fetch(`/api/userProfile/interest`);
+        if (!userProfileRes.ok) throw new Error("Failed to fetch user interests");
+
+        const { interest } = await userProfileRes.json();
+        console.log("====================================");
+        console.log("User Interests:", interest);
+        console.log("====================================");
+
+
+        setSelectedInterests(Array.isArray(interest) ? interest : []);
+
+      } catch (error) {
+        console.log("====================================");
+        console.error("Error fetching user data:", error);
+        console.log("====================================");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkUserInterest();
+  }, []);
+
 
   const toggleInterest = (interest: string) => {
     setSelectedInterests((prev) =>
@@ -48,7 +70,7 @@ function MainContent({ interest }: MainContentProps) {
         console.log("Interests saved successfully:");
         console.log("====================================");
 
-        router.replace("/");
+        window.location.replace("/")
       } else {
         console.log("====================================");
         console.error("Failed to save interests: ", response.status);
@@ -77,9 +99,9 @@ function MainContent({ interest }: MainContentProps) {
 
   return (
     <>
-      <div className="text-left px-4 pt-10 space-y-4">
-        <h2 className="text-4xl font-bold">What interests you?</h2>
-        <p className="text-2xl font-semibold text-gray-400">
+      <div className="text-left px-4 pt-14 space-y-4">
+        <h2 className="text-3xl font-semibold">What interests you?</h2>
+        <p className="text-xl font-medium text-gray-400">
           Select at least <span className="text-green-600">3 topics</span>.
         </p>
       </div>
@@ -87,7 +109,7 @@ function MainContent({ interest }: MainContentProps) {
       <div className="p-5">
         {categorizedInterests.map((section, index) => (
           <div key={index} className="w-full">
-            <p className="text-2xl font-extrabold mt-10 mb-6 text-black">
+            <p className="text-2xl font-semibold mt-10 mb-6 text-gray-500">
               {section.title}
             </p>
             <div className="grid grid-cols-3 gap-2">
@@ -96,13 +118,13 @@ function MainContent({ interest }: MainContentProps) {
                   key={idx}
                   type="button"
                   onClick={() => toggleInterest(item.name)}
-                  className={`px-4 py-8 rounded-xl text-medium text-black ${selectedInterests.includes(item.name)
-                    ? "bg-green-300"
+                  className={`px-4 py-6 rounded-xl text-medium text-gray-500 ${selectedInterests.includes(item.name)
+                    ? "bg-green-200"
                     : "bg-gray-50"
                     }`}
                 >
-                  <p className="text-5xl mb-4">{item.icon}</p>
-                  <p className="text-lg font-bold">{item.name}</p>
+                  <p className="text-4xl mb-6">{item.icon}</p>
+                  <p className="text-sm font-semibold">{item.name}</p>
                 </button>
               ))}
             </div>
@@ -110,21 +132,25 @@ function MainContent({ interest }: MainContentProps) {
         ))}
       </div>
 
-      <div className="p-5 space-y-6">
-        <button
-          type="button"
+      <div className="p-5 pt-14 space-y-6">
+        <Button
           onClick={handleSaveInterests}
           disabled={selectedInterests.length < 3 || loading}
-          className={`w-full px-20 py-4 text-white text-xl font-extrabold rounded-full flex items-center justify-center gap-2
-          ${selectedInterests.length < 3 ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 active:bg-green-500 active:scale-95"}`}
+          className={`w-full px-20 h-16 text-white text-xl font-extrabold rounded-full flex items-center justify-center gap-2
+          ${selectedInterests.length < 3 ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 active:bg-green-500"}`}
         >
           {loading ? "Saving..." : "Build my Feed"}
-        </button>
+        </Button>
 
-        <div className="flex items-center justify-center">
-          <Link href="/home" className="text-black text-xl font-extrabold">
+        <div className="flex items-center justify-center fixed top-3 right-3">
+          <Button
+            variant={'ghost'}
+            size={'sm'}
+            className="text-black text-sm font-semibold bg-gray-100 px-7 py-1 rounded-full duration-300 cursor-pointer"
+            onClick={() => window.location.replace("/")}
+          >
             Skip
-          </Link>
+          </Button>
         </div>
       </div>
     </>

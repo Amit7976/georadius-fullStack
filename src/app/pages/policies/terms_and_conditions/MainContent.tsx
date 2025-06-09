@@ -1,35 +1,26 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-import Link from 'next/link'
-import React from 'react'
-import { FaArrowLeftLong } from 'react-icons/fa6'
+import HeadingHeader from "@/src/components/HeadingHeader";
+import { LoaderLink } from "@/src/components/loaderLinks";
+import Link from 'next/link';
 
 function MainContent() {
-      const router = useRouter();
-  
+
   return (
-    <div className='bg-white'>
-       <div className='flex items-center justify-center relative my-5'>
-                          <FaArrowLeftLong
-                              onClick={() => router.back()}
-                              className="text-lg absolute left-3 w-10 h-10 p-2.5 cursor-pointer"
-                          />
+    <>
       
-        <h1 className='text-xl font-bold'>Terms & Conditions</h1>
-                      </div>
+      <HeadingHeader heading="Terms & Conditions" />
+
       <div className='p-4'>
         <h1 className='text-6xl font-extrabold my-5'>Terms & Conditions</h1>
         <p className='text-lg font-semibold'>Effective Date: 01/01/2025</p>
         <p className='text-lg font-semibold'>Last Updated: 01/01/2025</p>
 
-        <p className='text-lg font-normal my-6'>Welcome to <Link href={"/"} className='text-green-600 font-semibold'>GeoRadiusNews</Link>, a radius-based news application designed to deliver location-specific news within a default 5 km radius of the user’s location. By accessing or using this app, you agree to comply with these Terms and Conditions and all applicable Indian laws and regulations.</p>
+        <p className='text-lg font-normal my-6'>Welcome to <LoaderLink href={"/"} className='text-green-600 font-semibold'>GeoRadiusNews</LoaderLink>, a radius-based news application designed to deliver location-specific news within a default 5 km radius of the user’s location. By accessing or using this app, you agree to comply with these Terms and Conditions and all applicable Indian laws and regulations.</p>
 
 
 
         <h2 className='text-xl font-semibold mt-16 mb-6'>1. Acceptance of Terms</h2>
         <ul className='list-disc pl-6'>
-          <li className='text-lg font-normal my-6'>These Terms and Conditions govern your use of <Link href={"/"} className='text-green-600 font-semibold'>GeoRadiusNews</Link>, including all services, features, and content provided.</li>
+          <li className='text-lg font-normal my-6'>These Terms and Conditions govern your use of <LoaderLink href={"/"} className='text-green-600 font-semibold'>GeoRadiusNews</LoaderLink>, including all services, features, and content provided.</li>
           <li className='text-lg font-normal my-6'>By using the app, you acknowledge that you have read, understood, and agree to be bound by these terms.</li>
           <li className='text-lg font-normal my-6'>If you do not agree with any part of these terms, you must immediately stop using the app.</li>
         </ul>
@@ -40,7 +31,7 @@ function MainContent() {
 
         <h3 className='text-lg font-semibold mt-10 mb-6'>2.1 Age and Legal Capacity</h3>
         <ul className='list-disc pl-6'>
-          <li className='text-lg font-normal my-6'>To use <Link href={"/"} className='text-green-600 font-semibold'>GeoRadiusNews</Link>, you must be at least 18 years old or have parental consent if you are between 13 and 18 years old.</li>
+          <li className='text-lg font-normal my-6'>To use <LoaderLink href={"/"} className='text-green-600 font-semibold'>GeoRadiusNews</LoaderLink>, you must be at least 18 years old or have parental consent if you are between 13 and 18 years old.</li>
           <li className='text-lg font-normal my-6'>If you are using this app on behalf of an organization or entity, you must have the legal authority to bind that entity to these terms.</li>
           <li className='text-lg font-normal my-6'>If we discover that a user is under 13 years old, their account may be suspended or deleted without notice.</li>
         </ul>
@@ -70,7 +61,7 @@ function MainContent() {
 
         <h3 className='text-lg font-semibold mt-10 mb-6'>3.1 Collection & Use of Location Data</h3>
         <ul className='list-disc pl-6'>
-          <li className='text-lg font-normal my-6'><Link href={"/"} className='text-green-600 font-semibold'>GeoRadiusNews</Link> collects real-time location data to provide localized news content within a default radius of 5 km.</li>
+          <li className='text-lg font-normal my-6'><LoaderLink href={"/"} className='text-green-600 font-semibold'>GeoRadiusNews</LoaderLink> collects real-time location data to provide localized news content within a default radius of 5 km.</li>
           <li className='text-lg font-normal my-6'>This data is processed as per the Information Technology (Reasonable Security Practices and Procedures and Sensitive Personal Data or Information) Rules, 2011.</li>
         </ul>
 
@@ -156,7 +147,7 @@ function MainContent() {
         <h2 className='text-xl font-semibold mt-16 mb-6'>9. Contact Information</h2>
         <p className='text-lg font-normal my-6'>For any questions or concerns, users can contact us at amitgupta60600@gmail.com</p>
       </div>
-    </div>
+    </>
   )
 }
 

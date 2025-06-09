@@ -7,6 +7,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import Image from "next/image";
 import NewsPost from "@/src/components/NewsPost";
+import { LoaderLink } from "@/src/components/loaderLinks";
 
 interface News {
     _id: string;
@@ -104,10 +105,11 @@ export default function MainContent({
                     )}
                     <h2 className="text-lg font-bold">{username}</h2>
                 </div>
-                <IoSettingsOutline
-                    className="text-2xl cursor-pointer"
-                    onClick={() => router.push("/pages/others/settings")}
-                />
+                <LoaderLink href="/pages/others/settings">
+                    <IoSettingsOutline
+                        className="text-2xl cursor-pointer"
+                    />
+                </LoaderLink>
             </div>
 
             {/* Profile Info */}
@@ -124,7 +126,7 @@ export default function MainContent({
                 <div className="flex-3 mt-1 space-y-2">
                     <h3 className="text-xl font-bold">{userData.fullname}</h3>
                     <p
-                        className="text-gray-500 text-sm font-medium"
+                        className="text-gray-500 text-sm font-medium text-balance"
                         dangerouslySetInnerHTML={{
                             __html: userData.bio.replace(/\r?\n/g, "<br />"),
                         }}
@@ -139,7 +141,7 @@ export default function MainContent({
                     <Button
                         variant="primary"
                         onClick={() => router.push("/pages/others/updateprofile")}
-                        className="bg-gray-200 w-full flex-1 h-10 text-gray-600 font-semibold text-sm active:scale-95"
+                        className="bg-gray-200 w-full flex-1 h-10 text-gray-600 font-semibold text-sm"
                     >
                         Update Profile
                     </Button>
@@ -148,14 +150,14 @@ export default function MainContent({
                 <Button
                     variant="primary"
                     onClick={handleShare}
-                    className="bg-gray-200 w-full flex-1 h-10 text-gray-600 font-semibold text-sm active:scale-95"
+                    className="bg-gray-200 w-full flex-1 h-10 text-gray-600 font-semibold text-sm"
                 >
                     Share Profile
                 </Button>
             </div>
 
             {/* News Posts */}
-            <div className="mt-6 mb-20">
+            <div className="py-6">
                 {newsData.length > 0 ? (
                     newsData.map((news) => (
                         <NewsPost

@@ -1,20 +1,17 @@
-"use client";
-import React from 'react';
+import { auth } from "@/src/auth";
+import { redirect } from "next/navigation";
 import MainContent from './MainContent';
-import useAuthVerification from '../../../hooks/useAuthVerification';
 
-function Page() {
-  const { isVerified, loading } = useAuthVerification();
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="loader"></div>
-      </div>
-    );
-  }
+export default async function page() {
 
-  return isVerified ? <MainContent /> : null;
+  const session = await auth();
+  if (!session?.user) redirect("/pages/auth/signin");
+
+
+  return (
+    <>
+      <MainContent />
+    </>
+  );
 }
-
-export default Page;

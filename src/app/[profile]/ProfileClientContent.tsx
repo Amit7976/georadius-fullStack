@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import MainContent from "./MainContent";
+import { LoaderLink } from "@/src/components/loaderLinks";
+import { AnimatedText } from "@/src/components/Animate";
 
 type Props = {
     profile: string;
@@ -44,6 +46,7 @@ function ProfileClientContent({ profile }: Props) {
     const [userData, setUserData] = useState<UserData | null>(null);
     const [newsData, setNewsData] = useState<News[] | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [userNotFound, setUserNotFound] = useState(false)
 
     useEffect(() => {
         if (!profile) return;
@@ -56,7 +59,6 @@ function ProfileClientContent({ profile }: Props) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username: profile }),
             }).then(async (res) => {
-                if (!res.ok) throw new Error("User profile not found");
                 return res.json();
             }),
             fetch("/api/post/username", {
@@ -64,7 +66,6 @@ function ProfileClientContent({ profile }: Props) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username: profile }),
             }).then(async (res) => {
-                if (!res.ok) throw new Error("User posts not found");
                 return res.json();
             }),
         ])
@@ -73,7 +74,8 @@ function ProfileClientContent({ profile }: Props) {
 
                 const postsArray = postDataRes.posts;
                 if (!Array.isArray(postsArray)) {
-                    throw new Error("Invalid post data format");
+                    setUserNotFound(true)
+                    return;
                 }
 
                 const formattedPosts: News[] = postsArray.map((item): News => ({
@@ -104,17 +106,41 @@ function ProfileClientContent({ profile }: Props) {
                 setError(null);
             })
             .catch((err) => {
-                console.error("❌ Fetch error:", err);
                 setError(err.message);
+                setUserNotFound(true)
             });
     }, [profile]);
 
-    if (!userData || !newsData) {
+
+    if (userNotFound) {
         return (
-            <div className="flex items-center justify-center h-screen">
-                <div className="loader"></div>
-            </div>
+            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-800">
+                <div className="rounded-xl p-8 w-full text-center space-y-6">
+                    <div className="text-red-500">
+                        <AnimatedText text="Oops!" color="black" />
+                    </div>
+                    <p className="text-lg text-gray-400 font-medium mb-6 max-w-md mx-auto animate-fade-in-up">
+                        We couldn’t find the user you’re looking for. It may have been deleted or never existed.
+                    </p>
+                    <LoaderLink
+                        href="/"
+                        className="inline-block px-10 py-3.5 bg-green-500 text-white animate-fade-in-up rounded-full font-semibold hover:bg-red-600 transition duration-300"
+                    >
+                        Go to Home
+                    </LoaderLink>
+                </div>
+            </div>          
         );
+
+    } else {
+
+        if (!userData || !newsData) {
+            return (
+                <div className="flex items-center justify-center h-screen">
+                    <div className="loader"></div>
+                </div>
+            );
+        }
     }
 
     if (error) {

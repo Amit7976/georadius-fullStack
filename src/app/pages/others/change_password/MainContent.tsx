@@ -1,14 +1,13 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import HeadingHeader from "@/src/components/HeadingHeader";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { FaArrowLeftLong } from "react-icons/fa6";
 
 // ✅ Zod Schema for Validation
 const passwordSchema = z
@@ -43,6 +42,7 @@ export default function ChangePassword() {
 
     const [passwordStrength, setPasswordStrength] = useState(0);
     const [passwordColor, setPasswordColor] = useState("bg-red-500");
+    const [loading, setLoading] = useState(false)
 
     // ✅ Password Strength Checker with Colors
     const checkPasswordStrength = (password: string) => {
@@ -81,20 +81,39 @@ export default function ChangePassword() {
 
     const newPassword = watch("newPassword");
 
-    const router = useRouter();
+
+    const onSubmit = async (data: any) => {
+        try {
+            setLoading(true);
+            const response = await fetch("/api/changePassword", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    currentPassword: data.currentPassword,
+                    newPassword: data.newPassword,
+                }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) throw new Error(result.error || "Something went wrong");
+
+            alert("✅ Password updated successfully");
+        } catch (error: any) {
+            alert("❌ " + error.message);
+        }
+        finally {
+            setLoading(false);
+        }
+    };
+
+
 
     return (
         <div className="w-white">
-            <div className="flex items-center justify-center relative my-5">
-                <FaArrowLeftLong
-                    onClick={() => router.back()}
-                    className="text-lg absolute left-3 w-10 h-10 p-2.5 cursor-pointer"
-                />
-
-                <h1 className="text-xl font-bold">Change Password</h1>
-            </div>
+            <HeadingHeader heading="Change Password" />
             <form
-                onSubmit={handleSubmit((data) => console.log(data))}
+                onSubmit={handleSubmit(onSubmit)}
                 className="space-y-8 my-10 p-4"
             >
                 {/* Current Password */}
@@ -103,10 +122,14 @@ export default function ChangePassword() {
                         Current Password
                     </Label>
                     <Input
-                        className="h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"
-                        type="password"
+                        className="h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0 font-medium text-gray-500"
+                        type="text"
                         {...register("currentPassword")}
                         placeholder="Enter current password"
+                        onInput={(e: React.FormEvent<HTMLInputElement>) => {
+                            const input = e.currentTarget;
+                            input.value = input.value.replace(/\s/g, "");
+                        }}
                     />
                     {errors.currentPassword && (
                         <p className="text-red-500">{errors.currentPassword.message}</p>
@@ -119,11 +142,15 @@ export default function ChangePassword() {
                         New Password
                     </Label>
                     <Input
-                        className="h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"
-                        type="password"
+                        className="h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0 font-medium text-gray-500"
+                        type="text"
                         {...register("newPassword")}
                         placeholder="Enter new password"
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => checkPasswordStrength(e.target.value)}
+                        onInput={(e: React.FormEvent<HTMLInputElement>) => {
+                            const input = e.currentTarget;
+                            input.value = input.value.replace(/\s/g, "");
+                        }}
                     />
                     {errors.newPassword && (
                         <p className="text-red-500">{errors.newPassword.message}</p>
@@ -163,7 +190,7 @@ export default function ChangePassword() {
                         variant={'primary'}
 
                         onClick={generateSecurePassword}
-                        className="w-1/2 border-2 border-green-600 text-green-600 text-base font-semibold py-3 rounded-lg"
+                        className="w-1/2 border-2 border-green-600 text-green-600 text-base font-semibold h-12 rounded-lg"
                     >
                         Generate Password
                     </Button></div>
@@ -174,10 +201,14 @@ export default function ChangePassword() {
                         Confirm New Password
                     </Label>
                     <Input
-                        className="h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"
-                        type="password"
+                        className="h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0 font-medium text-gray-500"
+                        type="text"
                         {...register("confirmPassword")}
                         placeholder="Confirm new password"
+                        onInput={(e: React.FormEvent<HTMLInputElement>) => {
+                            const input = e.currentTarget;
+                            input.value = input.value.replace(/\s/g, "");
+                        }}
                     />
                     {errors.confirmPassword && (
                         <p className="text-red-500">{errors.confirmPassword.message}</p>
@@ -188,10 +219,10 @@ export default function ChangePassword() {
                 <Button
                     type="submit"
                     variant={'primary'}
-
-                    className="w-full bg-green-600 active:bg-green-400 active:scale-95 duration-300 h-16 text-white text-lg font-bold rounded-full"
+                    className="w-full bg-green-600 active:bg-green-400  duration-300 h-16 text-white text-lg font-bold rounded-full"
+                    disabled={loading}
                 >
-                    Update Password
+                    {loading ? 'Loading...' : 'Update Password'}
                 </Button>
             </form>
         </div>

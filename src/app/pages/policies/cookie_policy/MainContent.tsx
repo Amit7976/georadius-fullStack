@@ -1,27 +1,18 @@
-"use client";
-
-import { useRouter } from "next/navigation";
+import HeadingHeader from '@/src/components/HeadingHeader'
+import { LoaderLink } from '@/src/components/loaderLinks'
 import Link from 'next/link'
-import React from 'react'
-import { FaArrowLeftLong } from 'react-icons/fa6'
 
 function MainContent() {
-      const router = useRouter();
-  
+     
   return (
     <>
-       <div className='flex items-center justify-center relative my-5'>
-                          <FaArrowLeftLong
-                              onClick={() => router.back()}
-                              className="text-lg absolute left-3 w-10 h-10 p-2.5 cursor-pointer"
-                          />
       
-        <h1 className='text-xl font-bold'>Cookie Policy</h1>
-                      </div>
+      <HeadingHeader heading="Cookie Policy" />
+
       <div className='p-4'>
         <h1 className='text-6xl font-extrabold my-5'>Cookie Policy</h1>
         <p className='text-lg font-semibold my-6'>Effective Date: 01/01/2025</p>
-        <p className='text-lg font-normal my-6'>Welcome to <Link href={"/"} className='text-green-600 font-semibold'>GeoRadiusNews</Link> (&#34;we,&#34; &#34;our,&#34; or &#34;us&#34;). This Cookie Policy explains how we use cookies and similar tracking technologies when you use our radius-based news application. By using our app, you agree to our use of cookies as described in this policy.</p>
+        <p className='text-lg font-normal my-6'>Welcome to <LoaderLink href={"/"} className='text-green-600 font-semibold'>GeoRadiusNews</LoaderLink> (&#34;we,&#34; &#34;our,&#34; or &#34;us&#34;). This Cookie Policy explains how we use cookies and similar tracking technologies when you use our radius-based news application. By using our app, you agree to our use of cookies as described in this policy.</p>
         
         
         <h2 className='text-xl font-semibold mt-16 mb-6'>1. What Are Cookies?</h2>

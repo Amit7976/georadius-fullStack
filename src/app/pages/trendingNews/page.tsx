@@ -68,9 +68,9 @@ function Page() {
     };
 
     return (
-        <div className='py-3 px-1'>
+        <div className='py-3 px-1 bg-white'>
             <h2 className="text-3xl font-bold">Breaking <span className='text-green-500'>News!</span></h2>
-            <div className="mt-6 mb-20">
+            <div className="py-6">
                 {data.map((news) => (
                     <NewsPost news={news} key={news._id} onHide={handleHide} fullDescription={false} />
                 ))}

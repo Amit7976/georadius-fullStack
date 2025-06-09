@@ -14,6 +14,7 @@ import SearchInput from "@/src/components/SearchInput";
 import ImageSlider from "@/src/components/ImageSlider";
 import { formatTimeAgo } from "@/src/helpers/formatTimeAgo";
 import Image from "next/image";
+import { LoaderLink } from "@/src/components/loaderLinks";
 
 export default function SearchResultsClient() {
     const searchParams = useSearchParams();
@@ -175,7 +176,7 @@ export default function SearchResultsClient() {
                         ) {
                             const user = result as User;
                             return (
-                                <Link href={"/" + user.username} key={user._id} className="flex items-center py-2 mt-2">
+                                <LoaderLink href={"/" + user.username} key={user._id} className="flex items-center py-2 mt-2">
                                     <div className="w-12 flex-1">
                                         <Image
                                             width={100}
@@ -189,7 +190,7 @@ export default function SearchResultsClient() {
                                         <p className="text-gray-500 text-sm font-medium">@{user.username}</p>
                                         <h3 className="text-xl font-bold">{user.fullname}</h3>
                                     </div>
-                                </Link>
+                                </LoaderLink>
                             );
                         }
                         return null;
@@ -203,7 +204,7 @@ export default function SearchResultsClient() {
                     <div className="divider-y-2 border-gray-200 mb-4">
                         <div className="flex flex-col gap-6">
                             {results.filter((result): result is Post => "title" in result).map((post) => (
-                                <Link href={"/post/" + post._id} key={post._id} className="py-2 space-y-2">
+                                <LoaderLink href={"/post/" + post._id} key={post._id} className="py-2 space-y-2">
                                     <p className="text-gray-500 text-xs">{formatTimeAgo(post.updatedAt)}</p>
                                     <h4 className="font-semibold text-lg leading-5">{post.title}</h4>
                                     <p className="text-xs text-gray-500 leading-5 mt-1">{post.location}</p>
@@ -223,7 +224,7 @@ export default function SearchResultsClient() {
                                             {post.description}
                                         </p>
                                     </div>
-                                </Link>
+                                </LoaderLink>
                             ))}
                         </div>
                     </div>

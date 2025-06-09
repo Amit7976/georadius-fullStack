@@ -60,7 +60,7 @@ export default function MainContent() {
         images: [],
     });
     const [selectedCategories, setSelectedCategories] = useState<string[]>(post.categories || []);
- 
+
 
     const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -75,7 +75,7 @@ export default function MainContent() {
             deletedImages: [],
         },
     });
-    
+
     useEffect(() => {
         const storedData = sessionStorage.getItem("editNewsData");
         if (storedData) {
@@ -177,7 +177,7 @@ export default function MainContent() {
                 disabled={processing}
                 type="submit"
                 onClick={handleSubmit(onSubmit)} // Remove onClick for simplicity
-                className="w-full bg-green-600 active:bg-green-400 active:scale-95 h-16 text-white text-lg font-bold rounded-lg"
+                className="w-full bg-green-600 active:bg-green-400  h-16 text-white text-lg font-bold rounded-lg"
             >
                 {processing ? "Processing...." : "Post News"}
             </Button>

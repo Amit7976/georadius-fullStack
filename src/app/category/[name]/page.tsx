@@ -12,6 +12,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { useGeolocation } from "../../hooks/useGeolocation";
+import { LoaderLink } from "@/src/components/loaderLinks";
 
 type Post = {
     _id: string;
@@ -83,7 +84,7 @@ export default function CategoryPage() {
             <div className="gap-4 flex flex-col">
                 {posts.length > 0 ? (
                     posts.map((post) => (
-                        <Link href={"/post/" + post._id} key={post._id} className="py-2 space-y-2">
+                        <LoaderLink href={"/post/" + post._id} key={post._id} className="py-2 space-y-2 text-start">
                             <p className="text-gray-500 text-xs">{formatTimeAgo(post.updatedAt)}</p>
                             <h4 className="font-semibold text-lg leading-5">{post.title}</h4>
                             <p className="text-xs text-gray-500 leading-5 mt-1">{post.location}</p>
@@ -103,7 +104,7 @@ export default function CategoryPage() {
                                     {post.description}
                                 </p>
                             </div>
-                        </Link>
+                        </LoaderLink>
                     ))
                 ) : (
                     <div className="w-full h-screen flex items-center justify-center text-gray-400 font-medium text-lg">
