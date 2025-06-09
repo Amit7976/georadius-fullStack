@@ -8,6 +8,7 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import Image from "next/image";
 import NewsPost from "@/src/components/NewsPost";
 import { LoaderLink } from "@/src/components/loaderLinks";
+import { t } from "@/src/helpers/i18n";
 
 interface News {
     _id: string;
@@ -82,13 +83,13 @@ export default function MainContent({
         if (navigator.share) {
             navigator
                 .share({
-                    title: "Check out this profile!",
-                    text: "Here is a profile you might be interested in.",
+                    title: t("checkProfile"),
+                    text: t("interestProfile"),
                     url,
                 })
                 .catch((err) => console.error("Share failed:", err));
         } else {
-            alert("Sharing not supported on this device.");
+            alert(t("shareNotSupported"));
         }
     };
 
@@ -143,7 +144,7 @@ export default function MainContent({
                         onClick={() => router.push("/pages/others/updateprofile")}
                         className="bg-gray-200 w-full flex-1 h-10 text-gray-600 font-semibold text-sm"
                     >
-                        Update Profile
+                        {t("updateProfile")}
                     </Button>
                 )}
 
@@ -152,7 +153,7 @@ export default function MainContent({
                     onClick={handleShare}
                     className="bg-gray-200 w-full flex-1 h-10 text-gray-600 font-semibold text-sm"
                 >
-                    Share Profile
+                    {t("shareProfile")}
                 </Button>
             </div>
 
@@ -168,7 +169,7 @@ export default function MainContent({
                         />
                     ))
                 ) : (
-                    <p className="text-center text-gray-500">No posts to show</p>
+                        <p className="text-center text-gray-500">{t("noPosts")}</p>
                 )}
             </div>
         </div>

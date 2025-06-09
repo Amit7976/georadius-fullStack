@@ -7,12 +7,12 @@ import NewsPost from "@/src/components/NewsPost";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { IoMapOutline } from "react-icons/io5";
+import { LoaderLink } from "../components/loaderLinks";
 import TrendingNewsSlider from "../components/TrendingNewsSlider";
 import { useGeolocation } from "./hooks/useGeolocation";
-import Link from "next/link";
-import { LoaderLink } from "../components/loaderLinks";
+import { t } from "../helpers/i18n";
 
-const filterOptions = ["Nearby", "District", "Global"];
+const filterOptions = [t("nearby"), t("district"), t("worldwide")];
 
 
 interface NewsPostType {
@@ -40,7 +40,7 @@ interface NewsPostType {
 
 
 export default function MainContent() {
-    const [selectedFilter, setSelectedFilter] = useState("Nearby");
+    const [selectedFilter, setSelectedFilter] = useState(t("nearby"));
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [newsData, setNewsData] = useState<NewsPostType[]>([]);
     const [loading, setLoading] = useState(true);
@@ -69,7 +69,7 @@ export default function MainContent() {
             location = { lat: 26.92, lng: 75.78 } //Default Jaipur Latitude & Longitude
         };
         const range = selectedFilter === "Nearby"
-            ? 50
+            ? Number(localStorage.getItem("radius")) || 10
             : selectedFilter === "District"
                 ? 100
                 : 7000;
@@ -206,15 +206,15 @@ export default function MainContent() {
             {/* Trending News */}
             <div className="py-3 px-0">
                 <div className="flex justify-between items-end p-2">
-                    <h2 className="text-3xl font-bold">Breaking <span className='text-green-500'>News!</span></h2>
+                    <h2 className="text-3xl font-bold">{t("breaking")} <span className='text-green-500'>{t("news")}</span></h2>
                     <LoaderLink href={'/pages/trendingNews'} className="text-xs font-bold pb-2 text-gray-500 active:scale-95">
-                        View More
+                        {t("viewAll")}
                     </LoaderLink>
                 </div>
                 <TrendingNewsSlider
                     range={
                         selectedFilter === "Nearby"
-                            ? 50
+                            ? Number(localStorage.getItem("radius")) || 10
                             : selectedFilter === "District"
                                 ? 100
                                 : 7000

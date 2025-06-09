@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import HeadingHeader from "@/src/components/HeadingHeader";
+import { t } from "@/src/helpers/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 // ✅ Zod Schema for Validation
@@ -96,11 +98,11 @@ export default function ChangePassword() {
 
             const result = await response.json();
 
-            if (!response.ok) throw new Error(result.error || "Something went wrong");
+            if (!response.ok) throw new Error(result.error || t("somethingWrong"));
 
-            alert("✅ Password updated successfully");
+            toast.success(t("passwordUpdatedSuccessfully"));
         } catch (error: any) {
-            alert("❌ " + error.message);
+            toast.error("❌ " + error.message);
         }
         finally {
             setLoading(false);
@@ -111,7 +113,7 @@ export default function ChangePassword() {
 
     return (
         <div className="w-white">
-            <HeadingHeader heading="Change Password" />
+            <HeadingHeader heading={t("changePassword")} />
             <form
                 onSubmit={handleSubmit(onSubmit)}
                 className="space-y-8 my-10 p-4"
@@ -119,13 +121,13 @@ export default function ChangePassword() {
                 {/* Current Password */}
                 <div className="space-y-4">
                     <Label className="text-lg font-bold text-black" htmlFor="currentPassword">
-                        Current Password
+                        {t("currentPasswordTitle")}
                     </Label>
                     <Input
                         className="h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0 font-medium text-gray-500"
                         type="text"
                         {...register("currentPassword")}
-                        placeholder="Enter current password"
+                        placeholder={t("enterCurrentPassword")}
                         onInput={(e: React.FormEvent<HTMLInputElement>) => {
                             const input = e.currentTarget;
                             input.value = input.value.replace(/\s/g, "");
@@ -139,13 +141,13 @@ export default function ChangePassword() {
                 {/* New Password */}
                 <div className="space-y-4">
                     <Label className="text-lg font-bold text-black" htmlFor="newPassword">
-                        New Password
+                        {t("newPasswordTitle")}
                     </Label>
                     <Input
                         className="h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0 font-medium text-gray-500"
                         type="text"
                         {...register("newPassword")}
-                        placeholder="Enter new password"
+                        placeholder={t("enterNewPassword")}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => checkPasswordStrength(e.target.value)}
                         onInput={(e: React.FormEvent<HTMLInputElement>) => {
                             const input = e.currentTarget;
@@ -192,19 +194,19 @@ export default function ChangePassword() {
                         onClick={generateSecurePassword}
                         className="w-1/2 border-2 border-green-600 text-green-600 text-base font-semibold h-12 rounded-lg"
                     >
-                        Generate Password
+                        {t("generatePassword")}
                     </Button></div>
 
                 {/* Confirm Password */}
                 <div className="space-y-4">
                     <Label className="text-lg font-bold text-black" htmlFor="confirmPassword">
-                        Confirm New Password
+                        {t("confirmNewPassword")}
                     </Label>
                     <Input
                         className="h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0 font-medium text-gray-500"
                         type="text"
                         {...register("confirmPassword")}
-                        placeholder="Confirm new password"
+                        placeholder={t("confirmNewPassword")}
                         onInput={(e: React.FormEvent<HTMLInputElement>) => {
                             const input = e.currentTarget;
                             input.value = input.value.replace(/\s/g, "");
@@ -222,7 +224,7 @@ export default function ChangePassword() {
                     className="w-full bg-green-600 active:bg-green-400  duration-300 h-16 text-white text-lg font-bold rounded-full"
                     disabled={loading}
                 >
-                    {loading ? 'Loading...' : 'Update Password'}
+                    {loading ? t("loading") : t("updatePassword") }
                 </Button>
             </form>
         </div>

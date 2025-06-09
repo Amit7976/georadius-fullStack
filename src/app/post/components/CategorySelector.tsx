@@ -5,6 +5,7 @@ import interestsList from "@/public/json/interestList.json";
 import { useEffect } from "react";
 import { UseFormSetValue, FieldErrors } from "react-hook-form";
 import type { FormValues } from "../MainContent";
+import { t } from "@/src/helpers/i18n";
 
 interface CategorySelectorProps {
     selectedCategories: string[];
@@ -36,7 +37,7 @@ export default function CategorySelector({
     return (
         <div className="space-y-4">
             <Label className="text-lg font-bold text-black">
-                News Category <span className="text-red-500">*</span>
+                {t("newsCategory")} <span className="text-red-500">*</span>
             </Label>
 
             <div className="grid grid-cols-3 gap-2">
@@ -54,7 +55,7 @@ export default function CategorySelector({
             </div>
 
             {errors.categories && (
-                <p className="text-red-500 text-sm">Please select at least one category.</p>
+                <p className="text-red-500 text-sm">{t("selectCategoryWarning")}</p>
             )}
         </div>
     );

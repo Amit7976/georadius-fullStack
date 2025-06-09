@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import BackButton from "@/src/components/BackButton";
 import { getAddress } from "@/src/helpers/AddressFunc";
+import { t } from "@/src/helpers/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -16,22 +17,23 @@ import { toast } from "sonner";
 import { z } from "zod";
 // Zod Schema
 const profileSchema = z.object({
-    profileImage: z.string().min(1, "Profile image is required"),
-    username: z.string().min(3, "Username must be at least 3 characters"),
-    fullName: z.string().min(3, "Full name is required"),
+    profileImage: z.string().min(1, t("profileImageRequired")),
+    username: z.string().min(3, t("usernameTooShort")),
+    fullName: z.string().min(3, t("fullNameRequired")),
     phoneNumber: z.string().optional(),
     dob: z
         .string()
-        .min(1, "Date of Birth is required")
+        .min(1, t("dobRequired"))
         .refine((dob) => {
             const inputDate = new Date(dob);
             return !isNaN(inputDate.getTime()) && inputDate <= new Date(new Date().setFullYear(new Date().getFullYear() - 16));
         }, {
-            message: "You must be at least 16 years old",
+            message: t("ageRequirement"),
         }),
-    location: z.string().min(1, "Location is required"),
-    bio: z.string().min(10, "Bio must be at least 10 characters"),
+    location: z.string().min(1, t("locationRequired")),
+    bio: z.string().min(10, t("bioTooShort")),
 });
+
 
 export default function MainContent() {
     const router = useRouter();
@@ -97,7 +99,7 @@ export default function MainContent() {
         setLocationLoading(true);
 
         if (typeof window === "undefined" || !navigator.geolocation || !navigator.permissions) {
-            alert("Geolocation is not supported in this browser.");
+            alert(t("geoNotSupported"));
             setLocationLoading(false);
             return;
         }
@@ -111,14 +113,14 @@ export default function MainContent() {
                     setValue("location", location);
                 } catch (err) {
                     console.error("Error fetching address from coordinates:", err);
-                    alert("Failed to get location details.");
+                    alert(t("fetchLocationError"));
                 }
             } else {
-                alert("Location permission denied. Cannot fetch location-based data.");
+                alert(t("locationPermissionDenied"));
             }
         } catch (err) {
             console.error("Permission check failed:", err);
-            alert("Could not check geolocation permission.");
+            alert(t("geoPermissionError"));
         }
 
         setLocationLoading(false);
@@ -152,10 +154,10 @@ export default function MainContent() {
 
             // **Check if user selected a new file**
             if (selectedFile) {
-                console.log("✅ New profile image detected, appending...");
+                console.log("New profile image detected, appending...");
                 formData.append("profileImage", selectedFile);
             } else {
-                console.log("✅ Using existing image URL...");
+                console.log("Using existing image URL...");
                 formData.append("profileImage", data.profileImage); // Send existing image path
             }
 
@@ -168,12 +170,12 @@ export default function MainContent() {
             if (!response.ok) throw new Error(result.error || "Profile update failed");
 
             console.log("✅ Profile updated successfully!", result);
-            toast("Profile updated successfully!");
+            toast.success(t("profileUpdateSuccess"));
 
             router.refresh();
         } catch (error) {
             console.error("❌ Error updating profile:", error);
-            toast("Failed to update profile.");
+            toast.error(t("profileUpdateFailed"));
         } finally {
             setIsSubmitting(false);
         }
@@ -187,7 +189,7 @@ export default function MainContent() {
         <div className="max-w-lg mx-auto p-2">
             <div className='flex items-center justify-center relative my-5'>
                 <BackButton />
-                <h1 className="text-xl font-semibold text-gray-500 text-center">Update your <span className="text-green-600">Profile</span></h1>
+                <h1 className="text-xl font-semibold text-gray-500 text-center">{t("updateYour")} <span className="text-green-600">Profile</span></h1>
             </div>
 
 
@@ -231,7 +233,7 @@ export default function MainContent() {
 
                     {/* Username */}
                     <div className="rounded-lg space-y-2 flex-2">
-                        <Label className={"text-sm text-gray-500 font-medium"}>Username</Label>
+                        <Label className={"text-sm text-gray-500 font-medium"}>{t("username")}</Label>
                         <Input
                             className={"border-0 border-b-2 focus-visible:ring-0 px-0 rounded-none rounded-t-lg text-lg font-semibold focus-visible:border-green-500 focus-visible:border-b-4 focus-visible:outline-0"}
                             type='text'
@@ -243,7 +245,7 @@ export default function MainContent() {
                             }}
                             disabled
                             readOnly
-                            placeholder="Enter username"
+                            placeholder={t("enterUsername")}
                         />
                     </div>
 
@@ -251,13 +253,13 @@ export default function MainContent() {
 
                 {/* Full Name */}
                 <div className="border border-gray-200 w-full px-6 py-10 rounded-lg flex flex-col gap-2">
-                    <Label className={"text-sm text-gray-500 font-medium"}>Full Name</Label>
+                    <Label className={"text-sm text-gray-500 font-medium"}>{t("fullName")}</Label>
                     <Input
                         type={"text"}
                         autoComplete="name"
                         className={"h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"}
                         {...register("fullName")}
-                        placeholder="Enter full name"
+                        placeholder={t("enterFullName")}
                     />
                     {errors.fullName && (
                         <p className="text-red-500">{errors.fullName.message}</p>
@@ -266,11 +268,11 @@ export default function MainContent() {
 
                 {/* Phone Number (Optional) */}
                 <div className="border border-gray-200 w-full px-6 py-10 rounded-lg flex flex-col gap-2">
-                    <Label className={"text-sm text-gray-500 font-medium"}>Phone Number</Label>
+                    <Label className={"text-sm text-gray-500 font-medium"}>{t("phoneNumber")}</Label>
                     <Input
                         className={"h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"}
                         {...register("phoneNumber")}
-                        placeholder="Enter phone number"
+                        placeholder={t("enterPhoneNumber")}
                         autoComplete="tel"
                         onInput={(e: React.FormEvent<HTMLInputElement>) => {
                             const input = e.currentTarget;
@@ -284,7 +286,7 @@ export default function MainContent() {
 
                 {/* Date of Birth */}
                 <div className="border border-gray-200 w-full p-6 rounded-lg flex flex-col gap-2">
-                    <Label className="text-sm text-gray-500 font-medium">Date of Birth</Label>
+                    <Label className="text-sm text-gray-500 font-medium">{t("dateOfBirth")}</Label>
                     <Input
                         className="h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"
                         {...register("dob")}
@@ -304,7 +306,7 @@ export default function MainContent() {
 
                 {/* Location + Get Current Location Button */}
                 <div className="border border-gray-200 w-full px-6 py-10 rounded-lg flex flex-col justify-center-center gap-2">
-                    <Label className={"text-sm text-gray-500 font-medium"}>Location</Label>
+                    <Label className={"text-sm text-gray-500 font-medium"}>{t("location")}</Label>
                     <div className="flex items-center gap-2" >
                         <div className="flex-3">
                             <Input
@@ -312,7 +314,7 @@ export default function MainContent() {
                                 className={"h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"}
                                 {...register("location")}
                                 autoComplete="address-level2"
-                                placeholder="Enter location"
+                                placeholder={t("enterLocation")}
                             />
                             {errors.location && (
                                 <p className="text-red-500">{errors.location.message}</p>
@@ -327,7 +329,7 @@ export default function MainContent() {
                         >
                             {locationLoading ? <PiCircleNotch className="animate-spin text-gray-500" /> :
                                 (<><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-navigation h-4 w-4"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
-                                    Current
+                                    {t("current")}
                                 </>)}
                         </Button>
                     </div>
@@ -335,8 +337,8 @@ export default function MainContent() {
 
                 {/* Bio */}
                 <div className="border border-gray-200 w-full px-6 py-10 rounded-lg flex flex-col gap-2">
-                    <Label className={"text-sm text-gray-500 font-medium"}>Bio</Label>
-                    <Textarea className={"h-40 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"} {...register("bio")} placeholder="Tell us about yourself" />
+                    <Label className={"text-sm text-gray-500 font-medium"}>{t("bio")}</Label>
+                    <Textarea className={"h-40 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"} {...register("bio")} placeholder={t("bio")} />
                     {errors.bio && <p className="text-red-500">{errors.bio.message}</p>}
                 </div>
 
@@ -349,7 +351,7 @@ export default function MainContent() {
                         disabled={isSubmitting}
                         className="w-full bg-green-600 active:bg-green-400  duration-300 h-16 text-white text-lg font-bold rounded-full"
                     >
-                        {isSubmitting ? "Submitting..." : "Update Profile"}
+                        {isSubmitting ? "Submitting..." : t("updateProfile") }
                     </Button>
                 </div>
             </form>

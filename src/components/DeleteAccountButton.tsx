@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { signOut } from "next-auth/react";
 import { toast } from "sonner";
+import { t } from "../helpers/i18n";
 
 export default function DeleteAccountDialog() {
     const [open, setOpen] = useState(false);
@@ -34,16 +35,16 @@ export default function DeleteAccountDialog() {
             const result = await res.json();
 
             if (!res.ok) {
-                toast.error(result.message || "Something went wrong");
+                toast.error(result.message || t("somethingWrong"));
                 handleLogout();
                 return;
             }
 
-            toast.success("Account deleted successfully.");
+            toast.success(t("accountDeleted"));
             handleLogout();
         } catch (err) {
             console.error("Error:", err);
-            toast.error("Something went wrong");
+            toast.error(t("somethingWrong"));
         } finally {
             setLoading(false);
             setOpen(false);
@@ -89,14 +90,14 @@ export default function DeleteAccountDialog() {
                     htmlFor="confirm-delete"
                     className="text-lg font-semibold text-red-500 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                    Yes, I understand that deleting my account is permanent and cannot be undone.
+                    {t("deleteWarning")}
                 </label>
             </div>
 
             {confirmed && countdown > 0 && (
                 <p className="text-sm text-red-600 mt-2">
-                    Deleting in <strong>{countdown}</strong> seconds... You can still uncheck to cancel. <br />
-                    <em>This action is irreversible.</em>
+                    {t("deletingIn")} <strong>{countdown}</strong> {t("cancelDelete")} <br />
+                    <em>{t("irreversible")}</em>
                 </p>
             )}
 
@@ -106,21 +107,21 @@ export default function DeleteAccountDialog() {
                 onClick={() => setOpen(true)}
                 disabled={!isDeleteButtonEnabled}
             >
-                Permanently Delete your Account
+                {t("deleteAccountTitle")}
             </Button>
 
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent className={"bg-red-500 border-red-500 rounded-3xl"}>
                     <DialogHeader className={"py-5"}>
                         <DialogTitle className="text-xl text-start text-white">
-                            Please enter your password to confirm account deletion:
+                            {t("enterPasswordToDelete")}
                         </DialogTitle>
                     </DialogHeader>
 
                     <div className="space-y-4">
                         <Input
                             type="text"
-                            placeholder="Enter your password"
+                            placeholder={t("enterPassword")}
                             value={password}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                 const noSpaces = e.target.value.replace(/\s/g, "");
@@ -137,7 +138,7 @@ export default function DeleteAccountDialog() {
                             disabled={loading || password.length === 0}
                             className="w-full bg-red-800 active:bg-red-800 duration-300 h-16 text-white text-lg font-bold rounded-lg"
                         >
-                            {loading ? "Deleting..." : "Delete Account"}
+                            {loading ? t("deleting") : t("deleteAccountBtn")}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

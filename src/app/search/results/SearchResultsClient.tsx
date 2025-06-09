@@ -15,6 +15,7 @@ import ImageSlider from "@/src/components/ImageSlider";
 import { formatTimeAgo } from "@/src/helpers/formatTimeAgo";
 import Image from "next/image";
 import { LoaderLink } from "@/src/components/loaderLinks";
+import { t } from "@/src/helpers/i18n";
 
 export default function SearchResultsClient() {
     const searchParams = useSearchParams();
@@ -117,18 +118,18 @@ export default function SearchResultsClient() {
         );
     };
 
-    
+
     return (
         <div className="p-4">
             <SearchInput queryParam={query} />
 
             <div className="mb-0">
                 <h2 className="text-sm font-normal text-gray-500 mb-2">
-                    Search Results for &#34;<span className="text-green-600 font-medium">{query}</span>&#34;
+                    {t("searchResultsFor")} &#34;<span className="text-green-600 font-medium">{query}</span>&#34;
                 </h2>
 
                 <div className="flex mb-2 gap-2 justify-between items-center">
-                    <h3 className="text-base font-medium text-gray-600 mb-1">Filter Results</h3>
+                    <h3 className="text-base font-medium text-gray-600 mb-1">{t("filterResults")}</h3>
                     <div className="flex gap-2 items-center">
                         <div>
                             <Select onValueChange={setSearchType} defaultValue="post">
@@ -136,8 +137,8 @@ export default function SearchResultsClient() {
                                     <SelectValue placeholder="post" />
                                 </SelectTrigger>
                                 <SelectContent className="static">
-                                    <SelectItem className="static" value="post">Posts</SelectItem>
-                                    <SelectItem className="static" value="user">Users</SelectItem>
+                                    <SelectItem className="static" value="post">{t("posts")}</SelectItem>
+                                    <SelectItem className="static" value="user">{t("users")}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -146,7 +147,7 @@ export default function SearchResultsClient() {
                             <div>
                                 <Select onValueChange={setRadius} defaultValue="5000000">
                                     <SelectTrigger className="w-fit flex items-center shadow-none border-0">
-                                        <SelectValue placeholder="World Wide" />
+                                        <SelectValue placeholder={t("worldwide")} />
                                     </SelectTrigger>
                                     <SelectContent className="static">
                                         <SelectItem className="static" value="5">5 km</SelectItem>
@@ -155,7 +156,7 @@ export default function SearchResultsClient() {
                                         <SelectItem className="static" value="50">50 km</SelectItem>
                                         <SelectItem className="static" value="500">500 km</SelectItem>
                                         <SelectItem className="static" value="50000">5000 km</SelectItem>
-                                        <SelectItem className="static" value="5000000">World Wide</SelectItem>
+                                        <SelectItem className="static" value="5000000">{t("worldwide")}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>

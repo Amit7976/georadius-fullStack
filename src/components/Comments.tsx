@@ -12,6 +12,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { t } from "../helpers/i18n";
 
 
 interface CommentType {
@@ -250,22 +251,22 @@ const Comments = ({ news_id }: { news_id: string }) => {
                                     });
                                 }}
                             >
-                                Reply
+                                {t("reply")}
                             </Button>
                             <Button variant={"ghost"}
                                 onClick={() => handleLike(comment._id)}
                                 className={comment.likes ? "text-green-700 font-semibold" : ""}
                             >
-                                {comment.likes ? 'Liked' : 'Like'}
+                                {comment.likes ? t("liked") : t("like")}
                             </Button>
                             {currentUser?.username === comment.username ? (
-                                <Button variant={"ghost"} className="" onClick={() => handleDelete(comment._id)}>Delete</Button>
+                                <Button variant={"ghost"} className="" onClick={() => handleDelete(comment._id)}>{t("delete")}</Button>
                             ) : (
                                 <Button variant={"ghost"}
                                     onClick={() => handleReport(comment._id)}
                                     className={comment.reports ? "text-red-700 font-semibold" : ""}
                                 >
-                                    {comment.reports ? 'Reported' : 'Report'}
+                                        {comment.reports ? t("reported") : t("report")}
                                 </Button>
                             )}
                         </div>
@@ -287,32 +288,32 @@ const Comments = ({ news_id }: { news_id: string }) => {
                 <div className="fixed bottom-0 left-0 right-0 bg-white shadow-md p-4 border-t z-50">
                     {replyingTo && (
                         <div className="text-sm text-gray-500 mb-1">
-                            Replying to @{replyingTo.replyingToUsername}
+                            {t("replyingTo")} @{replyingTo.replyingToUsername}
                             <Button variant={"ghost"}
                                 onClick={() => setReplyingTo(null)}
                                 className="ml-2 text-red-500 text-xs"
                             >
-                                Cancel
+                                {t("cancel")}
                             </Button>
                         </div>
                     )}
                     <div className="flex gap-2">
                         <textarea
                             className="flex-1 border rounded p-2 resize-none"
-                            placeholder="Write a comment..."
+                            placeholder={t("writeComment")}
                             value={input}
                             rows={1}
                             onChange={e => setInput(e.target.value)}
                         />
                         <Button variant={"ghost"} className="px-4 bg-green-500 text-xs text-white" onClick={handleSubmit}>
-                            {replyingTo ? 'Reply' : 'Comment'}
+                            {replyingTo ? t("reply") : t("comments")}
                         </Button>
                     </div>
                 </div>
 
                 {rootComments.length === 0 && (
                     <div className="text-center text-gray-500 mt-4">
-                        No comments yet. Be the first to comment!
+                        {t("noCommentsYet")}
                     </div>
                 )}
                 {rootComments.map(comment => (
@@ -322,14 +323,14 @@ const Comments = ({ news_id }: { news_id: string }) => {
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogContent className={""}>
                     <DialogHeader className={""}>
-                        <DialogTitle className={""}>Delete Comment?</DialogTitle>
+                        <DialogTitle className={""}>{t("deleteComment")}</DialogTitle>
                         <DialogDescription className={"mt-3"}>
-                            Are you sure you want to delete this comment? <br /> This action cannot be undone.
+                            {t("deleteCommentConfirm")} <br /> {t("deleteCommentWarning")}
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className={"flex items-center justify-center gap-4 mt-4 flex-row"}>
-                        <Button className="flex-1 w-full py-2" variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-                        <Button className="flex-1 w-full py-2" variant="destructive" onClick={confirmDelete}>Delete</Button>
+                        <Button className="flex-1 w-full py-2" variant="outline" onClick={() => setDialogOpen(false)}>{t("cancel")}</Button>
+                        <Button className="flex-1 w-full py-2" variant="destructive" onClick={confirmDelete}>{t("delete")}</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

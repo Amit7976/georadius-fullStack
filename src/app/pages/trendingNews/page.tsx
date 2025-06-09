@@ -4,6 +4,7 @@ import NewsPost from '@/src/components/NewsPost';
 import { useEffect, useState } from 'react';
 import useAuthVerification from '../../hooks/useAuthVerification';
 import { useGeolocation } from '../../hooks/useGeolocation';
+import { t } from '@/src/helpers/i18n';
 
 
 interface News {
@@ -55,7 +56,13 @@ function Page() {
     }, [location, isVerified]);
 
     if (error) return <p className="text-red-500 text-center">{error}</p>;
-    if (!data || data.length === 0) return <p className="text-center">No trending news nearby.</p>;
+    if (!data || data.length === 0) return (
+        <>
+            <div className="h-screen w-full flex items-center justify-center">
+                <p className='text-xl font-medium text-gray-500'>{t("noBreakingNewsNearByYou")}</p>
+            </div>
+        </>
+    );
 
     const handleHide = (postId: number) => {
         setData(prevNews => prevNews.filter(news => news._id !== postId.toString()));
@@ -69,7 +76,7 @@ function Page() {
 
     return (
         <div className='py-3 px-1 bg-white'>
-            <h2 className="text-3xl font-bold">Breaking <span className='text-green-500'>News!</span></h2>
+            <h2 className="text-2xl font-bold">{t("nearby")} {t("breaking")} <span className='text-green-500'>{t("news")}</span></h2>
             <div className="py-6">
                 {data.map((news) => (
                     <NewsPost news={news} key={news._id} onHide={handleHide} fullDescription={false} />

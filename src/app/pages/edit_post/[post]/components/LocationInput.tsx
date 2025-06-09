@@ -19,6 +19,7 @@ import {
     FieldErrors
 } from "react-hook-form";
 import { FormValues } from "../MainContent";
+import { t } from "@/src/helpers/i18n";
 
 interface Prediction {
     description: string;
@@ -157,14 +158,14 @@ export default function LocationInput({
                             className="text-blue-500 font-bold text-left"
                         >
                             {location ? location : "Fetching location..."}{" "}
-                            <span className="text-gray-400">(click to change)</span>
+                            <span className="text-gray-400">({t("clickToChange")})</span>
                         </button>
                     </DialogTrigger>
 
                     <DialogContent className={""}>
                         <DialogHeader className={""}>
                             <DialogTitle className="text-lg font-bold mb-3">
-                                Enter New Location
+                                {t("enterNewLocation")}
                             </DialogTitle>
                         </DialogHeader>
 
@@ -174,7 +175,7 @@ export default function LocationInput({
                             {...register("location")}
                             value={inputValue}
                             onChange={handleInputChange}
-                            placeholder="Type location here..."
+                            placeholder={t("typeLocationHere")}
                             className="h-14 border-2 w-full px-4 rounded-lg"
                         />
                         {errors.location && (
@@ -208,7 +209,7 @@ export default function LocationInput({
                                 variant="primary"
                                 onClick={() => {
                                     if (!inputValue.trim()) {
-                                        setError("Location cannot be empty.");
+                                        setError(t("locationEmpty"));
                                         return;
                                     }
                                     console.log("Saving custom location:", inputValue);
@@ -245,7 +246,7 @@ export default function LocationInput({
                     onClick={handleGetLocation}
                     className="w-full h-12 bg-gray-600 text-white font-bold mt-2"
                 >
-                    Use Current Location
+                    {t("useCurrentLocation")}
                 </Button>
             )}
         </div>

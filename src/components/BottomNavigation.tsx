@@ -9,6 +9,7 @@ import { CgSearch, CgSearchLoading } from "react-icons/cg";
 import { FaUser } from "react-icons/fa";
 import { FaRegUser } from "react-icons/fa";
 import { LoaderLink } from "./loaderLinks";
+import { t } from "../helpers/i18n";
 
 
 export default function BottomNavigation({ username }: { username: string | boolean }) {
@@ -29,11 +30,11 @@ export default function BottomNavigation({ username }: { username: string | bool
 
 
     const tabs = [
-        { key: "home", name: "Home", icon: IoHomeOutline, icon2: IoHome, href: "/home" },
-        { key: "rapid", name: "Rapid", icon: IoFlashOutline, icon2: IoFlash, href: "/rapid" },
-        { key: "post", name: "Post", icon: MdOutlineAddBox, icon2: MdAddBox, href: "/post" },
-        { key: "search", name: "Search", icon: CgSearch, icon2: CgSearchLoading, href: "/search" },
-        { key: `${username}`, name: "Profile", icon: FaRegUser, icon2: FaUser, href: `/${username}` },
+        { key: "home", name: t("home"), icon: IoHomeOutline, icon2: IoHome, href: "/home" },
+        { key: "rapid", name: t("rapid"), icon: IoFlashOutline, icon2: IoFlash, href: "/rapid" },
+        { key: "post", name: t("post"), icon: MdOutlineAddBox, icon2: MdAddBox, href: "/post" },
+        { key: "search", name: t("search"), icon: CgSearch, icon2: CgSearchLoading, href: "/search" },
+        { key: `${username}`, name: t("profile"), icon: FaRegUser, icon2: FaUser, href: `/${username}` },
     ];
 
 

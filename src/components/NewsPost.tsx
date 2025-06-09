@@ -20,6 +20,7 @@ import QrButton from "./QrButton";
 import SaveButton from "./saveButton";
 import ShareButton from "./ShareButton";
 import VoteButtons from "./VoteButtons";
+import { t } from "../helpers/i18n";
 
 interface News {
     _id: string;
@@ -59,9 +60,9 @@ const NewsPost = ({ news, onHide, fullDescription }: { news:News; fullDescriptio
         if (news.latitude !== undefined && news.longitude !== undefined) {
             getDistanceFromCurrentLocation(news.latitude, news.longitude)
                 .then(({ formattedDistance }) => setDistance(formattedDistance))
-                .catch(() => setDistance("Location not available"));
+                .catch(() => setDistance(t("nearby")));
         } else {
-            setDistance("Location not available");
+            setDistance(t("nearby"));
         }
     }, [news.latitude, news.longitude]);
 
@@ -108,7 +109,7 @@ const NewsPost = ({ news, onHide, fullDescription }: { news:News; fullDescriptio
                         </DrawerTrigger>
                         <DrawerContent className={""} aria-describedby={undefined}>
                             <div className="p-4">
-                                <DrawerTitle className="text-lg font-semibold text-center mb-4">Options</DrawerTitle>
+                                <DrawerTitle className="text-lg font-semibold text-center mb-4">{t("options")}</DrawerTitle>
                                 <div className="space-y-3 mb-10">
                                     {/* News Categories */}
                                     <div className="flex gap-2 px-4 flex-wrap">
@@ -127,7 +128,7 @@ const NewsPost = ({ news, onHide, fullDescription }: { news:News; fullDescriptio
                                                 onClick={handleEditClick}
                                                 className="flex gap-3 w-full p-3 h-12 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100 items-center font-semibold"
                                             >
-                                                <Pencil /> Edit
+                                                <Pencil /> {t("edit")}
                                             </Button>
 
                                             <DeleteButton postId={Number(news._id)} onHide={onHide} />
@@ -135,10 +136,10 @@ const NewsPost = ({ news, onHide, fullDescription }: { news:News; fullDescriptio
                                     ) : (
                                         <>
                                             <LoaderLink href={"/" + news.creatorName} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100 items-center font-semibold">
-                                                    <Image src={news.creatorImage} alt="Profile" width={40} height={40} className="rounded-full size-5" priority /> View Profile
+                                                    <Image src={news.creatorImage} alt="Profile" width={40} height={40} className="rounded-full size-5" priority /> {t("viewProfile")}
                                             </LoaderLink>
                                             <LoaderLink href={`/pages/others/report_an_issue/${news._id}`} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100">
-                                                <TbReport className="size-6" /> Report
+                                                    <TbReport className="size-6" /> {t("report")}
                                             </LoaderLink>
                                         </>
                                     )}
@@ -177,7 +178,7 @@ const NewsPost = ({ news, onHide, fullDescription }: { news:News; fullDescriptio
                             </DrawerTrigger>
                             <DrawerContent className={""} aria-describedby={undefined}>
                                 <DrawerHeader className="p-4 overflow-scroll">
-                                    <DrawerTitle className="text-lg font-semibold text-center mb-1">Comments</DrawerTitle>
+                                    <DrawerTitle className="text-lg font-semibold text-center mb-1">{t("comments")}</DrawerTitle>
                                     <Comment news_id={String(news._id)} />
                                 </DrawerHeader>
                             </DrawerContent>

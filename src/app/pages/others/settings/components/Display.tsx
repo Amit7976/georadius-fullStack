@@ -1,37 +1,40 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { useRouter } from "next/navigation";
+import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
 import { FiSun } from "react-icons/fi";
 import { HiOutlineChevronRight } from "react-icons/hi2";
+import { useTheme } from "next-themes"
+import { t } from "@/src/helpers/i18n";
+
 function Display() {
 
-    const [displayModal, setDisplayModal] = useState(false);
     const [displayMode, setDisplayMode] = useState("system");
+
+    const { setTheme } = useTheme()
 
 
     return (
         <>
-            <Dialog open={displayModal} onOpenChange={setDisplayModal}>
+            <Dialog>
                 <DialogTrigger className="flex justify-between items-center gap-5 active:scale-95 duration-300 w-full">
                     <div className="flex gap-3 items-center py-5">
                         <FiSun className='text-3xl shrink-0' />
                         <label className="text-start overflow-hidden">
-                            <h4 className='text-base font-medium'>Display Preference</h4>
-                            <p className='text-sm font-medium text-gray-400'>Select Theme Appearance</p>
+                            <h4 className='text-base font-medium'>{t("displayPreference")}</h4>
+                            <p className='text-sm font-medium text-gray-400'>{t("themeSelection")}</p>
                         </label>
                     </div>
                     <HiOutlineChevronRight className='text-2xl text-gray-500 font-light' />
                 </DialogTrigger>
-                <DialogContent className="">
+                <DialogContent className="rounded-2xl pb-8">
                     <DialogHeader className="">
-                        <DialogTitle className="text-lg font-bold mb-5">Display Preferences</DialogTitle>
+                        <DialogTitle className="text-2xl font-bold mt-4 mb-6">{t("display_preferences")}</DialogTitle>
                     </DialogHeader>
-                    <div className="flex flex-wrap gap-2 justify-between px-10">
+                    <div className="flex flex-wrap gap-2 justify-between px-10 pb-6">
                         <div>
-                            <Button className='w-20 h-40 aspect-video bg-white border-2 p-0 overflow-hidden grid grid-rows-6 shadow-none' variant={'ghost'} onClick={() => setDisplayMode("system")}>
+                            <Button className={`w-20 h-40 aspect-video hover:bg-white bg-white border-2 ${displayMode === "light" ? 'border-[3px] border-green-500' : 'border-gray-100'} p-0 overflow-hidden grid grid-rows-6 shadow-none`} variant={'ghost'} onClick={() => { setTheme("light"), setDisplayMode('light') }}>
                                 <div className="row-span-5 h-full w-20">
                                     <div className="flex items-center p-2 w-full">
                                         <div className="w-5 h-5 rounded-full bg-gray-200 shrink-0"></div>
@@ -60,11 +63,11 @@ function Display() {
                                 </div>
                                 <div className="row-span-1 bg-gray-100 h-full w-20"></div>
                             </Button>
-                            <p className="font-semibold text-sm w-full text-center pt-2 text-gray-500">light</p>
+                            <p className="font-semibold text-sm w-full text-center pt-2 text-gray-500">{t("light")}</p>
                         </div>
 
                         <div>
-                            <Button className='w-20 h-40 aspect-video bg-neutral-900 border-2 p-0 overflow-hidden grid grid-rows-6 shadow-none' variant={'ghost'} onClick={() => setDisplayMode("light")}>
+                            <Button className={`w-20 h-40 aspect-video bg-neutral-900 hover:bg-neutral-900 border-2 ${displayMode === "dark" ? 'border-[3px] border-green-500' : 'border-gray-100'} p-0 overflow-hidden grid grid-rows-6 shadow-none`} variant={'ghost'} onClick={() => { setTheme("dark"), setDisplayMode("dark") }}>
                                 <div className="row-span-5 h-full w-20">
                                     <div className="flex items-center p-2 w-full">
                                         <div className="w-5 h-5 rounded-full bg-neutral-600 shrink-0"></div>
@@ -93,10 +96,10 @@ function Display() {
                                 </div>
                                 <div className="row-span-1 bg-neutral-700 h-full w-20"></div>
                             </Button>
-                            <p className="font-semibold text-sm w-full text-center pt-2 text-gray-500">Dark</p>
+                            <p className="font-semibold text-sm w-full text-center pt-2 text-gray-500">{t("dark")}</p>
                         </div>
                         <div>
-                            <Button className='w-20 h-40 gap-0 aspect-video relative bg-white border-2 border-gray-100 p-0 overflow-hidden shadow-none' variant={'ghost'} onClick={() => setDisplayMode("dark")}>
+                            <Button className={`w-20 h-40 gap-0 aspect-video relative bg-white border-2 ${displayMode === "system" ? 'border-[3px] border-green-500' : 'border-gray-100'} p-0 overflow-hidden shadow-none`} variant={'ghost'} onClick={() => { setTheme("system"), setDisplayMode("system") }}>
                                 <div className='w-10 h-40 z-10 absolute top-0 left-0 aspect-video border-0 bg-white overflow-hidden grid grid-rows-6'>
                                     <div className="row-span-5 h-full w-20">
                                         <div className="flex items-center p-2 w-full">
@@ -156,18 +159,9 @@ function Display() {
                                     <div className="row-span-1 bg-neutral-700 h-full w-20"></div>
                                 </div>
                             </Button>
-                            <p className="font-semibold text-sm w-full text-center pt-1 text-gray-500">System</p>
+                            <p className="font-semibold text-sm w-full text-center pt-1 text-gray-500">{t("system")}</p>
                         </div>
                     </div>
-                    <div className="flex justify-end">
-                        <Button
-                            type="button"
-                            variant={'primary'}
-                            onClick={() => setDisplayModal(false)}
-                            className='w-full h-14 border-2 bg-green-500  text-white text-lg font-bold py-3 rounded-lg'
-                        >
-                            Save
-                        </Button></div>
                 </DialogContent>
             </Dialog>
         </>

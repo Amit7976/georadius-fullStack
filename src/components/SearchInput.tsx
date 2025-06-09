@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { IoSearch, IoClose } from "react-icons/io5";
 import { Input } from "@/components/ui/input";
+import { t } from "../helpers/i18n";
 
 interface SearchInputProps {
     queryParam?: string;
@@ -73,7 +74,7 @@ export default function SearchInput({ queryParam = "" }: SearchInputProps) {
                 <Input
                     ref={inputRef}
                     type="text"
-                    placeholder="Search for users, posts, location..."
+                    placeholder={t("searchPlaceholder")}
                     value={query}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setQuery(e.target.value);

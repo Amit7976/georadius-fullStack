@@ -16,6 +16,7 @@ import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useGeolocation } from "../hooks/useGeolocation";
 import { LoaderLink } from "@/src/components/loaderLinks";
+import { t } from "@/src/helpers/i18n";
 
 
 interface Post {
@@ -49,7 +50,6 @@ export default function MainContent() {
     const [newsData, setNewsData] = useState<Post[]>([]);
     const [posts, setPosts] = useState([]);
     const [loadingPosts, setLoadingPosts] = useState(true);
-    const [height, setHeight] = useState(94);
     const [error, setError] = useState<string | null>(null);
     let location = useGeolocation();
 
@@ -134,7 +134,7 @@ export default function MainContent() {
                                         </DrawerTrigger>
                                         <DrawerContent className={""}>
                                             <div className="p-4">
-                                                <DrawerTitle className="text-lg font-semibold text-center mb-4">Options</DrawerTitle>
+                                                <DrawerTitle className="text-lg font-semibold text-center mb-4">{t("options")}</DrawerTitle>
                                                 <div className="space-y-3 mb-10">
                                                     {/* News Categories */}
                                                     <div className="flex gap-2 px-4 flex-wrap">
@@ -149,17 +149,17 @@ export default function MainContent() {
                                                     {post.currentUserProfile ? (
                                                         <>
                                                             <LoaderLink href={"/pages/edit_post/" + post._id} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100 items-center font-semibold">
-                                                                <Pencil /> Edit
+                                                                <Pencil /> {t("edit")}
                                                             </LoaderLink>
                                                             <DeleteButton postId={Number(post._id)} onHide={() => handleHide(Number(post._id))} />
                                                         </>
                                                     ) : (
                                                         <>
                                                             <LoaderLink href={"/" + post.creatorName} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100 items-center font-semibold">
-                                                                <Image src={post.creatorImage} alt="Profile" width={40} height={40} priority className="rounded-full size-5" /> View Profile
+                                                                    <Image src={post.creatorImage} alt="Profile" width={40} height={40} priority className="rounded-full size-5" /> {t("viewProfile")}
                                                             </LoaderLink>
                                                             <LoaderLink href={`/pages/others/report_an_issue/${post._id}`} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100">
-                                                                <TbReport className="size-6" /> Report
+                                                                    <TbReport className="size-6" /> {t("report")}
                                                             </LoaderLink>
                                                         </>
                                                     )}

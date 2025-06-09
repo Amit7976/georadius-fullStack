@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import MainContent from "./MainContent";
 import { LoaderLink } from "@/src/components/loaderLinks";
 import { AnimatedText } from "@/src/components/Animate";
+import { t } from "@/src/helpers/i18n";
 
 type Props = {
     profile: string;
@@ -120,7 +121,7 @@ function ProfileClientContent({ profile }: Props) {
                         <AnimatedText text="Oops!" color="black" />
                     </div>
                     <p className="text-lg text-gray-400 font-medium mb-6 max-w-md mx-auto animate-fade-in-up">
-                        We couldn’t find the user you’re looking for. It may have been deleted or never existed.
+                        {t("userNotFound")}
                     </p>
                     <LoaderLink
                         href="/"

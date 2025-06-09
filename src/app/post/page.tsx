@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/src/auth";
 import MainContent from "./MainContent";
+import { t } from "@/src/helpers/i18n";
 
 
 export default async function page() {
@@ -22,7 +23,7 @@ export default async function page() {
   return (
     <>
       <div className="text-center p-10">
-        <h1 className="text-2xl font-extrabold text-black">Report a News</h1>
+        <h1 className="text-2xl font-semibold text-black">{t("reportNews")}</h1>
       </div>
       <MainContent />
     </>

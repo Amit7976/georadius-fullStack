@@ -13,28 +13,32 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { getAddress } from "@/src/helpers/AddressFunc";
 import { PiCircleNotch } from "react-icons/pi";
+import { t } from "@/src/helpers/i18n";
 
 const profileSchema = z.object({
     profileImage: z
-        .instanceof(File, { message: "Profile image is required" })
-        .or(z.string().min(1, "Profile image is required")),
+        .instanceof(File, { message: t("profileImageRequired") })
+        .or(z.string().min(1, t("profileImageRequired"))),
 
-    username: z.string().min(3, "Username must be at least 3 characters"),
-    fullName: z.string().min(3, "Full name is required"),
+    username: z.string().min(3, t("usernameTooShort")),
+    fullName: z.string().min(3, t("fullNameRequired")),
     phoneNumber: z.string().optional(),
     dob: z
         .string()
-        .min(1, "Date of Birth is required")
+        .min(1, t("dobRequired"))
         .refine((dob) => {
             const inputDate = new Date(dob);
-            return !isNaN(inputDate.getTime()) && inputDate <= new Date(new Date().setFullYear(new Date().getFullYear() - 16));
+            return (
+                !isNaN(inputDate.getTime()) &&
+                inputDate <= new Date(new Date().setFullYear(new Date().getFullYear() - 16))
+            );
         }, {
-            message: "You must be at least 16 years old",
+            message: t("ageRequirement"),
         }),
-    location: z.string().min(1, "Location is required"),
-    bio: z.string().min(10, "Bio must be at least 10 characters"),
+    location: z.string().min(1, t("locationRequired")),
+    bio: z.string().min(10, t("bioTooShort")),
 });
-
+  
 
 export default function MainContent() {
     const {
@@ -63,7 +67,7 @@ export default function MainContent() {
         setLocationLoading(true);
 
         if (typeof window === "undefined" || !navigator.geolocation || !navigator.permissions) {
-            alert("Geolocation is not supported in this browser.");
+            alert(t("geoNotSupported"));
             setLocationLoading(false);
             return;
         }
@@ -77,18 +81,20 @@ export default function MainContent() {
                     setValue("location", location);
                 } catch (err) {
                     console.error("Error fetching address from coordinates:", err);
-                    alert("Failed to get location details.");
+                    alert(t("fetchLocationError"));
                 }
             } else {
-                alert("Location permission denied. Cannot fetch location-based data.");
+                alert(t("locationPermissionDenied"));
             }
         } catch (err) {
             console.error("Permission check failed:", err);
-            alert("Could not check geolocation permission.");
+            alert(t("geoPermissionError"));
         }
 
         setLocationLoading(false);
     };
+
+
     const router = useRouter();
 
 
@@ -148,8 +154,8 @@ export default function MainContent() {
                     throw new Error(result.error || "Failed to update profile");
                 }
 
-                console.log("✅ Profile updated successfully!", result);
-                toast("Profile updated successfully!");
+                console.log("✅ Profile Created successfully!", result);
+                toast.success("Profile Created successfully!");
 
                 router.replace("/pages/onboarding/interest");
 
@@ -159,7 +165,7 @@ export default function MainContent() {
             }
         } catch (error) {
             console.error("❌ Error updating profile:", error);
-            toast("Failed to update profile.");
+            toast.error("Failed to create profile.");
         } finally {
             setIsSubmitting(false);
         }
@@ -212,13 +218,13 @@ export default function MainContent() {
 
                     {/* Username */}
                     <div className="rounded-lg space-y-2 flex-2">
-                        <Label className={"text-sm text-gray-500 font-medium"}>Username</Label>
+                        <Label className={"text-sm text-gray-500 font-medium"}>{t("username")}</Label>
                         <Input
                             className={"border-0 border-b-2 focus-visible:ring-0 rounded-none rounded-t-lg text-base font-medium p-0 focus-visible:border-green-500 focus-visible:border-b-4 focus-visible:outline-0"}
                             type={"text"}
                             {...register("username")}
                             autoComplete="username"
-                            placeholder="Your UserName"
+                            placeholder={t("enterUsername")}
                             onInput={(e: React.FormEvent<HTMLInputElement>) => {
                                 const input = e.currentTarget;
                                 input.value = input.value.replace(/\s/g, "");
@@ -233,13 +239,13 @@ export default function MainContent() {
 
                 {/* Full Name */}
                 <div className="border border-gray-200 w-full p-6 rounded-lg flex flex-col gap-2">
-                    <Label className={"text-sm text-gray-500 font-medium"}>Full Name</Label>
+                    <Label className={"text-sm text-gray-500 font-medium"}>{t("fullName")}</Label>
                     <Input
                         type={"text"}
                         autoComplete="name"
                         className={"h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"}
                         {...register("fullName")}
-                        placeholder="Enter full name"
+                        placeholder={t("enterFullName")}
                     />
                     {errors.fullName && (
                         <p className="text-red-500">{errors.fullName.message}</p>
@@ -248,11 +254,11 @@ export default function MainContent() {
 
                 {/* Phone Number (Optional) */}
                 <div className="border border-gray-200 w-full p-6 rounded-lg flex flex-col gap-2">
-                    <Label className={"text-sm text-gray-500 font-medium"}>Phone Number</Label>
+                    <Label className={"text-sm text-gray-500 font-medium"}>{t("phoneNumber")}</Label>
                     <Input
                         className={"h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"}
                         {...register("phoneNumber")}
-                        placeholder="Enter phone number"
+                        placeholder={t("enterPhoneNumber")}
                         autoComplete="tel"
                         onInput={(e: React.FormEvent<HTMLInputElement>) => {
                             const input = e.currentTarget;
@@ -264,7 +270,7 @@ export default function MainContent() {
 
                 {/* Date of Birth */}
                 <div className="border border-gray-200 w-full p-6 rounded-lg flex flex-col gap-2">
-                    <Label className="text-sm text-gray-500 font-medium">Date of Birth</Label>
+                    <Label className="text-sm text-gray-500 font-medium">{t("dateOfBirth")}</Label>
                     <Input
                         className="h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"
                         {...register("dob")}
@@ -282,7 +288,7 @@ export default function MainContent() {
 
                 {/* Location + Get Current Location Button */}
                 <div className="border border-gray-200 w-full p-6 rounded-lg flex flex-col justify-center-center gap-2">
-                    <Label className={"text-sm text-gray-500 font-medium"}>Location</Label>
+                    <Label className={"text-sm text-gray-500 font-medium"}>{t("location")}</Label>
                     <div className="flex items-center gap-2" >
                         <div className="flex-3">
                             <Input
@@ -290,7 +296,7 @@ export default function MainContent() {
                                 className={"h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"}
                                 {...register("location")}
                                 autoComplete="address-level2"
-                                placeholder="Enter location"
+                                placeholder={t("enterLocation")}
                             />
                             {errors.location && (
                                 <p className="text-red-500">{errors.location.message}</p>
@@ -305,7 +311,7 @@ export default function MainContent() {
                         >
                             {locationLoading ? <PiCircleNotch className="animate-spin text-gray-500" /> :
                                 (<><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-navigation h-4 w-4"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
-                                    Current
+                                    {t("current")}
                                 </>)}
                         </Button>
                     </div>
@@ -313,8 +319,8 @@ export default function MainContent() {
 
                 {/* Bio */}
                 <div className="border border-gray-200 w-full p-6 rounded-lg flex flex-col gap-2">
-                    <Label className={"text-sm text-gray-500 font-medium"}>Bio</Label>
-                    <Textarea className={"h-40 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"} {...register("bio")} placeholder="Tell us about yourself" />
+                    <Label className={"text-sm text-gray-500 font-medium"}>{t("bio")}</Label>
+                    <Textarea className={"h-40 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"} {...register("bio")} placeholder={t("bio")} />
                     {errors.bio && <p className="text-red-500">{errors.bio.message}</p>}
                 </div>
 

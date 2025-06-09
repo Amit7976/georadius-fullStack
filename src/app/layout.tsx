@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { auth } from "../auth";
 import BottomNavigation from "../components/BottomNavigation";
+import { ThemeProvider } from "../components/theme-provider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,11 +28,19 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="antialiased relative bg-white">
-        <main>
-          {children}
-          <BottomNavigation username={session?.user.username || false} />
-        </main>
-        <Toaster richColors position="top-center" expand={false} closeButton />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <main>
+            <Toaster richColors position="top-right" />
+            {children}
+            <BottomNavigation username={session?.user.username || false} />
+          </main>
+          <Toaster richColors position="top-center" expand={false} closeButton />
+        </ThemeProvider>
       </body>
     </html>
   );

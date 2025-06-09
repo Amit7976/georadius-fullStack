@@ -4,6 +4,7 @@ import Link from "next/link";
 import "swiper/css";
 import SearchInput from "@/src/components/SearchInput";
 import { LoaderLink } from "@/src/components/loaderLinks";
+import { t } from "@/src/helpers/i18n";
 
 
 
@@ -17,7 +18,7 @@ export default function MainContent() {
            
             {/* 🔥 Trending Topics Section */}
             <div className="pt-6">
-                <h2 className="px-5 font-extrabold text-xl text-black">All Categories</h2>
+                <h2 className="px-5 font-semibold text-xl text-black">{t("allCategories")}</h2>
                 <div className="flex flex-wrap items-center px-5 py-8 gap-y-5 gap-x-3 select-none">
                     {interestsList.map((interest, index) => (
                         <LoaderLink

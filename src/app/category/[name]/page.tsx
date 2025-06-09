@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { useGeolocation } from "../../hooks/useGeolocation";
 import { LoaderLink } from "@/src/components/loaderLinks";
+import { t } from "@/src/helpers/i18n";
 
 type Post = {
     _id: string;
@@ -76,7 +77,7 @@ export default function CategoryPage() {
                         <SelectItem className={""} value="50">50 km</SelectItem>
                         <SelectItem className={""} value="500">500 km</SelectItem>
                         <SelectItem className={""} value="5000">5000 km</SelectItem>
-                        <SelectItem className={""} value="50000">World Wide</SelectItem>
+                        <SelectItem className={""} value="50000">{t("worldwide")}</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
@@ -108,7 +109,7 @@ export default function CategoryPage() {
                     ))
                 ) : (
                     <div className="w-full h-screen flex items-center justify-center text-gray-400 font-medium text-lg">
-                        <p>No posts available in this category.</p>
+                            <p>{t("noPostsInCategory")}</p>
                     </div>
                 )}
             </div>

@@ -10,17 +10,20 @@ import CategorySelector from "./components/CategorySelector";
 import { Button } from "@/components/ui/button";
 import ImageUploader from "./components/ImageUploader";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { t } from "@/src/helpers/i18n";
 
 // ✅ Zod Validation Schema with Debugging
 const formSchema = z.object({
-    title: z.string().min(3, "Title must be at least 3 characters long"),
-    description: z.string().min(10, "Description must be at least 10 characters long"),
-    location: z.string().min(10, "Location must be provided"),
-    latitude: z.number().min(1, "latitude must be provided"),
-    longitude: z.number().min(1, "longitude must be provided"),
-    categories: z.array(z.string()).min(1, "At least one category must be selected"),
-    images: z.array(z.any()).max(3, "You can only upload up to 3 images").optional(),
+  title: z.string().min(3, t("titleTooShort")),
+  description: z.string().min(10, t("descriptionTooShort")),
+  location: z.string().min(10, t("locationRequired")),
+  latitude: z.number().min(1, t("latitudeRequired")),
+  longitude: z.number().min(1, t("longitudeRequired")),
+  categories: z.array(z.string()).min(1, t("categoryRequired")),
+  images: z.array(z.any()).max(3, t("maxImages")).optional(),
 });
+
 
 export interface FormValues {
     title: string;
@@ -91,6 +94,7 @@ export default function MainContent() {
 
             console.log("Upload Successful:", data);
 
+            toast.success(t("uploadComplete"))
             // ✅ Reset Form After Successful Submission
             reset();
             setSelectedCategories([]);
@@ -99,7 +103,7 @@ export default function MainContent() {
             router.replace("/");
         } catch (error) {
             console.error("Upload Error:", error);
-            alert("Failed to upload. Please try again.");
+            toast.error(t("uploadFailed"));
         } finally {
             setProcessing(false)
         }
@@ -108,7 +112,7 @@ export default function MainContent() {
 
     return (
         <div className="p-5 space-y-10">
-            {isSubmitting && <p className="text-blue-500">Submitting...</p>}
+            {isSubmitting && <p className="text-blue-500">{t("submitting")}</p>}
 
             <TitleInput register={register} errors={errors} />
             <LocationInput register={register} setValue={setValue} errors={errors} />
@@ -131,7 +135,7 @@ export default function MainContent() {
             )}
 
             <Button variant={"primary"} disabled={processing} type="submit" onClick={handleSubmit(onSubmit)} className="w-full bg-green-600 active:bg-green-400  h-16 text-white text-lg font-bold rounded-lg">
-                {processing ? "Processing...." : "Post News"}
+                {processing ? t("posting") : t("postNews")}
             </Button>
         </div>
     );

@@ -1,0 +1,35 @@
+import { translations } from "./translations";
+
+type LangType = "English" | "Hindi";
+
+function isLangType(lang: string): lang is LangType {
+  return lang === "English" || lang === "Hindi";
+}
+
+function getLanguageIndex(): number {
+  if (typeof window !== "undefined") {
+    const stored = localStorage.getItem("app-language");
+    const lang: LangType = isLangType(stored || "") ? (stored as LangType) : "English";
+    return lang === "Hindi" ? 1 : 0;
+  }
+  return 0; // default to English
+}
+
+export function t(key: keyof typeof translations.language): string {
+  const index = getLanguageIndex();
+  return translations.language[key][index] || key;
+}
+
+export function setLang(lang: LangType) {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("app-language", lang);
+  }
+}
+
+export function getLang(): LangType {
+  if (typeof window !== "undefined") {
+    const stored = localStorage.getItem("app-language");
+    return isLangType(stored || "") ? (stored as LangType) : "English";
+  }
+  return "English";
+}

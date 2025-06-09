@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import HeadingHeader from "@/src/components/HeadingHeader";
+import { t } from "@/src/helpers/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -35,27 +36,27 @@ export default function MainContent() {
 
     return (
         <div className="space-y-6">
-            <HeadingHeader heading="Two-Factor Authentication" />
+            <HeadingHeader heading={t("twoFactorAuth")} />
 
             <form onSubmit={handleSubmit((data) => console.log(data))} className="space-y-6 p-6 my-10">
                 {/* Current Password */}
                 <div className="space-y-2">
-                    <Label className="text-lg font-bold text-black" htmlFor="password">Current Password</Label>
-                    <Input className="h-16 px-5 font-semibold border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0" type="password" {...register("password")} placeholder="Enter your password" />
+                    <Label className="text-lg font-bold text-black" htmlFor="password">{t("enterCurrentPassword")}</Label>
+                    <Input className="h-16 px-5 font-semibold border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0" type="password" {...register("password")} placeholder={t("enterPassword")} />
                     {errors.password && <p className="text-red-500">{errors.password.message}</p>}
                 </div>
 
                 {/* Toggle 2FA */}
                 <div className="flex justify-between items-center border-2 px-4 py-8 rounded-lg">
-                    <span className="text-lg font-medium flex-3">Enable Two-Factor Authentication</span>
+                    <span className="text-lg font-medium flex-3">{t("enable2FA")}</span>
                     <div className="flex-1 flex justify-center"> <Switch className="scale-200" checked={is2FAEnabled} onCheckedChange={handleToggle2FA} /></div>
                 </div>
 
                 {/* Email Input (Shown only if 2FA is enabled) */}
                 {is2FAEnabled && (
                     <div className="space-y-2">
-                        <Label className="text-lg font-bold text-black" htmlFor="email">Verification Email</Label>
-                        <Input className="h-16 px-5 font-semibold border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0" type="email" defaultValue={defaultEmail} {...register("email")} placeholder="Enter your email" />
+                        <Label className="text-lg font-bold text-black" htmlFor="email">{t("verificationEmail")}</Label>
+                        <Input className="h-16 px-5 font-semibold border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0" type="email" defaultValue={defaultEmail} {...register("email")} placeholder={t("enterEmail")} />
                         {errors.email && <p className="text-red-500">{errors.email.message}</p>}
                     </div>
                 )}
@@ -70,10 +71,10 @@ export default function MainContent() {
                         disabled
                         className="w-full bg-green-600 active:bg-green-400  duration-300 h-16 text-white text-lg font-bold rounded-full"
                     >
-                        {is2FAEnabled ? "Enable 2FA" : "Disable 2FA"}
+                        {is2FAEnabled ? t("enable2FATitle") : t("disable2FATitle") }
                     </Button>
                     <p className="text-sm text-center mt-5 text-red-500 font-medium">
-                        <span className="text-gray-500">*</span>Two-Factor Authentication (2FA) is currently not available.
+                        <span className="text-gray-500">*</span>{t("twoFAnotAvailable")}
                     </p>
                 </div>
             </form>

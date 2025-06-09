@@ -6,6 +6,7 @@ import { RiUploadCloud2Line } from "react-icons/ri";
 import { useState, useEffect } from "react";
 import type { FormValues } from "../MainContent";
 import Image from "next/image";
+import { t } from "@/src/helpers/i18n";
 
 interface ImageUploaderProps {
     setValue: UseFormSetValue<FormValues>;
@@ -69,7 +70,7 @@ export default function ImageUploader({ setValue, errors, data }: ImageUploaderP
 
     return (
         <div className="space-y-4">
-            <Label className="text-lg font-bold text-black">Attach Media</Label>
+            <Label className="text-lg font-bold text-black">{t("attachMedia")}</Label>
 
             <div className="relative">
                 <div
@@ -77,7 +78,7 @@ export default function ImageUploader({ setValue, errors, data }: ImageUploaderP
                         } border-2 flex items-center justify-center flex-col gap-2 rounded-lg`}
                 >
                     <RiUploadCloud2Line className="text-3xl" />
-                    <p className="text-gray-500 text-xs">Max file size: 2MB, up to 3 images</p>
+                    <p className="text-gray-500 text-xs">{t("maxFileSize")}</p>
                 </div>
 
                 <Input
