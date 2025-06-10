@@ -1,1 +1,0 @@
-Complete Delete Account so that every details, post, every comment, every like, dislike, save must be totally removed of his id
