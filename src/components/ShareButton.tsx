@@ -69,8 +69,8 @@ const ShareButton = ({ news }: ShareButtonProps) => {
 
     return (
         <Button size="icon" variant="ghost" disabled={loading} className="flex items-center gap-1" onClick={handleShare}>
-            <Send className="size-6" />
-            <span className="font-semibold text-sm">{formatNumber(shareCount)}</span>
+            <Send className="size-4.5 text-gray-500" />
+            <span className="font-semibold text-xs text-gray-500">{formatNumber(shareCount)}</span>
         </Button>
     );
 };

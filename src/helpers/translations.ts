@@ -1,6 +1,6 @@
 export const translations = {
   language: {
-    settings: ["Settings!", "सेटिंग्स"],
+    settings: ["Settings", "सेटिंग्स"],
     accountSettings: ["Account Settings!", "अकाउंट सेटिंग"],
     yourProfile: ["Your Profile", "आपकी प्रोफ़ाइल"],
     updateYourProfileInformation: [
@@ -368,5 +368,9 @@ export const translations = {
       "आप अधिकतम 3 छवियाँ अपलोड कर सकते हैं",
     ],
 
+    locationAccessDeniedBanner: [
+      "Location access was denied, we’re using the central area of Jaipur as your default location.",
+      "लोकेशन एक्सेस को अनुमति नहीं देने के कारण, आपकी डिफ़ॉल्ट लोकेशन जयपुर के सेंट्रल एरिया पर सेट की गई है।",
+    ],
   },
 };

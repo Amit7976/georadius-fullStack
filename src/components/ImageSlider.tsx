@@ -29,7 +29,7 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ images, height }) => {
                 {images.map((image, index) => (
                     <SwiperSlide
                         key={index}
-                        className="relative w-full bg-gray-100"
+                        className="relative w-full bg-gray-100 dark:bg-neutral-800"
                         style={{ height: height ? `${height}px` : "auto" }}
                     >
                         <Image
@@ -40,7 +40,7 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ images, height }) => {
                             priority
                             style={{ objectFit: "contain" }}
                         />
-                        <div className="absolute top-2 right-2 bg-gray-500 rounded-full p-1.5 py-0.5 text-white text-[8px] border-2">
+                        <div className="absolute top-2 right-2 bg-gray-500 dark:bg-neutral-950 rounded-full p-1.5 py-0.5 text-white text-[8px] border-2">
                             {index + 1} / {images.length}
                         </div>
                     </SwiperSlide>
@@ -48,13 +48,14 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ images, height }) => {
             </Swiper>
 
             <div className="flex justify-center gap-2 my-2">
-                {images.map((_, index) => (
-                    <div
-                        key={index}
-                        className={`w-1 h-1 rounded-full cursor-pointer ${currentSlide === index + 1 ? "bg-green-500" : "bg-gray-300"}`}
-                        onClick={() => swiperRef.current?.slideTo(index)}
-                    />
-                ))}
+                {images.length > 1 &&
+                    images.map((_, index) => (
+                        <div
+                            key={index}
+                            className={`w-1 h-1 rounded-full cursor-pointer ${currentSlide === index + 1 ? "bg-green-500" : "bg-gray-300"}`}
+                            onClick={() => swiperRef.current?.slideTo(index)}
+                        />
+                    ))}
             </div>
         </>
     );

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { use } from "react"; // <-- for unwrapping the `params` Promise
 import NewsPost from "@/src/components/NewsPost";
+import BackButton from "@/src/components/BackButton";
 
 
 interface News {
@@ -31,7 +32,7 @@ interface News {
 
 
 export default function SinglePostPage({ params }: { params: Promise<{ post: string }> }) {
-    const { post } = use(params); // ✅ Unwrap the Promise
+    const { post } = use(params);
 
     const [newsData, setNewsData] = useState<News[]>([]);
 
@@ -61,7 +62,11 @@ export default function SinglePostPage({ params }: { params: Promise<{ post: str
     };
 
     return (
-        <div>
+        <>
+            <div className="pt-3 flex items-center justify-start gap-2 select-none">
+                <BackButton classname="relative pr-3" />
+                <p className="font-medium text-gray-500">Back</p>
+            </div>
             {newsData.map((news) => (
                 <NewsPost
                     news={news}
@@ -70,6 +75,6 @@ export default function SinglePostPage({ params }: { params: Promise<{ post: str
                     fullDescription={true}
                 />
             ))}
-        </div>
+        </>
     );
 }

@@ -23,7 +23,7 @@ export default async function page() {
   return (
     <>
       <div className="text-center p-10">
-        <h1 className="text-2xl font-semibold text-black">{t("edit")} {t("news")}</h1>
+        <h1 className="text-2xl font-semibold text-black dark:text-white">{t("edit")} {t("news")}</h1>
       </div>
       <MainContent />
     </>

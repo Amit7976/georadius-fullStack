@@ -50,10 +50,11 @@ export default function MainContent() {
     const categoriesRef = useRef<HTMLDivElement | null>(null);
     const router = useRouter();
     let location = useGeolocation();
+    const [locationDenied, setLocationDenied] = useState(false);
 
 
 
-    const handleHide = (postId: number) => {
+    const handleHide = (postId: string) => {
         setNewsData(prevNews => prevNews.filter(news => news._id !== postId.toString()));
 
         const hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");
@@ -62,6 +63,27 @@ export default function MainContent() {
             localStorage.setItem("hideNews", JSON.stringify(hiddenPosts));
         }
     };
+
+
+
+    useEffect(() => {
+        if (!navigator.geolocation) {
+            setLocationDenied(true);
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                // access granted — do nothing or set flag
+            },
+            (error) => {
+                if (error.code === error.PERMISSION_DENIED) {
+                    setLocationDenied(true); // show banner
+                }
+            }
+        );
+    }, []);
+
 
 
     useEffect(() => {
@@ -140,8 +162,8 @@ export default function MainContent() {
 
     const Placeholder = () => (
         <div className="flex flex-col gap-4 px-4 py-6">
-            {[1, 2, 3].map((i) => (
-                <div key={i} className="animate-pulse bg-gray-100 rounded-lg h-32 w-full" />
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
+                <div key={i} className="animate-pulse bg-gray-100 dark:bg-neutral-800 rounded-lg h-32 w-full" />
             ))}
         </div>
     );
@@ -149,11 +171,11 @@ export default function MainContent() {
 
 
     return (
-        <div className="h-screen w-full bg-white p-0 scroll-smooth">
+        <div className="h-screen w-full p-0 scroll-smooth">
 
 
-            <div className="sticky top-0 w-full bg-white z-50 transition-shadow">
-                <div className="flex justify-between items-center p-3 pb-1.5 bg-white">
+            <div className="sticky top-0 w-full z-50 transition-shadow">
+                <div className="flex justify-between items-center p-3 pb-1.5 bg-white dark:bg-neutral-900">
                     <Select value={selectedFilter} onValueChange={setSelectedFilter}>
                         <SelectTrigger className="w-fit border-0 text-2xl font-bold shadow-none px-0 scale-90">
                             <SelectValue placeholder="Select Filter" />
@@ -167,37 +189,41 @@ export default function MainContent() {
                         </SelectContent>
                     </Select>
 
-                    <div className="flex items-center gap-4 pr-1">
-                        <IoMapOutline className="text-3xl scale-95" onClick={() => router.push("/pages/others/map")} />
+                    <LoaderLink href="/pages/others/map" className="flex items-center gap-4 pr-1">
+                        <IoMapOutline className="text-3xl scale-95" />
+                    </LoaderLink>
+                </div>
+            </div>
+
+
+
+
+            {!locationDenied && (
+                <div className="bg-green-600 text-white font-medium p-2 pr-5 my-2 text-sm overflow-hidden whitespace-nowrap relative flex items-center">
+                    <div
+                        className="relative flex items-center gap- flex-4"
+                        style={{
+                            animation: 'scrollText 30s linear infinite ',
+                        }}
+                    >
+                        <span>
+                            {t("locationAccessDeniedBanner")}
+                        </span>
                     </div>
+
+                    <style jsx>{`
+            @keyframes scrollText {
+                0% {
+                    transform: translateX(10%);
+                }
+                100% {
+                    transform: translateX(-100%);
+                }
+            }
+        `}</style>
                 </div>
-            </div>
+            )}
 
-
-
-            <div className="bg-green-600 text-white font-medium p-2 pr-5 my-2 text-sm overflow-hidden whitespace-nowrap relative flex items-center">
-                <div
-                    className="relative flex items-center gap- flex-4"
-                    style={{
-                        animation: 'scrollText 50s linear infinite ',
-                    }}
-                >
-                    <span>
-                        Thundering with Thunderstorm, Very Strong Winds, Lightning, and Dust Storm is very likely to occur at many places over Ajmer, Didwana-Kuchaman, Dudu, Jaipur, Jaipur (Gramin), Nagaur, Neem Ka Thana, Sikar in next 3 hours.
-                    </span>
-                </div>
-
-                <style jsx>{`
-                                @keyframes scrollText {
-                                0% {
-                                    transform: translateX(10%);
-                                }
-                                100% {
-                                    transform: translateX(-100%);
-                                }
-                                }
-                            `}</style>
-            </div>
 
 
 
@@ -224,11 +250,11 @@ export default function MainContent() {
 
 
             {/* Categories */}
-            <div ref={categoriesRef} className="w-full py-2 bg-white">
+            <div ref={categoriesRef} className="w-full py-2 pb-3 bg-white dark:bg-neutral-900">
                 <div className="flex gap-2 px-2 overflow-x-auto whitespace-nowrap">
                     <Button
                         variant="outline"
-                        className={`rounded-lg px-6 py-2 font-bold text-xs ${selectedCategory === "All" ? "bg-black text-white" : ""}`}
+                        className={`rounded-lg px-8 py-2 font-bold text-xs dark:bg-neutral-800 dark:border-neutral-700 ${selectedCategory === "All" ? "bg-black text-white dark:bg-neutral-600" : ""}`}
                         onClick={() => setSelectedCategory("All")}
                     >
                         All
@@ -237,7 +263,7 @@ export default function MainContent() {
                         <Button
                             key={index}
                             variant="outline"
-                            className={`rounded-lg px-6 py-2 font-bold text-xs ${selectedCategory === category.name ? "bg-black text-white" : ""}`}
+                            className={`rounded-lg px-6 py-2 font-bold text-xs dark:bg-neutral-800 dark:border-neutral-700 ${selectedCategory === category.name ? "bg-black text-white dark:bg-neutral-600" : ""}`}
                             onClick={() => setSelectedCategory(category.name)}
                         >
                             {category.name}
@@ -248,7 +274,7 @@ export default function MainContent() {
 
             {showFixedHeader && (
                 <div className="fixed left-0 top-0 w-full flex justify-center z-50">
-                    <div className="w-full bg-white shadow-md transition-transform duration-300">
+                    <div className="w-full bg-white dark:bg-neutral-900 shadow-md transition-transform duration-300">
                         {/* Header */}
                         <div className="flex justify-between items-center p-3 pb-2">
                             <Select value={selectedFilter} onValueChange={setSelectedFilter}>
@@ -270,7 +296,7 @@ export default function MainContent() {
                         </div>
 
                         {/* Fixed Categories */}
-                        <div className="w-full pb-1.5 bg-white">
+                        {/* <div className="w-full pb-1.5 dark:pb-2 bg-white dark:bg-neutral-900">
                             <div className="flex gap-2 px-2 overflow-x-auto whitespace-nowrap">
                                 <Button
                                     variant="outline"
@@ -290,7 +316,7 @@ export default function MainContent() {
                                     </Button>
                                 ))}
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             )}

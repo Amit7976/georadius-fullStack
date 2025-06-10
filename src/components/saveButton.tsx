@@ -46,7 +46,7 @@ const SaveButton = ({ news }: SavedButtonProps) => {
 
     return (
         <Button className={""} size="icon" variant="ghost" disabled={loading} onClick={handleSave}>
-            {saved ? <TbBookmarkFilled className="size-6 text-yellow-500" /> : <TbBookmark className="size-6" />}
+            {saved ? <TbBookmarkFilled className="size-5 text-green-600" /> : <TbBookmark className="size-5 text-gray-500" />}
         </Button>
     );
 };

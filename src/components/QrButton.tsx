@@ -13,16 +13,18 @@ const QrButton = ({ postId }: { postId: string }) => {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="ghost" className="flex gap-3 w-full p-3 text-lg cursor-pointer justify-start rounded-md text-gray-700 hover:bg-gray-100">
+                <Button variant="ghost" className="flex gap-3 w-full p-3 h-12 text-lg justify-start cursor-pointer text-gray-700 hover:bg-gray-100 dark:text-gray-300 border-2 rounded-lg bg-gray-100 dark:bg-neutral-800">
                     <QrCode className="size-5" /> {t("makeQR")}
                 </Button>
             </DialogTrigger>
 
-            <DialogContent className="flex flex-col items-center p-6">
+            <DialogContent className="flex flex-col items-center p-12 bg-transparent dark:bg-transparent">
                 <DialogHeader className={"relative"}>
                     <DialogTitle className="text-lg font-semibold text-center">{t("scanToView")}</DialogTitle>
                 </DialogHeader>
-                <QRCodeSVG value={shareUrl} size={200} />
+                <div className="border-4 p-2 rounded-sm">
+                    <QRCodeSVG value={shareUrl} size={300} />
+                </div>
                 <p className="text-sm text-gray-500 mt-2">{t("scanQRDesc")}</p>
             </DialogContent>
         </Dialog>

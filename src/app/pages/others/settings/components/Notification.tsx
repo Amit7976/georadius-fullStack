@@ -34,13 +34,13 @@ function Notification() {
                     <DialogHeader className="">
                         <DialogTitle className="text-xl font-bold mt-4 mb-6">{t("notification_settings")}</DialogTitle>
                     </DialogHeader>
-                    <div className="flex justify-between items-center border-2 rounded-lg p-5">
+                    <div className="flex justify-between items-center border-2 rounded-lg p-5 bg-gray-100 dark:bg-neutral-900">
                         <span className="flex-4">{t("in_app_notifications")}</span>
                         <div className="flex-1 flex justify-center">
                             <Switch className="scale-150" checked={inAppNotifications} onCheckedChange={setInAppNotifications} />
                         </div>
                     </div>
-                    <div className="flex justify-between items-center border-2 rounded-lg p-5">
+                    <div className="flex justify-between items-center border-2 rounded-lg p-5 bg-gray-100 dark:bg-neutral-900">
                         <span className="flex-4">{t("push_notifications")}</span>
                         <div className="flex-1 flex justify-center">
                             <Switch className="scale-150" checked={pushNotifications} onCheckedChange={setPushNotifications} />
@@ -51,7 +51,7 @@ function Notification() {
                         <DialogClose
                             type="button"
                             variant={'primary'}
-                            className='w-full h-14 border-2 border-gray-500  text-gray-500 text-lg font-semibold py-3 rounded-lg'
+                            className='w-full h-14 border-2 border-gray-500  dark:border-neutral-700  text-gray-500 dark:text-gray-200 text-lg font-semibold py-3 rounded-lg'
                         >
                             {t("save")}
                         </DialogClose></div>

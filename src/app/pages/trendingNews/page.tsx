@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import useAuthVerification from '../../hooks/useAuthVerification';
 import { useGeolocation } from '../../hooks/useGeolocation';
 import { t } from '@/src/helpers/i18n';
+import BackButton from '@/src/components/BackButton';
 
 
 interface News {
@@ -75,9 +76,12 @@ function Page() {
     };
 
     return (
-        <div className='py-3 px-1 bg-white'>
-            <h2 className="text-2xl font-bold">{t("nearby")} {t("breaking")} <span className='text-green-500'>{t("news")}</span></h2>
-            <div className="py-6">
+        <div className='py-3'>
+            <div className='flex justify-start items-center gap-0'>
+                <BackButton classname='relative text-sm pl-0 pr-5' />
+                <h2 className="text-xl font-bold">{t("breaking")} <span className='text-green-500'>{t("news")}</span></h2>
+                </div>
+            <div className="py-6 px-1">
                 {data.map((news) => (
                     <NewsPost news={news} key={news._id} onHide={handleHide} fullDescription={false} />
                 ))}

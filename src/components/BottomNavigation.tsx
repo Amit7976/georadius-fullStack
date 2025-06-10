@@ -58,7 +58,7 @@ export default function BottomNavigation({ username }: { username: string | bool
 
     return (
         <nav
-            className={`fixed bottom-0 w-full bg-white flex justify-around p-2 h-[6vh] pt-0 rounded-none z-50 transition-transform duration-300 ${isVisible ? "translate-y-0" : "translate-y-full"
+            className={`fixed bottom-0 w-full bg-white dark:bg-neutral-900 flex justify-around p-2 h-[6vh] pt-0 rounded-none z-50 transition-transform duration-300 ${isVisible ? "translate-y-0" : "translate-y-full"
                 }`}
         >
             {tabs.map(({ key, name, icon: Icon, icon2: Icon2, href }) => {
@@ -67,7 +67,7 @@ export default function BottomNavigation({ username }: { username: string | bool
                 return (
                     <LoaderLink key={key} href={href} className="flex-1 active:bg-gray-100">
                         <div
-                            className={`lg:p-1 p-2 ${isActive ? "border-t-[3px] border-green-500" : "border-t-1 border-gray-200"}`}>
+                            className={`lg:p-1 p-2 ${isActive ? "border-t-[3px] border-green-500" : "border-t-1 border-gray-200 dark:border-neutral-700"}`}>
                             <div className={`flex flex-col items-center ${isActive ? "pt-0" : "pt-0.5"}`}>
                                 {isActive ? (
                                     <Icon2 className="text-green-600 text-[5vw] sm:text-xl" />

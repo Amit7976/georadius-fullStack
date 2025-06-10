@@ -196,7 +196,7 @@ export default function MainContent() {
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-6 p-2">
                 {/* Profile Image Upload */}
-                <div className="border border-gray-200 w-full px-6 py-10 rounded-lg flex items-center gap-6">
+                <div className="border border-gray-200 dark:border-neutral-700 w-full px-6 py-10 rounded-lg flex items-center gap-6">
 
                     <div className="relative flex-1 w-32 h-32 border-2 border-dashed rounded-xl active:scale-95 duration-300">
                         {!imagePreview && (
@@ -252,7 +252,7 @@ export default function MainContent() {
                 </div>
 
                 {/* Full Name */}
-                <div className="border border-gray-200 w-full px-6 py-10 rounded-lg flex flex-col gap-2">
+                <div className="border border-gray-200 dark:border-neutral-700 w-full px-6 py-10 rounded-lg flex flex-col gap-2">
                     <Label className={"text-sm text-gray-500 font-medium"}>{t("fullName")}</Label>
                     <Input
                         type={"text"}
@@ -267,7 +267,7 @@ export default function MainContent() {
                 </div>
 
                 {/* Phone Number (Optional) */}
-                <div className="border border-gray-200 w-full px-6 py-10 rounded-lg flex flex-col gap-2">
+                <div className="border border-gray-200 dark:border-neutral-700 w-full px-6 py-10 rounded-lg flex flex-col gap-2">
                     <Label className={"text-sm text-gray-500 font-medium"}>{t("phoneNumber")}</Label>
                     <Input
                         className={"h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"}
@@ -285,7 +285,7 @@ export default function MainContent() {
                 </div>
 
                 {/* Date of Birth */}
-                <div className="border border-gray-200 w-full p-6 rounded-lg flex flex-col gap-2">
+                <div className="border border-gray-200 dark:border-neutral-700 w-full p-6 rounded-lg flex flex-col gap-2">
                     <Label className="text-sm text-gray-500 font-medium">{t("dateOfBirth")}</Label>
                     <Input
                         className="h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"
@@ -305,7 +305,7 @@ export default function MainContent() {
 
 
                 {/* Location + Get Current Location Button */}
-                <div className="border border-gray-200 w-full px-6 py-10 rounded-lg flex flex-col justify-center-center gap-2">
+                <div className="border border-gray-200 dark:border-neutral-700 w-full px-6 py-10 rounded-lg flex flex-col justify-center-center gap-2">
                     <Label className={"text-sm text-gray-500 font-medium"}>{t("location")}</Label>
                     <div className="flex items-center gap-2" >
                         <div className="flex-3">
@@ -336,7 +336,7 @@ export default function MainContent() {
                 </div>
 
                 {/* Bio */}
-                <div className="border border-gray-200 w-full px-6 py-10 rounded-lg flex flex-col gap-2">
+                <div className="border border-gray-200 dark:border-neutral-700 w-full px-6 py-10 rounded-lg flex flex-col gap-2">
                     <Label className={"text-sm text-gray-500 font-medium"}>{t("bio")}</Label>
                     <Textarea className={"h-40 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"} {...register("bio")} placeholder={t("bio")} />
                     {errors.bio && <p className="text-red-500">{errors.bio.message}</p>}

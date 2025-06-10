@@ -58,7 +58,7 @@ function Radius() {
                         <DialogClose
                             type="button"
                             variant={'primary'}
-                            className='w-full h-14 border-2 border-gray-500  text-gray-500 text-lg font-semibold py-3 rounded-lg'
+                            className='w-full h-14 border-2 border-gray-500  dark:border-neutral-700  text-gray-500 dark:text-gray-200 text-lg font-semibold py-3 rounded-lg'
                         >
                             {t("save")}
                         </DialogClose>

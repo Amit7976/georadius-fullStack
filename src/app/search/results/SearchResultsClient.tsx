@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
     Select,
     SelectContent,
@@ -16,21 +16,14 @@ import { formatTimeAgo } from "@/src/helpers/formatTimeAgo";
 import Image from "next/image";
 import { LoaderLink } from "@/src/components/loaderLinks";
 import { t } from "@/src/helpers/i18n";
+import BackButton from "@/src/components/BackButton";
+import { useGeolocation } from "../../hooks/useGeolocation";
 
 export default function SearchResultsClient() {
     const searchParams = useSearchParams();
     const query = searchParams.get("q") || "";
     const [radius, setRadius] = useState("5000000");
     const [searchType, setSearchType] = useState("post");
-
-    const [latLng, setLatLng] = useState<{
-        lat: number | null;
-        lng: number | null;
-        latMin?: number;
-        latMax?: number;
-        lngMin?: number;
-        lngMax?: number;
-    }>({ lat: null, lng: null });
 
     interface User {
         _id: string;
@@ -56,59 +49,46 @@ export default function SearchResultsClient() {
         setRadius("10");
     }, [searchType]);
 
+
+    const location = useGeolocation();
+
+
+    const fetchResults = useCallback(async (lat: number, lng: number) => {
+        const r = parseInt(radius);
+        const latMin = lat - r / 111;
+        const latMax = lat + r / 111;
+        const lngMin = lng - r / (111 * Math.cos(lat * (Math.PI / 180)));
+        const lngMax = lng + r / (111 * Math.cos(lat * (Math.PI / 180)));
+
+        if (!latMin || !latMax || !lngMin || !lngMax) return;
+
+
+        const queryParams = new URLSearchParams({
+            q: query,
+            type: searchType,
+            radius,
+            latMin: latMin.toString(),
+            latMax: latMax.toString(),
+            lngMin: lngMin.toString(),
+            lngMax: lngMax.toString(),
+        });
+
+        const res = await fetch(`/api/search/result?${queryParams}`);
+        const data = await res.json();
+
+        setResults(searchType === "user" ? data.users : data.posts);
+    }, [query, radius, searchType]);
+
+
     useEffect(() => {
-        if (typeof navigator !== "undefined" && navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-
-                    const latOffset = parseInt(radius) / 111;
-                    const lngOffset = parseInt(radius) / (111 * Math.cos((lat * Math.PI) / 180));
-
-                    setLatLng({
-                        lat,
-                        lng,
-                        latMin: lat - latOffset,
-                        latMax: lat + latOffset,
-                        lngMin: lng - lngOffset,
-                        lngMax: lng + lngOffset,
-                    });
-                },
-                (error) => {
-                    console.warn("Geolocation error:", error.message);
-                }
-            );
+        if (location) {
+            fetchResults(location.lat, location.lng);
         }
-    }, [radius]);
+    }, [location, query, radius, searchType, fetchResults]);
+      
 
-    useEffect(() => {
-        const fetchResults = async () => {
-            const { latMin, latMax, lngMin, lngMax } = latLng;
 
-            if (!latMin || !latMax || !lngMin || !lngMax) return;
 
-            const queryParams = new URLSearchParams({
-                q: query,
-                type: searchType,
-                radius,
-                latMin: latMin.toString(),
-                latMax: latMax.toString(),
-                lngMin: lngMin.toString(),
-                lngMax: lngMax.toString(),
-            });
-
-            const res = await fetch(`/api/search/result?${queryParams}`);
-            const data = await res.json();
-
-            console.log("Search Results:", data);
-            setResults(searchType === "user" ? data.users : data.posts);
-        };
-
-        if (query && latLng.latMin && latLng.lngMin) {
-            fetchResults();
-        }
-    }, [query, radius, latLng, searchType]);
 
     const toggleDescription = (postId: string) => {
         setExpandedDescriptions((prev) =>
@@ -166,8 +146,7 @@ export default function SearchResultsClient() {
             </div>
 
             {searchType === "user" && results.length > 0 && (
-                <div className="mt-4 mb-8">
-                    <h3 className="text-lg font-medium mb-2 text-gray-500">Users</h3>
+                <div className="my-6">
                     {results.map((result) => {
                         if (
                             "username" in result &&
@@ -178,16 +157,16 @@ export default function SearchResultsClient() {
                             const user = result as User;
                             return (
                                 <LoaderLink href={"/" + user.username} key={user._id} className="flex items-center py-2 mt-2">
-                                    <div className="w-12 flex-1">
+                                    <div className="w-16 shrink-0">
                                         <Image
                                             width={100}
                                             height={100}
                                             src={user.profileImage}
                                             alt="Profile Pic"
-                                            className="w-12 h-12 rounded-full object-cover"
+                                            className="w-12 h-12 rounded-full object-cover shrink-0"
                                         />
                                     </div>
-                                    <div className="flex-5 mt-1">
+                                    <div className="mt-1 w-full text-start">
                                         <p className="text-gray-500 text-sm font-medium">@{user.username}</p>
                                         <h3 className="text-xl font-bold">{user.fullname}</h3>
                                     </div>
@@ -200,12 +179,11 @@ export default function SearchResultsClient() {
             )}
 
             {searchType === "post" && results.length > 0 && (
-                <div className="mt-2">
-                    <h3 className="text-lg font-medium mb-2 text-gray-500">Posts</h3>
+                <div className="my-6">
                     <div className="divider-y-2 border-gray-200 mb-4">
                         <div className="flex flex-col gap-6">
                             {results.filter((result): result is Post => "title" in result).map((post) => (
-                                <LoaderLink href={"/post/" + post._id} key={post._id} className="py-2 space-y-2">
+                                <LoaderLink href={"/search/results/" + post._id} key={post._id} className="py-2 space-y-2 text-start">
                                     <p className="text-gray-500 text-xs">{formatTimeAgo(post.updatedAt)}</p>
                                     <h4 className="font-semibold text-lg leading-5">{post.title}</h4>
                                     <p className="text-xs text-gray-500 leading-5 mt-1">{post.location}</p>
@@ -218,7 +196,7 @@ export default function SearchResultsClient() {
 
                                     <div className="flex-6 mt-4">
                                         <p
-                                            className={`border-l-4 border-green-500 pl-3 py-0.5 text-sm text-gray-800 ${expandedDescriptions.includes(post._id) ? "" : "line-clamp-6"
+                                            className={`border-l-4 border-green-500 pl-3 py-0.5 text-sm text-gray-800 dark:text-gray-400 ${expandedDescriptions.includes(post._id) ? "" : "line-clamp-6"
                                                 }`}
                                             onClick={() => toggleDescription(post._id)}
                                         >

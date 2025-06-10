@@ -21,6 +21,7 @@ import SaveButton from "./saveButton";
 import ShareButton from "./ShareButton";
 import VoteButtons from "./VoteButtons";
 import { t } from "../helpers/i18n";
+import { DialogTitle } from "@/components/ui/dialog";
 
 interface News {
     _id: string;
@@ -48,7 +49,7 @@ interface News {
 
 
 
-const NewsPost = ({ news, onHide, fullDescription }: { news:News; fullDescription: boolean; onHide: (id: number) => void }) => {
+const NewsPost = ({ news, onHide, fullDescription }: { news: News; fullDescription: boolean; onHide: (id: string) => void }) => {
     const [distance, setDistance] = useState<string | null>(null);
 
     console.log("📰 News Post Data:", news);
@@ -73,8 +74,8 @@ const NewsPost = ({ news, onHide, fullDescription }: { news:News; fullDescriptio
     const handleEditClick = () => {
         sessionStorage.setItem("editNewsData", JSON.stringify(news));
         router.push(`/pages/edit_post/${news._id}`);
-      };
-    
+    };
+
     return (
         <div key={String(news._id)}>
             <Card className="w-full my-0 border-0 shadow-none gap-4 select-none rounded-none">
@@ -90,7 +91,7 @@ const NewsPost = ({ news, onHide, fullDescription }: { news:News; fullDescriptio
                                 <span className="text-gray-500 text-sm">-</span>
                                 <span className="text-gray-500 text-xs">{formatTimeAgo(news.createdAt)}</span>
                             </div>
-                            <div className="flex items-start gap-2 text-gray-500 text-xs">
+                            <div className="flex items-start gap-2 text-gray-600 dark:text-gray-400 text-xs">
                                 <span className="text-green-600 font-semibold">{distance}</span>
                                 <span
                                     className={`cursor-pointer ${showAddress ? "" : "line-clamp-1"}`}
@@ -108,38 +109,40 @@ const NewsPost = ({ news, onHide, fullDescription }: { news:News; fullDescriptio
                             <MoreHorizontal className="text-gray-600 cursor-pointer" />
                         </DrawerTrigger>
                         <DrawerContent className={""} aria-describedby={undefined}>
-                            <div className="p-4">
-                                <DrawerTitle className="text-lg font-semibold text-center mb-4">{t("options")}</DrawerTitle>
-                                <div className="space-y-3 mb-10">
-                                    {/* News Categories */}
-                                    <div className="flex gap-2 px-4 flex-wrap">
-                                        {news.categories.map((category: string, index: number) => (
-                                            <LoaderLink href={`/category/${category}`} key={index} className="bg-gray-200 rounded px-2 py-1 text-xs font-semibold text-gray-600 hover:text-green-500 cursor-pointer">
-                                                {category}
-                                            </LoaderLink>
-                                        ))}
-                                    </div>
-                                    <HideButton postId={Number(news._id)} onHide={onHide} />
-                                    <QrButton postId={news._id} />
+                            <div className="px-4 py-10 space-y-6">
+                                <DialogTitle className={"flex gap-2 px-4 flex-wrap"}>
+                                    {news.categories.map((category: string, index: number) => (
+                                        <LoaderLink href={`/category/${category}`} key={index} className="bg-gray-200 dark:bg-neutral-800 rounded-sm px-5 py-2 text-xs font-semibold text-gray-600 dark:text-gray-400 hover:text-green-500 cursor-pointer">
+                                            {category}
+                                        </LoaderLink>
+                                    ))}
+                                </DialogTitle>
+                                <div className="space-y-2 mb-0">
+                                    <>
+                                        <HideButton postId={news._id} onHide={onHide} />
+                                    </>
+                                    <>
+                                        <QrButton postId={news._id} />
+                                    </>
                                     {news.currentUserProfile ? (
                                         <>
                                             <Button
                                                 variant="ghost"
                                                 onClick={handleEditClick}
-                                                className="flex gap-3 w-full p-3 h-12 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100 items-center font-semibold"
+                                                className="flex gap-3 w-full p-3 h-12 text-lg justify-start cursor-pointer text-gray-700 hover:bg-gray-100 dark:text-gray-300 border-2 rounded-lg bg-gray-100 dark:bg-neutral-800"
                                             >
                                                 <Pencil /> {t("edit")}
                                             </Button>
 
-                                            <DeleteButton postId={Number(news._id)} onHide={onHide} />
+                                            <DeleteButton postId={news._id} onHide={onHide} />
                                         </>
                                     ) : (
                                         <>
-                                            <LoaderLink href={"/" + news.creatorName} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100 items-center font-semibold">
-                                                    <Image src={news.creatorImage} alt="Profile" width={40} height={40} className="rounded-full size-5" priority /> {t("viewProfile")}
+                                            <LoaderLink href={"/" + news.creatorName} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer text-gray-700 hover:bg-gray-100 dark:text-gray-300 border-2 rounded-lg bg-gray-100 dark:bg-neutral-800">
+                                                <Image src={news.creatorImage} alt="Profile" width={40} height={40} className="rounded-full size-5" priority /> {t("viewProfile")}
                                             </LoaderLink>
-                                            <LoaderLink href={`/pages/others/report_an_issue/${news._id}`} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-gray-700 hover:bg-gray-100">
-                                                    <TbReport className="size-6" /> {t("report")}
+                                                <LoaderLink href={`/pages/others/report_an_issue/${news._id}`} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer text-gray-700 hover:bg-gray-100 dark:text-gray-300 border-2 rounded-lg bg-gray-100 dark:bg-neutral-800">
+                                                <TbReport className="size-6" /> {t("report")}
                                             </LoaderLink>
                                         </>
                                     )}
@@ -158,7 +161,7 @@ const NewsPost = ({ news, onHide, fullDescription }: { news:News; fullDescriptio
 
 
                 <div className="pl-1">
-                    <p className={`border-l-4 border-green-500 pl-3 py-3 text-sm text-gray-800 ${showDescription ? "" : "line-clamp-6"}`}
+                    <p className={`border-l-4 border-green-500 pl-3 py-3 text-sm font-medium text-gray-800 dark:text-gray-400 ${showDescription ? "" : "line-clamp-6"}`}
                         onClick={() => setShowDescription(!showDescription)}>
                         {news.description}
                     </p>
@@ -173,12 +176,12 @@ const NewsPost = ({ news, onHide, fullDescription }: { news:News; fullDescriptio
                         {/* Comment Drawer */}
                         <Drawer>
                             <DrawerTrigger className="flex items-center gap-1">
-                                <MessageCircle className="size-6" />
-                                <span className="font-semibold text-sm">{formatNumber(news.commentsCount)}</span>
+                                <MessageCircle className="size-4.5 text-gray-500" />
+                                <span className="font-semibold text-sm text-gray-500">{formatNumber(news.commentsCount)}</span>
                             </DrawerTrigger>
-                            <DrawerContent className={""} aria-describedby={undefined}>
+                            <DrawerContent className={"bg-white dark:bg-neutral-900 h-screen data-[vaul-drawer-direction=bottom]:max-h-[90vh]"} aria-describedby={undefined}>
                                 <DrawerHeader className="p-4 overflow-scroll">
-                                    <DrawerTitle className="text-lg font-semibold text-center mb-1">{t("comments")}</DrawerTitle>
+                                    <DrawerTitle className="text-lg font-semibold mt-0 mb-5 text-start">{t("comments")}</DrawerTitle>
                                     <Comment news_id={String(news._id)} />
                                 </DrawerHeader>
                             </DrawerContent>

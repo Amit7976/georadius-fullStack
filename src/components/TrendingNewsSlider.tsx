@@ -81,7 +81,7 @@ const TrendingNewsSlider: React.FC<TrendingNewsSliderProps> = ({ range }) => {
                 <Swiper spaceBetween={0} slidesPerView={1} parallax={true} modules={[Autoplay]}>
                     {[1, 2, 3].map((i) => (
                         <SwiperSlide key={i}>
-                            <div className="animate-pulse bg-gray-100 rounded-lg h-80 w-full" />
+                            <div className="animate-pulse bg-gray-100 dark:bg-neutral-800 rounded-lg h-80 w-full" />
                         </SwiperSlide>
                     ))}
                 </Swiper>
@@ -96,7 +96,7 @@ const TrendingNewsSlider: React.FC<TrendingNewsSliderProps> = ({ range }) => {
             <Swiper spaceBetween={0} slidesPerView={1} parallax={true} modules={[Autoplay]}>
                 {data.map((news, index: number) => (
                     <SwiperSlide key={news._id || index}>
-                        <div className="w-full h-80 relative overflow-hidden select-none">
+                        <div className="w-full h-80 relative overflow-hidden select-none bg-gray-100 dark:bg-neutral-800">
                             {/* Nested Swiper for images */}
                             {news?.images && (
                                 <Image
@@ -105,7 +105,7 @@ const TrendingNewsSlider: React.FC<TrendingNewsSliderProps> = ({ range }) => {
                                     width={600}
                                     height={300}
                                     priority
-                                    className="w-full h-full object-fill object-center"
+                                    className="w-full h-full object-cover object-center"
                                 />
                             )}
 

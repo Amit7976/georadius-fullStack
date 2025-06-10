@@ -40,11 +40,11 @@ export default function CategorySelector({
                 {t("newsCategory")} <span className="text-red-500">*</span>
             </Label>
 
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-4">
                 {interestsList.map((category) => (
                     <Button
 
-                        className="text-xs py-3"
+                        className="text-xs py-3 h-12"
                         key={category.name}
                         variant={selectedCategories.includes(category.name) ? "default" : "outline"}
                         onClick={() => toggleCategory(category.name)}

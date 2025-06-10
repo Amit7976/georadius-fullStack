@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Trash } from "lucide-react";
 import { toast } from "sonner"
 
-const DeleteButton = ({ postId, onHide }: { postId: number; onHide: (id: number) => void }) => {
+const DeleteButton = ({ postId, onHide }: { postId: string; onHide: (id: string) => void }) => {
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -35,7 +35,7 @@ const DeleteButton = ({ postId, onHide }: { postId: number; onHide: (id: number)
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="ghost" className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer rounded-md text-red-500 hover:bg-gray-100">
+                <Button variant="ghost" className="flex gap-3 w-full p-3 h-12 text-lg justify-start cursor-pointer text-red-500 hover:bg-gray-100 border-2 rounded-lg bg-gray-100 dark:bg-neutral-800">
                     <Trash /> Delete
                 </Button>
             </DialogTrigger>

@@ -64,7 +64,7 @@ function Language() {
                     <DialogTitle className="text-xl font-bold mt-4 mb-6">{t("selectLanguage")}</DialogTitle>
                 </DialogHeader>
                 <Select value={selectedLanguage} onValueChange={handleLanguageChange}>
-                    <SelectTrigger className="w-full border-2 h-16 py-6 font-bold tracking-wider text-gray-500">
+                    <SelectTrigger className="w-full border-2 h-16 py-6 font-bold tracking-wider text-gray-500 bg-gray-100 dark:bg-neutral-900">
                         <SelectValue placeholder="Select a Language" />
                     </SelectTrigger>
                     <SelectContent className="p-1">

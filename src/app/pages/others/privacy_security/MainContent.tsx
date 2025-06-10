@@ -18,7 +18,7 @@ function MainContent() {
     const router = useRouter();
     return (
         <>
-            <div className='bg-white w-full h-full'>
+            <>
 
                 <HeadingHeader heading={t("privacySecurity")} />
 
@@ -79,7 +79,7 @@ function MainContent() {
                         <DeleteAccountButton />
                     </div>
                 </div>
-            </div>
+            </>
         </>
     )
 }

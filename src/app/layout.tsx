@@ -27,20 +27,27 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="antialiased relative bg-white">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
+      <body className="antialiased relative bg-white dark:bg-neutral-900">
+        <div
+          // className="lg:hidden"
         >
-          <main>
-            <Toaster richColors position="top-right" />
-            {children}
-            <BottomNavigation username={session?.user.username || false} />
-          </main>
-          <Toaster richColors position="top-center" expand={false} closeButton />
-        </ThemeProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <main>
+              <Toaster richColors position="top-right" />
+              {children}
+              <BottomNavigation username={session?.user.username || false} />
+            </main>
+            <Toaster richColors position="top-center" expand={false} closeButton />
+          </ThemeProvider>
+        </div>
+        {/* <div className="hidden lg:flex items-center justify-center h-screen w-full dark:bg-neutral-900 px-10">
+          <p className="max-w-lg mx-auto text-center">You're currently viewing the web version of the Geo Radius app. For the best experience, please use a mobile device.</p>
+        </div> */}
       </body>
     </html>
   );

@@ -69,7 +69,7 @@ export default function SearchInput({ queryParam = "" }: SearchInputProps) {
 
     return (
         <div ref={wrapperRef} className="pb-3 relative">
-            <div className="border-2 w-full rounded-full px-5 flex items-center bg-white">
+            <div className="border-2 w-full rounded-full px-5 flex items-center bg-white dark:bg-neutral-900">
                 <IoSearch className="text-gray-500 text-2xl" />
                 <Input
                     ref={inputRef}
@@ -81,7 +81,7 @@ export default function SearchInput({ queryParam = "" }: SearchInputProps) {
                         setHasTyped(true);
                     }}
                     onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => handleKeyDown(e)}
-                    className="h-14 font-semibold border-0 ring-0 outline-none focus-visible:ring-0 focus-visible:outline-0 focus-visible:border-0"
+                    className="h-14 font-semibold border-0 ring-0 outline-none focus-visible:ring-0 focus-visible:outline-0 focus-visible:border-0 bg-white dark:bg-neutral-900"
                 />
                 {query && (
                     <IoClose
@@ -97,11 +97,11 @@ export default function SearchInput({ queryParam = "" }: SearchInputProps) {
             </div>
 
             {suggestions.length > 0 && (
-                <div className="absolute w-full bg-white shadow-lg rounded-lg mt-2 p-2 max-h-60 overflow-y-scroll z-10">
+                <div className="absolute w-full bg-white dark:bg-neutral-800 shadow-lg rounded-lg mt-2 p-2 max-h-60 overflow-y-scroll z-10 border-4">
                     {suggestions.map((item, idx) => (
                         <div
                             key={idx}
-                            className="p-2 hover:bg-gray-100 cursor-pointer rounded"
+                            className="p-3 hover:bg-gray-100 cursor-pointer rounded"
                             onClick={() => handleSearch(item.name)}
                         >
                             {item.name}

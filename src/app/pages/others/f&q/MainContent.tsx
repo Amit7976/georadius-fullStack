@@ -29,7 +29,7 @@ const MainContent = () => {
     }, []);
 
     return (
-        <div className="bg-white">
+        <>
             <HeadingHeader heading={t("faq")} />
             <div className="p-5">
                 <Accordion type="single" collapsible>
@@ -45,7 +45,7 @@ const MainContent = () => {
                     ))}
                 </Accordion>
             </div>
-        </div>
+        </>
     );
 };
 

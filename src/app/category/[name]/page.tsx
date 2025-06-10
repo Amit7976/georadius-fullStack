@@ -14,6 +14,7 @@ import {
 import { useGeolocation } from "../../hooks/useGeolocation";
 import { LoaderLink } from "@/src/components/loaderLinks";
 import { t } from "@/src/helpers/i18n";
+import BackButton from "@/src/components/BackButton";
 
 type Post = {
     _id: string;
@@ -54,20 +55,23 @@ export default function CategoryPage() {
     }, [name, radius]);
 
     useEffect(() => {
-        if ("geolocation" in navigator) {
-            if (!location) return;
-            fetchCategoryPosts(location.lat, location.lng);
-        }
+        // if ("geolocation" in navigator) {
+        if (!location) return;
+        fetchCategoryPosts(location.lat, location.lng);
+        // }
     }, [location, name, radius, fetchCategoryPosts]);
 
 
     return (
-        <div className="p-4">
+        <div className="py-4">
             <div className="flex items-center justify-between mb-4">
-                <h1 className="text-2xl font-bold text-gray-400 capitalize">{name}</h1>
+                <div className="flex items-center justify-start gap-0">
+                    <BackButton classname='relative pl-1 pr-5' />
+                    <h1 className="text-lg font-semibold text-gray-400 capitalize">{name}</h1>
+                </div>
 
                 <Select value={radius} onValueChange={setRadius}>
-                    <SelectTrigger className="w-[120px]">
+                    <SelectTrigger className="w-[120px] mr-4">
                         <SelectValue placeholder="Radius" />
                     </SelectTrigger>
                     <SelectContent className={""}>
@@ -82,7 +86,7 @@ export default function CategoryPage() {
                 </Select>
             </div>
 
-            <div className="gap-4 flex flex-col">
+            <div className="gap-4 flex flex-col px-4">
                 {posts.length > 0 ? (
                     posts.map((post) => (
                         <LoaderLink href={"/post/" + post._id} key={post._id} className="py-2 space-y-2 text-start">
@@ -98,7 +102,7 @@ export default function CategoryPage() {
 
                             <div className="flex-6 mt-4">
                                 <p
-                                    className={`border-l-4 border-green-500 pl-3 py-0.5 text-sm text-gray-800 ${expandedDescriptions.includes(post._id) ? "" : "line-clamp-6"
+                                    className={`border-l-4 border-green-500 pl-3 py-0.5 text-sm text-gray-800 dark:text-gray-400 ${expandedDescriptions.includes(post._id) ? "" : "line-clamp-6"
                                         }`}
                                     onClick={() => toggleDescription(post._id)}
                                 >
@@ -109,7 +113,7 @@ export default function CategoryPage() {
                     ))
                 ) : (
                     <div className="w-full h-screen flex items-center justify-center text-gray-400 font-medium text-lg">
-                            <p>{t("noPostsInCategory")}</p>
+                        <p>{t("noPostsInCategory")}</p>
                     </div>
                 )}
             </div>

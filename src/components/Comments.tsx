@@ -213,71 +213,124 @@ const Comments = ({ news_id }: { news_id: string }) => {
         }
     };
 
+
+    const [longPressedCommentId, setLongPressedCommentId] = useState<string | null>(null);
+    let pressTimer: NodeJS.Timeout;
+
+    const handleLongPressStart = (commentId: string) => {
+        pressTimer = setTimeout(() => {
+            setLongPressedCommentId(commentId);
+        }, 600);
+    };
+
+    const handleLongPressEnd = () => {
+        clearTimeout(pressTimer);
+    };
+
+
     const CommentItem = ({ comment, level = 0 }: { comment: CommentType; level?: number }) => {
         const replies = getReplies(comment._id);
 
         return (
-            <div className={`ml-${level * 4} border-gray-200 pl-4 mt-5`}>
-                <div className="flex items-start gap-3">
-                    {comment.profileImage && (
-                        <Link href={"/" + comment.username} target='_blank'>
-                            <Image
-                                width={100}
-                                height={100}
-                                src={comment.profileImage}
-                                alt={comment.username}
-                                className="w-8 h-8 rounded-full"
-                            />
-                        </Link>
-                    )}
-                    <div className="flex-1">
-                        <Link href={"/" + comment.username} target='_blank'><p className="text-sm font-semibold">{comment.username}</p></Link>
-                        {comment.replyingToUsername && (
-                            <p className="text-xs text-gray-500">
-                                Replying to
-                                <Link href={"/" + comment.replyingToUsername} target='_blank'>
-                                    @{comment.replyingToUsername}
-                                </Link>
-                            </p>
+            <>
+                <div className={`${level ? 'pl-10' : 'pl-0'} border-gray-200 mt-1 mb-5`}>
+                    <div className="flex items-start gap-3">
+                        {comment.profileImage && (
+                            <Link href={"/" + comment.username} target='_blank'>
+                                <Image
+                                    width={100}
+                                    height={100}
+                                    src={comment.profileImage}
+                                    alt={comment.username}
+                                    className={`${level ? 'w-5 h-5' : 'w-8 h-8'} mt-0.5 rounded-full bg-gray-100 dark:bg-neutral-800`}
+                                />
+                            </Link>
                         )}
-                        <p className="text-gray-800 mt-1">{comment.comment}</p>
+                        <div
+                            className="flex-1 grid grid-cols-12 gap-4 relative"
+                        >
+                            <div className="col-span-11">
+                                <Link href={"/" + comment.username} target="_blank">
+                                    <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 w-fit">
+                                        {comment.username}
+                                    </p>
+                                </Link>
 
-                        <div className="flex gap-3 mt-2 text-xs text-gray-600">
-                            <Button variant={"ghost"} className=""
-                                onClick={() => {
-                                    setReplyingTo({
-                                        parentId: comment.parentCommentId || comment._id,
-                                        replyingToUsername: comment.username,
-                                    });
-                                }}
-                            >
-                                {t("reply")}
-                            </Button>
-                            <Button variant={"ghost"}
+                                <p className="text-gray-800 dark:text-gray-200 text-xs mt-0.5"
+                                    onMouseDown={() => handleLongPressStart(comment._id)}
+                                    onMouseUp={handleLongPressEnd}
+                                    onMouseLeave={handleLongPressEnd}
+                                    onTouchStart={() => handleLongPressStart(comment._id)}
+                                    onTouchEnd={handleLongPressEnd}
+                                >
+                                    {comment.replyingToUsername && (
+                                        <Link
+                                            href={"/" + comment.replyingToUsername}
+                                            target="_blank"
+                                            className="text-gray-400 dark:text-gray-500 font-medium pr-1"
+                                        >
+                                            @{comment.replyingToUsername}
+                                        </Link>
+                                    )}
+                                    {comment.comment}
+                                </p>
+
+                                <Button
+                                    variant="ghost"
+                                    className="text-xs scale-95 p-0 m-0 h-auto text-gray-500"
+                                    onClick={() => {
+                                        setReplyingTo({
+                                            parentId: comment.parentCommentId || comment._id,
+                                            replyingToUsername: comment.username,
+                                        });
+                                    }}
+                                >
+                                    {t("reply")}
+                                </Button>
+                            </div>
+
+                            <Button
+                                variant="ghost"
                                 onClick={() => handleLike(comment._id)}
-                                className={comment.likes ? "text-green-700 font-semibold" : ""}
+                                className={`${comment.likes ? "text-green-600" : "text-gray-500"
+                                    } font-semibold text-xs p-0 m-0 h-fit`}
                             >
                                 {comment.likes ? t("liked") : t("like")}
                             </Button>
-                            {currentUser?.username === comment.username ? (
-                                <Button variant={"ghost"} className="" onClick={() => handleDelete(comment._id)}>{t("delete")}</Button>
-                            ) : (
-                                <Button variant={"ghost"}
-                                    onClick={() => handleReport(comment._id)}
-                                    className={comment.reports ? "text-red-700 font-semibold" : ""}
-                                >
+
+                            <div
+                                className={`flex mt-1 text-gray-600 absolute w-1/2 bg-gray-400 dark:bg-neutral-800 h-full p-1 rounded-xl ${longPressedCommentId === comment._id ? "block" : "hidden"
+                                    }`}
+                            >
+                                <div className="fixed top-0 left-0 w-full h-full bg-transparent" onClick={() => setLongPressedCommentId("")}></div>
+                                {currentUser?.username === comment.username ? (
+                                    <Button
+                                        variant="ghost"
+                                        className="h-full w-full bg-red-500 text-white py-3 px-8 z-50"
+                                        onClick={() => handleDelete(comment._id)}
+                                    >
+                                        {t("delete")}
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        variant="ghost"
+                                        onClick={() => handleReport(comment._id)}
+                                        className={"h-full w-full bg-red-500 text-white py-3 px-8 z-50"}
+                                    >
                                         {comment.reports ? t("reported") : t("report")}
-                                </Button>
-                            )}
+                                    </Button>
+                                )}
+                            </div>
                         </div>
+
                     </div>
+
+
+                    {replies.map(reply => (
+                        <CommentItem key={reply._id} comment={reply} level={level + 1} />
+                    ))}
                 </div>
-
-
-                {replies.map(reply => (
-                    <CommentItem key={reply._id} comment={reply} level={level + 1} />
-                ))}
-            </div>
+            </>
         );
     };
 
@@ -285,7 +338,7 @@ const Comments = ({ news_id }: { news_id: string }) => {
         <>
             <div className="w-full mx-auto mb-28">
 
-                <div className="fixed bottom-0 left-0 right-0 bg-white shadow-md p-4 border-t z-50">
+                <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-neutral-900 shadow-md p-4 border-t z-50">
                     {replyingTo && (
                         <div className="text-sm text-gray-500 mb-1">
                             {t("replyingTo")} @{replyingTo.replyingToUsername}
@@ -299,7 +352,7 @@ const Comments = ({ news_id }: { news_id: string }) => {
                     )}
                     <div className="flex gap-2">
                         <textarea
-                            className="flex-1 border rounded p-2 resize-none"
+                            className="flex-1 p-2 resize-none outline-none"
                             placeholder={t("writeComment")}
                             value={input}
                             rows={1}
@@ -316,21 +369,23 @@ const Comments = ({ news_id }: { news_id: string }) => {
                         {t("noCommentsYet")}
                     </div>
                 )}
-                {rootComments.map(comment => (
-                    <CommentItem key={comment._id} comment={comment} />
-                ))}
+                <div className="select-none">
+                    {rootComments.map(comment => (
+                        <CommentItem key={comment._id} comment={comment} />
+                    ))}
+                </div>
             </div>
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <DialogContent className={""}>
+                <DialogContent className={"p-10"}>
                     <DialogHeader className={""}>
-                        <DialogTitle className={""}>{t("deleteComment")}</DialogTitle>
-                        <DialogDescription className={"mt-3"}>
+                        <DialogTitle className={"text-xl"}>{t("deleteComment")}</DialogTitle>
+                        <DialogDescription className={"mt-3 text-base"}>
                             {t("deleteCommentConfirm")} <br /> {t("deleteCommentWarning")}
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className={"flex items-center justify-center gap-4 mt-4 flex-row"}>
-                        <Button className="flex-1 w-full py-2" variant="outline" onClick={() => setDialogOpen(false)}>{t("cancel")}</Button>
-                        <Button className="flex-1 w-full py-2" variant="destructive" onClick={confirmDelete}>{t("delete")}</Button>
+                        <Button className="flex-1 w-full h-14 py-2 bg-transparent border-2 text-black dark:text-white" onClick={() => setDialogOpen(false)}>{t("cancel")}</Button>
+                        <Button className="flex-1 w-full h-14 py-2 bg-red-500 text-white" onClick={confirmDelete}>{t("delete")}</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

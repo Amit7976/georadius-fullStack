@@ -94,7 +94,7 @@ export default function MainContent({
     };
 
     return (
-        <div className="bg-white">
+        <>
             {/* Header */}
             <div className="flex items-center justify-between py-5 p-4">
                 <div className="flex items-center gap-4 relative">
@@ -127,12 +127,12 @@ export default function MainContent({
                 <div className="flex-3 mt-1 space-y-2">
                     <h3 className="text-xl font-bold">{userData.fullname}</h3>
                     <p
-                        className="text-gray-500 text-sm font-medium text-balance"
+                        className="text-gray-500 dark:text-gray-400 text-sm font-medium text-balance"
                         dangerouslySetInnerHTML={{
                             __html: userData.bio.replace(/\r?\n/g, "<br />"),
                         }}
                     />
-                    <p className="text-gray-400 font-semibold text-xs mt-3">{userData.location}</p>
+                    <p className="text-gray-400 dark:text-gray-600 font-semibold text-xs mt-3">{userData.location}</p>
                 </div>
             </div>
 
@@ -142,7 +142,7 @@ export default function MainContent({
                     <Button
                         variant="primary"
                         onClick={() => router.push("/pages/others/updateprofile")}
-                        className="bg-gray-200 w-full flex-1 h-10 text-gray-600 font-semibold text-sm"
+                        className="bg-gray-200 dark:bg-neutral-800 w-full flex-1 h-10 text-gray-600 dark:text-gray-300 font-semibold text-sm"
                     >
                         {t("updateProfile")}
                     </Button>
@@ -151,7 +151,7 @@ export default function MainContent({
                 <Button
                     variant="primary"
                     onClick={handleShare}
-                    className="bg-gray-200 w-full flex-1 h-10 text-gray-600 font-semibold text-sm"
+                    className="bg-gray-200 dark:bg-neutral-800 w-full flex-1 h-10 text-gray-600 dark:text-gray-300 font-semibold text-sm"
                 >
                     {t("shareProfile")}
                 </Button>
@@ -172,6 +172,6 @@ export default function MainContent({
                         <p className="text-center text-gray-500">{t("noPosts")}</p>
                 )}
             </div>
-        </div>
+        </>
     );
 }

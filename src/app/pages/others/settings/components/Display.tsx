@@ -10,9 +10,7 @@ import { t } from "@/src/helpers/i18n";
 
 function Display() {
 
-    const [displayMode, setDisplayMode] = useState("system");
-
-    const { setTheme } = useTheme()
+    const { setTheme, theme } = useTheme()
 
 
     return (
@@ -34,7 +32,7 @@ function Display() {
                     </DialogHeader>
                     <div className="flex flex-wrap gap-2 justify-between px-10 pb-6">
                         <div>
-                            <Button className={`w-20 h-40 aspect-video hover:bg-white bg-white border-2 ${displayMode === "light" ? 'border-[3px] border-green-500' : 'border-gray-100'} p-0 overflow-hidden grid grid-rows-6 shadow-none`} variant={'ghost'} onClick={() => { setTheme("light"), setDisplayMode('light') }}>
+                            <Button className={`w-20 h-40 aspect-video hover:bg-white bg-white border-2 ${theme === "light" ? 'border-[3px] border-green-500' : 'border-gray-100'} p-0 overflow-hidden grid grid-rows-6 shadow-none`} variant={'ghost'} onClick={() => setTheme("light")}>
                                 <div className="row-span-5 h-full w-20">
                                     <div className="flex items-center p-2 w-full">
                                         <div className="w-5 h-5 rounded-full bg-gray-200 shrink-0"></div>
@@ -67,7 +65,7 @@ function Display() {
                         </div>
 
                         <div>
-                            <Button className={`w-20 h-40 aspect-video bg-neutral-900 hover:bg-neutral-900 border-2 ${displayMode === "dark" ? 'border-[3px] border-green-500' : 'border-gray-100'} p-0 overflow-hidden grid grid-rows-6 shadow-none`} variant={'ghost'} onClick={() => { setTheme("dark"), setDisplayMode("dark") }}>
+                            <Button className={`w-20 h-40 aspect-video bg-neutral-900 hover:bg-neutral-900 border-2 ${theme === "dark" ? 'border-[3px] border-green-500' : 'border-gray-100'} p-0 overflow-hidden grid grid-rows-6 shadow-none`} variant={'ghost'} onClick={() => setTheme("dark")}>
                                 <div className="row-span-5 h-full w-20">
                                     <div className="flex items-center p-2 w-full">
                                         <div className="w-5 h-5 rounded-full bg-neutral-600 shrink-0"></div>
@@ -99,7 +97,7 @@ function Display() {
                             <p className="font-semibold text-sm w-full text-center pt-2 text-gray-500">{t("dark")}</p>
                         </div>
                         <div>
-                            <Button className={`w-20 h-40 gap-0 aspect-video relative bg-white border-2 ${displayMode === "system" ? 'border-[3px] border-green-500' : 'border-gray-100'} p-0 overflow-hidden shadow-none`} variant={'ghost'} onClick={() => { setTheme("system"), setDisplayMode("system") }}>
+                            <Button className={`w-20 h-40 gap-0 aspect-video relative bg-white border-2 ${theme === "system" ? 'border-[3px] border-green-500' : 'border-gray-100'} p-0 overflow-hidden shadow-none`} variant={'ghost'} onClick={() => setTheme("system")}>
                                 <div className='w-10 h-40 z-10 absolute top-0 left-0 aspect-video border-0 bg-white overflow-hidden grid grid-rows-6'>
                                     <div className="row-span-5 h-full w-20">
                                         <div className="flex items-center p-2 w-full">

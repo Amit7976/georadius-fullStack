@@ -11,14 +11,14 @@ import { t } from "@/src/helpers/i18n";
 export default function MainContent() {
 
     return (
-        <div className="bg-white min-h-screen pb-10">
+        <div className="min-h-screen pb-10">
             <div className="pt-4 px-2">
                 <SearchInput queryParam={""} />
             </div>
            
             {/* 🔥 Trending Topics Section */}
             <div className="pt-6">
-                <h2 className="px-5 font-semibold text-xl text-black">{t("allCategories")}</h2>
+                <h2 className="px-5 font-semibold text-xl">{t("allCategories")}</h2>
                 <div className="flex flex-wrap items-center px-5 py-8 gap-y-5 gap-x-3 select-none">
                     {interestsList.map((interest, index) => (
                         <LoaderLink
