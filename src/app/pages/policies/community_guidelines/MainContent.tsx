@@ -1,6 +1,5 @@
 import HeadingHeader from '@/src/components/HeadingHeader'
 import { LoaderLink } from '@/src/components/loaderLinks'
-import Link from 'next/link'
 
 function MainContent() {
   return (

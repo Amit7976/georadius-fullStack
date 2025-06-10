@@ -1,14 +1,11 @@
 "use client";
-
-
-import { useRouter } from "next/navigation";
-import { z } from "zod";
-import { toast } from "sonner";
-import { credentialsSignUp } from "../actions/register";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { LoaderLink } from "@/src/components/loaderLinks";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+import { z } from "zod";
+import { credentialsSignUp } from "../actions/register";
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

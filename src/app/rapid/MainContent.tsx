@@ -1,25 +1,23 @@
 "use client";
 
+import { DialogTitle } from "@/components/ui/dialog";
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import DeleteButton from "@/src/components/DeleteButton";
 import HideButton from "@/src/components/HideButton";
+import { LoaderLink } from "@/src/components/loaderLinks";
 import QrButton from "@/src/components/QrButton";
 import VoteButtons from "@/src/components/VoteButtons";
 import { formatTimeAgo } from "@/src/helpers/formatTimeAgo";
+import { t } from "@/src/helpers/i18n";
 import { Pencil } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { HiDotsVertical } from "react-icons/hi";
 import { TbReport } from "react-icons/tb";
+import PullToRefresh from "react-pull-to-refresh";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useGeolocation } from "../hooks/useGeolocation";
-import { LoaderLink } from "@/src/components/loaderLinks";
-import { t } from "@/src/helpers/i18n";
-import { DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import PullToRefresh from "react-pull-to-refresh";
 
 
 interface Post {
@@ -54,7 +52,7 @@ export default function MainContent() {
     const [posts, setPosts] = useState([]);
     const [loadingPosts, setLoadingPosts] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    let location = useGeolocation();
+    const location = useGeolocation();
 
 
     useEffect(() => {
@@ -75,9 +73,7 @@ export default function MainContent() {
 
 
     useEffect(() => {
-        if (!location) {
-            location = { lat: 26.92, lng: 75.78 } //Default Jaipur Latitude & Longitude
-        };
+        if (!location) return;
 
         const fetchNearbyPosts = async (latitude: number, longitude: number) => {
             try {

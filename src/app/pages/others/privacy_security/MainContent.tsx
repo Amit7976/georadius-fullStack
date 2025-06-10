@@ -1,21 +1,14 @@
 "use client";
-
-import { Checkbox } from "@/components/ui/checkbox";
 import DeleteAccountButton from "@/src/components/DeleteAccountButton";
 import HeadingHeader from "@/src/components/HeadingHeader";
 import { LoaderLink } from "@/src/components/loaderLinks";
 import { t } from "@/src/helpers/i18n";
-import { useRouter } from "next/navigation";
-import { useState } from 'react';
 import { HiOutlineChevronRight } from "react-icons/hi2";
 import { MdPassword } from "react-icons/md";
 import { TbAuth2Fa } from "react-icons/tb";
 
 
-
 function MainContent() {
-
-    const router = useRouter();
     return (
         <>
             <>

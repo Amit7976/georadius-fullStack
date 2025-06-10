@@ -2,7 +2,6 @@
 
 import NewsPost from '@/src/components/NewsPost';
 import { useEffect, useState } from 'react';
-import useAuthVerification from '../../hooks/useAuthVerification';
 import { useGeolocation } from '../../hooks/useGeolocation';
 import { t } from '@/src/helpers/i18n';
 import BackButton from '@/src/components/BackButton';
@@ -34,14 +33,11 @@ interface News {
 
 
 function Page() {
-    const { isVerified } = useAuthVerification();
     const [data, setData] = useState<News[]>([]);
     const [error, setError] = useState<string | null>(null);
     const location = useGeolocation();
 
     useEffect(() => {
-        if (!isVerified || !location) return;
-
         const fetchNearbyPosts = async (latitude: number, longitude: number) => {
             try {
                 const res = await fetch(`/api/main/nearby?lat=${latitude}&lng=${longitude}&range=7000&limit=20&images=0`);
@@ -54,7 +50,7 @@ function Page() {
         };
 
         fetchNearbyPosts(location.lat, location.lng);
-    }, [location, isVerified]);
+    }, [location]);
 
     if (error) return <p className="text-red-500 text-center">{error}</p>;
     if (!data || data.length === 0) return (
@@ -65,7 +61,7 @@ function Page() {
         </>
     );
 
-    const handleHide = (postId: number) => {
+    const handleHide = (postId: string) => {
         setData(prevNews => prevNews.filter(news => news._id !== postId.toString()));
 
         const hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");

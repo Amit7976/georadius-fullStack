@@ -56,8 +56,11 @@ export async function POST(req: Request) {
       { message: "Password updated successfully" },
       { status: 200 }
     );
-  } catch (error: any) {
-    console.error("🔥 Error updating password:", error.message || error);
+  } catch (error) {
+    console.error(
+      "🔥 Error updating password:",
+      error instanceof Error ? error.message : error
+    );
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

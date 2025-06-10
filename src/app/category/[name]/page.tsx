@@ -1,9 +1,4 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import Link from "next/link";
-import ImageSlider from "@/src/components/ImageSlider";
-import { formatTimeAgo } from "@/src/helpers/formatTimeAgo";
 import {
     Select,
     SelectContent,
@@ -11,10 +6,14 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useGeolocation } from "../../hooks/useGeolocation";
-import { LoaderLink } from "@/src/components/loaderLinks";
-import { t } from "@/src/helpers/i18n";
 import BackButton from "@/src/components/BackButton";
+import ImageSlider from "@/src/components/ImageSlider";
+import { LoaderLink } from "@/src/components/loaderLinks";
+import { formatTimeAgo } from "@/src/helpers/formatTimeAgo";
+import { t } from "@/src/helpers/i18n";
+import { useParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { useGeolocation } from "../../hooks/useGeolocation";
 
 type Post = {
     _id: string;

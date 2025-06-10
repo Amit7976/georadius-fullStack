@@ -65,7 +65,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           throw new Error("Invalid Email or Password");
         }
 
-        let isMatch = await compare(password, user.password);
+        const isMatch = await compare(password, user.password);
 
         console.log("====================================");
         console.log(isMatch);
@@ -87,7 +87,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           console.log("enter");
           console.log("====================================");
 
-          let compareTemp = password === user.tempPassword;
+          const compareTemp = password === user.tempPassword;
 
           console.log("1====================================");
           console.log(compareTemp);

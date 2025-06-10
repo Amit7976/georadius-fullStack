@@ -31,12 +31,10 @@ const TrendingNewsSlider: React.FC<TrendingNewsSliderProps> = ({ range }) => {
     const [loadingPosts, setLoadingPosts] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [distances, setDistances] = useState<Record<string, string>>({});
-    let location = useGeolocation();
+    const location = useGeolocation();
 
     useEffect(() => {
-        if (!location) {
-            location = { lat: 26.92, lng: 75.78 } //Default Jaipur Latitude & Longitude
-        };
+        if (!location) return;
 
 
         const fetchNearbyPosts = async (latitude: number, longitude: number) => {

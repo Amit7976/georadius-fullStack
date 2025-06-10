@@ -7,7 +7,6 @@ import { Switch } from "@/components/ui/switch";
 import HeadingHeader from "@/src/components/HeadingHeader";
 import { t } from "@/src/helpers/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -32,7 +31,6 @@ export default function MainContent() {
     const defaultEmail = "";
 
     const handleToggle2FA = () => setIs2FAEnabled((prev) => !prev);
-    const router = useRouter();
 
     return (
         <div className="space-y-6">

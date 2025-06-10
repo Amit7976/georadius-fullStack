@@ -1,10 +1,7 @@
 "use client";
-
-import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { t } from "@/src/helpers/i18n";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { HiOutlineChevronRight } from "react-icons/hi2";
 import { IoNotificationsOutline } from "react-icons/io5";

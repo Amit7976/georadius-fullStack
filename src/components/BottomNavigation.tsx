@@ -1,15 +1,12 @@
 "use client";
-
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { IoHomeOutline, IoHome, IoFlashOutline, IoFlash } from "react-icons/io5";
-import { MdAddBox, MdOutlineAddBox } from "react-icons/md";
 import { CgSearch, CgSearchLoading } from "react-icons/cg";
-import { FaUser } from "react-icons/fa";
-import { FaRegUser } from "react-icons/fa";
-import { LoaderLink } from "./loaderLinks";
+import { FaRegUser, FaUser } from "react-icons/fa";
+import { IoFlash, IoFlashOutline, IoHome, IoHomeOutline } from "react-icons/io5";
+import { MdAddBox, MdOutlineAddBox } from "react-icons/md";
 import { t } from "../helpers/i18n";
+import { LoaderLink } from "./loaderLinks";
 
 
 export default function BottomNavigation({ username }: { username: string | boolean }) {

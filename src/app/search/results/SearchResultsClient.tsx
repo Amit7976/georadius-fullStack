@@ -1,7 +1,4 @@
 "use client";
-
-import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
 import {
     Select,
     SelectContent,
@@ -9,14 +6,14 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import Link from "next/link";
-import SearchInput from "@/src/components/SearchInput";
 import ImageSlider from "@/src/components/ImageSlider";
-import { formatTimeAgo } from "@/src/helpers/formatTimeAgo";
-import Image from "next/image";
 import { LoaderLink } from "@/src/components/loaderLinks";
+import SearchInput from "@/src/components/SearchInput";
+import { formatTimeAgo } from "@/src/helpers/formatTimeAgo";
 import { t } from "@/src/helpers/i18n";
-import BackButton from "@/src/components/BackButton";
+import Image from "next/image";
+import { useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import { useGeolocation } from "../../hooks/useGeolocation";
 
 export default function SearchResultsClient() {

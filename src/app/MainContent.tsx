@@ -73,7 +73,7 @@ export default function MainContent() {
         }
 
         navigator.geolocation.getCurrentPosition(
-            (position) => {
+            () => {
                 // access granted — do nothing or set flag
             },
             (error) => {
@@ -108,7 +108,7 @@ export default function MainContent() {
 
                 const hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");
                 const filteredNews: NewsPostType[] = json.filter((news: NewsPostType) => !hiddenPosts.includes(news._id));
-                setNewsData(json);
+                setNewsData(filteredNews);
 
             } catch (err) {
                 console.error("API fetch error:", err);

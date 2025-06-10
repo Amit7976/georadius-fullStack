@@ -1,6 +1,5 @@
 "use client"
 import { Button } from "@/components/ui/button";
-import { useGeolocation } from "@/src/app/hooks/useGeolocation";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -9,7 +8,6 @@ import { FaLocationDot } from "react-icons/fa6";
 function MainContent() {
   const router = useRouter();
   const [locationStatus, setLocationStatus] = useState<string>("");
-  const location = useGeolocation();
 
   useEffect(() => {
     if ("permissions" in navigator) {
@@ -50,13 +48,13 @@ function MainContent() {
     }
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      () => {
         const expires = new Date();
         expires.setFullYear(expires.getFullYear() + 10);
         document.cookie = `LPS=true; expires=${expires.toUTCString()}; path=/;`;
         router.replace("/pages/onboarding/permissions/notification");
       },
-      (error) => {
+      () => {
         alert("Location permission denied or error.");
       }
     );

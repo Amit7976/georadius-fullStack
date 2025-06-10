@@ -1,11 +1,9 @@
 "use client";
 import interestsList from "@/public/json/interestList.json";
-import Link from "next/link";
-import "swiper/css";
 import SearchInput from "@/src/components/SearchInput";
 import { LoaderLink } from "@/src/components/loaderLinks";
 import { t } from "@/src/helpers/i18n";
-
+import "swiper/css";
 
 
 export default function MainContent() {

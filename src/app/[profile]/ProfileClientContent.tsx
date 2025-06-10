@@ -118,7 +118,7 @@ function ProfileClientContent({ profile }: Props) {
             <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-800">
                 <div className="rounded-xl p-8 w-full text-center space-y-6">
                     <div className="text-red-500">
-                        <AnimatedText text="Oops!" color="black" />
+                        <AnimatedText text="Oops!" />
                     </div>
                     <p className="text-lg text-gray-400 font-medium mb-6 max-w-md mx-auto animate-fade-in-up">
                         {t("userNotFound")}
@@ -130,7 +130,7 @@ function ProfileClientContent({ profile }: Props) {
                         Go to Home
                     </LoaderLink>
                 </div>
-            </div>          
+            </div>
         );
 
     } else {

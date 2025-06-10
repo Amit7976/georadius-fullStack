@@ -1,4 +1,4 @@
-export function AnimatedText({ text, color }: { text: string, color?: string }) {
+export function AnimatedText({ text }: { text: string }) {
   return (
     <h1 className={`text-4xl sm:text-7xl font-bold  flex flex-wrap justify-center`}>
       {text.split("").map((char, i) => (
@@ -16,7 +16,7 @@ export function AnimatedText({ text, color }: { text: string, color?: string }) 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export function AnimatedTextSmall({ text, color }: { text: string, color?: string }) {
+export function AnimatedTextSmall({ text }: { text: string }) {
   return (
     <h1 className={`text-lg sm:text-xl font-semibold flex flex-wrap justify-center`}>
       {text.split("").map((char, i) => (

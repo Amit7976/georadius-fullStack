@@ -57,7 +57,7 @@ export default function SinglePostPage({ params }: { params: Promise<{ post: str
         fetchPost();
     }, [post]);
 
-    const handleHide = (id: number) => {
+    const handleHide = (id: string) => {
         setNewsData(prev => prev.filter(post => post._id !== id.toString()));
     };
 

@@ -1,15 +1,12 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { credentialsLogin } from "../actions/login";
-import { toast } from "sonner"
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { LoaderLink } from "@/src/components/loaderLinks";
+import { useState } from "react";
+import { toast } from "sonner";
+import { credentialsLogin } from "../actions/login";
 
 
 const LoginForm = () => {
-    const router = useRouter();
     const [loading, setLoading] = useState(false)
 
     const handleSubmit = async (formData: FormData): Promise<void> => {

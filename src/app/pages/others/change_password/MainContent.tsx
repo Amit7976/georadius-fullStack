@@ -84,7 +84,16 @@ export default function ChangePassword() {
     const newPassword = watch("newPassword");
 
 
-    const onSubmit = async (data: any) => {
+    interface ChangePasswordRequest {
+        currentPassword: string;
+        newPassword: string;
+    }
+
+    interface ChangePasswordResponse {
+        error?: string;
+    }
+
+    const onSubmit = async (data: PasswordFormValues): Promise<void> => {
         try {
             setLoading(true);
             const response = await fetch("/api/changePassword", {
@@ -93,18 +102,17 @@ export default function ChangePassword() {
                 body: JSON.stringify({
                     currentPassword: data.currentPassword,
                     newPassword: data.newPassword,
-                }),
+                } as ChangePasswordRequest),
             });
 
-            const result = await response.json();
+            const result: ChangePasswordResponse = await response.json();
 
             if (!response.ok) throw new Error(result.error || t("somethingWrong"));
 
             toast.success(t("passwordUpdatedSuccessfully"));
-        } catch (error: any) {
-            toast.error("❌ " + error.message);
-        }
-        finally {
+        } catch (error) {
+            toast.error("❌ " + (error instanceof Error ? error.message : t("somethingWrong")));
+        } finally {
             setLoading(false);
         }
     };

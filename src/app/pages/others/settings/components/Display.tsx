@@ -1,12 +1,10 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { t } from "@/src/helpers/i18n";
+import { useTheme } from "next-themes";
 import { FiSun } from "react-icons/fi";
 import { HiOutlineChevronRight } from "react-icons/hi2";
-import { useTheme } from "next-themes"
-import { t } from "@/src/helpers/i18n";
 
 function Display() {
 

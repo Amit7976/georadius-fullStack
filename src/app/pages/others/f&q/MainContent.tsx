@@ -1,15 +1,12 @@
 "use client";
-
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import HeadingHeader from "@/src/components/HeadingHeader";
 import { t } from "@/src/helpers/i18n";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const MainContent = () => {
     const [faqs, setFaqs] = useState<{ question: string; answer: string }[]>([]);
-    const router = useRouter();
 
     useEffect(() => {
         const fetchFAQs = async () => {

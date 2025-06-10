@@ -3,10 +3,6 @@ import { Button } from "@/components/ui/button";
 import interestsList from "@/public/json/interestList.json";
 import { useEffect, useState } from "react";
 
-interface MainContentProps {
-  interest: string[];
-}
-
 function MainContent() {
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
