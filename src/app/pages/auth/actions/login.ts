@@ -1,7 +1,11 @@
 "use server";
-
 import { signIn } from "@/src/auth";
 import { CredentialsSignin } from "next-auth";
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 const credentialsLogin = async (email: string, password: string) => {
   try {
@@ -9,7 +13,6 @@ const credentialsLogin = async (email: string, password: string) => {
       email,
       password,
     });
-
     return result;
   } catch (error) {
     const err = error as CredentialsSignin;

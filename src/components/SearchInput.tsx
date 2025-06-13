@@ -5,15 +5,21 @@ import { IoSearch, IoClose } from "react-icons/io5";
 import { Input } from "@/components/ui/input";
 import { t } from "../helpers/i18n";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 export default function SearchInput({ queryParam = "" }: { queryParam?: string; }) {
     const [query, setQuery] = useState(queryParam);
     const [suggestions, setSuggestions] = useState<{ name: string, id: string }[]>([]);
     const [hasTyped, setHasTyped] = useState(false);
     const router = useRouter();
     const inputRef = useRef<HTMLInputElement>(null);
-    const wrapperRef = useRef<HTMLDivElement>(null); // 👉 Wrapper for click outside
+    const wrapperRef = useRef<HTMLDivElement>(null);
 
-    // 🔁 Debounced fetchSuggestions when user types
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     useEffect(() => {
         if (!query || !hasTyped) {
             setSuggestions([]);
@@ -27,7 +33,8 @@ export default function SearchInput({ queryParam = "" }: { queryParam?: string; 
         return () => clearTimeout(timeout);
     }, [query, hasTyped]);
 
-    // 🧠 Click outside to close suggestions
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
@@ -39,6 +46,8 @@ export default function SearchInput({ queryParam = "" }: { queryParam?: string; 
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const fetchSuggestions = async (q: string) => {
         try {
             const res = await fetch(`/api/search/suggestions?q=${encodeURIComponent(q)}`);
@@ -49,6 +58,8 @@ export default function SearchInput({ queryParam = "" }: { queryParam?: string; 
         }
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const handleSearch = (q?: string) => {
         const searchTerm = (q || query)?.trim();
         if (!searchTerm) return;
@@ -56,12 +67,16 @@ export default function SearchInput({ queryParam = "" }: { queryParam?: string; 
         setSuggestions([]);
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             e.preventDefault();
             handleSearch();
         }
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <div ref={wrapperRef} className="pb-3 relative">

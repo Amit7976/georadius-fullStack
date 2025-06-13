@@ -3,7 +3,14 @@ import { connectToDatabase } from "@/src/lib/utils";
 import { Post } from "@/src/models/postModel";
 import { NextRequest, NextResponse } from "next/server";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 export const dynamic = "force-dynamic";
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export async function GET(req: NextRequest) {
   // console.log("====================================");
@@ -16,13 +23,19 @@ export async function GET(req: NextRequest) {
     // console.log("➡️ Connecting to DB...");
     await connectToDatabase();
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const session = await auth();
     const userId = session?.user?.id;
     // console.log("🔐 Authenticated User ID:", userId);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const { searchParams } = new URL(req.url);
     const lat = parseFloat(searchParams.get("lat") || "");
     const lng = parseFloat(searchParams.get("lng") || "");
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (isNaN(lat) || isNaN(lng)) {
       return NextResponse.json(
@@ -30,6 +43,8 @@ export async function GET(req: NextRequest) {
         { status: 400 }
       );
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // console.log("📍 Coordinates:", { lat, lng });
 
@@ -75,10 +90,14 @@ export async function GET(req: NextRequest) {
       },
     ]);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const enrichedPosts = posts.map((post) => ({
       ...post,
       currentUserProfile: userId && post.userId?.toString() === userId,
     }));
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return NextResponse.json(enrichedPosts);
   } catch (err) {

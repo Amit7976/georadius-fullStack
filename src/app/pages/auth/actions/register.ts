@@ -1,5 +1,4 @@
 "use server";
-
 import { connectToDatabase } from "@/src/lib/utils";
 import { User } from "@/src/models/userModel";
 import bcryptjs from "bcryptjs";

@@ -8,6 +8,8 @@ export default function Placeholder() {
     );
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export function PlaceholderPost() {
     return (
         <div className="flex flex-col gap-10 px-0 py-6">
@@ -32,6 +34,9 @@ export function PlaceholderPost() {
         </div>
     );
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export function PlaceholderSearchPost() {
     return (
         <div className="flex flex-col gap-10 px-2 py-5">
@@ -50,6 +55,8 @@ export function PlaceholderSearchPost() {
     );
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export function PlaceholderSearchUser() {
     return (
         <div className="flex flex-col gap-10 px-2 py-10">
@@ -65,6 +72,8 @@ export function PlaceholderSearchUser() {
         </div>
     );
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export function PlaceholderUserProfile() {
     return (

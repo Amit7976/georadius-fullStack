@@ -3,15 +3,24 @@ import { useEffect } from 'react';
 import type { OlaMaps } from 'olamaps-web-sdk';
 import { useRouter } from 'next/navigation';
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 declare global {
     interface Window {
         OlaMaps: OlaMaps;
     }
 }
 
-function MainContent() {
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
+function MainContent() {
     const router = useRouter();
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     useEffect(() => {
         // console.log("Checking location permissions...");
         if (!navigator.geolocation) {
@@ -26,17 +35,25 @@ function MainContent() {
         });
     }, [router]);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     useEffect(() => {
         let olaMapsInstance: InstanceType<typeof OlaMaps>;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // Dynamically import the OlaMaps SDK
         import('olamaps-web-sdk').then((module) => {
             const { OlaMaps } = module;
 
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+
             // Initialize OlaMaps
             olaMapsInstance = new OlaMaps({
-                apiKey: "txBOleR58lHkyz1Aio6WJc5zPW223xIabWR3Yd4k",
+                apiKey: process.env.OLA_API_KEY || "",
             });
+
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
 
             // Function to get the user's current position
             const getCurrentPosition = () => {
@@ -50,10 +67,14 @@ function MainContent() {
                 });
             };
 
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+
             // Initialize the map after getting the user's location
             getCurrentPosition()
                 .then((position) => {
                     const { latitude, longitude } = position.coords;
+
+                    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
                     const myMap = olaMapsInstance.init({
                         style: "https://api.olamaps.io/styleEditor/v1/styleEdit/styles/f97cd17c-6bbe-48b0-8438-e0bae67a14be/geoRadiusStyle",
@@ -62,6 +83,8 @@ function MainContent() {
                         zoom: 16,
                     });
 
+                    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
                     const geolocate = olaMapsInstance.addGeolocateControls({
                         positionOptions: {
                             enableHighAccuracy: true,
@@ -69,11 +92,17 @@ function MainContent() {
                         trackUserLocation: true,
                     });
 
+                    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
                     myMap.addControl(geolocate);
+
+                    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
                     myMap.on('load', () => {
                         geolocate.trigger();
                     });
+
+                    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
                     // Fetch news locations and add markers
                     fetch('/api/main/map')
@@ -84,9 +113,13 @@ function MainContent() {
                                     const markerEl = document.createElement('div');
                                     markerEl.classList.add('marker');
 
+                                    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
                                     const popup = olaMapsInstance
                                         .addPopup({ offset: [0, -40], anchor: 'bottom' })
                                         .setHTML(`<div><strong>${news.title}</strong></div>`);
+
+                                    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
                                     const marker = olaMapsInstance
                                         .addMarker({
@@ -97,13 +130,19 @@ function MainContent() {
                                         .setLngLat([news.longitude, news.latitude])
                                         .addTo(myMap);
 
+                                    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
                                     markerEl.addEventListener('mouseenter', () => {
                                         marker.setPopup(popup).togglePopup();
                                     });
 
+                                    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
                                     markerEl.addEventListener('mouseleave', () => {
                                         marker.togglePopup();
                                     });
+
+                                    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
                                     markerEl.addEventListener('click', () => {
                                         window.open(`/post/${news._id}`, '_blank');
@@ -118,6 +157,8 @@ function MainContent() {
                 });
         });
     }, []);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <div id="map" className="w-full h-screen">

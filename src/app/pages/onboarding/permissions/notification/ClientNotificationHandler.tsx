@@ -1,13 +1,19 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaRegBell } from "react-icons/fa";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 export default function ClientNotificationHandler() {
     const router = useRouter();
     const [permissionStatus, setPermissionStatus] = useState<NotificationPermission>("default");
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     useEffect(() => {
         if ("Notification" in window) {
@@ -23,11 +29,15 @@ export default function ClientNotificationHandler() {
         }
     }, [router]);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const setLongTermCookie = () => {
         const expires = new Date();
         expires.setFullYear(expires.getFullYear() + 10);
         document.cookie = `NPS=true; expires=${expires.toUTCString()}; path=/;`;
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const requestNotificationPermission = () => {
         if (!("Notification" in window)) {
@@ -50,10 +60,14 @@ export default function ClientNotificationHandler() {
         });
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const handleSkip = () => {
         document.cookie = `NPS=true; path=/;`;
         router.replace("/pages/auth/signin");
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <>

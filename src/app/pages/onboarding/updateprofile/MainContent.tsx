@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,11 +16,18 @@ import { useForm } from "react-hook-form";
 import { PiCircleNotch } from "react-icons/pi";
 import { toast } from "sonner";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 export default function MainContent() {
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [locationLoading, setLocationLoading] = useState(false)
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -32,6 +38,7 @@ export default function MainContent() {
         }
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const {
         register,
@@ -45,6 +52,8 @@ export default function MainContent() {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     // Fetch existing profile data from API
     useEffect(() => {
         // console.log("Fetching existing profile data...");
@@ -56,6 +65,8 @@ export default function MainContent() {
                     toast.error("Failed to fetch profile data");
                     return;
                 }
+
+                /////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 // Prefill form fields
                 setValue("profileImage", data.profileImage);
@@ -74,11 +85,13 @@ export default function MainContent() {
             .finally(() => setLoading(false));
     }, [setValue]);
 
-
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Get current location
     const handleGetLocation = async () => {
         setLocationLoading(true);
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         if (typeof window === "undefined" || !navigator.geolocation || !navigator.permissions) {
             alert(t("geoNotSupported"));
@@ -86,9 +99,11 @@ export default function MainContent() {
             return;
         }
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+
         try {
             const permissionStatus = await navigator.permissions.query({ name: "geolocation" as PermissionName });
-
+            
             if (permissionStatus.state === "granted" || permissionStatus.state === "prompt") {
                 try {
                     const location = await getAddress();
@@ -108,14 +123,14 @@ export default function MainContent() {
         setLocationLoading(false);
     };
 
-
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Handle form submission
-
-
     const onSubmit = async (data: FormDataType) => {
         if (isSubmitting) return;
         setIsSubmitting(true);
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         try {
             const formData = new FormData();
@@ -124,8 +139,9 @@ export default function MainContent() {
             formData.append("dob", data.dob);
             formData.append("location", data.location); // Use the resolved address
             formData.append("bio", data.bio);
+            // console.log("Sending Form Data:", formData);
 
-            // console.log("📤 Sending Form Data:", formData);
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
 
             // **Check if user selected a new file**
             if (selectedFile) {
@@ -136,29 +152,36 @@ export default function MainContent() {
                 formData.append("profileImage", data.profileImage); // Send existing image path
             }
 
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+
             const response = await fetch("/api/update/profile", {
                 method: "PUT",
                 body: formData,
             });
 
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+
             const result: { error?: string } = await response.json();
             if (!response.ok) throw new Error(result.error || "Profile update failed");
 
-            // console.log("✅ Profile updated successfully!", result);
-            toast.success(t("profileUpdateSuccess"));
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+            // console.log("Profile updated successfully!", result);
+            toast.success(t("profileUpdateSuccess"));
             router.refresh();
         } catch (error) {
-            console.error("❌ Error updating profile:", error);
+            console.error("Error updating profile:", error);
             toast.error(t("profileUpdateFailed"));
         } finally {
             setIsSubmitting(false);
         }
     };
 
-
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (loading) return <div className="flex items-center justify-center h-screen"><div className="loader"></div></div>;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <div className="max-w-lg mx-auto p-2">
@@ -166,8 +189,6 @@ export default function MainContent() {
                 <BackButton />
                 <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-400 text-center">{t("updateYour")} <span className="text-green-600">Profile</span></h1>
             </div>
-
-
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-6 p-2">
                 {/* Profile Image Upload */}
@@ -206,6 +227,7 @@ export default function MainContent() {
                         )}
                     </div>
 
+                    
                     {/* Username */}
                     <div className="rounded-lg space-y-2 flex-2">
                         <Label className={"text-sm text-gray-600 dark:text-gray-400 font-medium"}>{t("username")}</Label>
@@ -226,6 +248,7 @@ export default function MainContent() {
 
                 </div>
 
+                
                 {/* Full Name */}
                 <div className="border border-gray-200 dark:border-neutral-700 w-full px-6 py-10 rounded-lg flex flex-col gap-2">
                     <Label className={"text-sm text-gray-600 dark:text-gray-400 font-medium"}>{t("fullName")}</Label>
@@ -241,6 +264,7 @@ export default function MainContent() {
                     )}
                 </div>
 
+                
                 {/* Phone Number (Optional) */}
                 <div className="border border-gray-200 dark:border-neutral-700 w-full px-6 py-10 rounded-lg flex flex-col gap-2">
                     <Label className={"text-sm text-gray-600 dark:text-gray-400 font-medium"}>{t("phoneNumber")}</Label>
@@ -259,6 +283,7 @@ export default function MainContent() {
                     />
                 </div>
 
+                
                 {/* Date of Birth */}
                 <div className="border border-gray-200 dark:border-neutral-700 w-full p-6 rounded-lg flex flex-col gap-2">
                     <Label className="text-sm text-gray-600 dark:text-gray-400 font-medium">{t("dateOfBirth")}</Label>
@@ -270,15 +295,13 @@ export default function MainContent() {
                         defaultValue="2000-01-01"
                         max={new Date(new Date().setFullYear(new Date().getFullYear() - 16))
                             .toISOString()
-                            .split("T")[0]} // ✅ max = today - 16 years
+                            .split("T")[0]} // max = today - 16 years
                     />
 
                     {errors.dob && <p className="text-red-500">{errors.dob.message}</p>}
                 </div>
 
-
-
-
+                
                 {/* Location + Get Current Location Button */}
                 <div className="border border-gray-200 dark:border-neutral-700 w-full px-6 py-10 rounded-lg flex flex-col justify-center-center gap-2">
                     <Label className={"text-sm text-gray-600 dark:text-gray-400 font-medium"}>{t("location")}</Label>
@@ -310,6 +333,7 @@ export default function MainContent() {
                     </div>
                 </div>
 
+                
                 {/* Bio */}
                 <div className="border border-gray-200 dark:border-neutral-700 w-full px-6 py-10 rounded-lg flex flex-col gap-2">
                     <Label className={"text-sm text-gray-600 dark:text-gray-400 font-medium"}>{t("bio")}</Label>
@@ -317,6 +341,7 @@ export default function MainContent() {
                     {errors.bio && <p className="text-red-500">{errors.bio.message}</p>}
                 </div>
 
+                
                 {/* Submit Button */}
                 <div className="w-full p-6">
                     <Button

@@ -4,12 +4,19 @@ import { connectToDatabase } from "@/src/lib/utils";
 import { User } from "@/src/models/userModel";
 import { auth } from "@/src/auth";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 export async function POST(req: Request) {
   try {
     const {
       currentPassword,
       newPassword,
     }: { currentPassword: string; newPassword: string } = await req.json();
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (!currentPassword || !newPassword) {
       return NextResponse.json(
@@ -18,7 +25,11 @@ export async function POST(req: Request) {
       );
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     await connectToDatabase();
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const session = await auth();
     const email = session?.user?.email;
@@ -27,6 +38,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const user = await User.findOne({ email }).select(
       "+password +tempPassword"
     );
@@ -34,6 +47,8 @@ export async function POST(req: Request) {
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const isCurrentPasswordValid =
       (user.password && (await compare(currentPassword, user.password))) ||
@@ -46,11 +61,15 @@ export async function POST(req: Request) {
       );
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const hashedPassword = await hash(newPassword, 10);
 
     user.password = hashedPassword;
-    user.tempPassword = ""; // Clear temp password if it existed
+    user.tempPassword = "";
     await user.save();
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return NextResponse.json(
       { message: "Password updated successfully" },

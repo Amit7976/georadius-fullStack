@@ -5,6 +5,11 @@ import { auth } from "@/src/auth";
 import mongoose from "mongoose";
 import { connectToDatabase } from "@/src/lib/utils";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 export async function POST(req: Request) {
   // console.log("====================================");
   // console.log("======== Post Fetch Single =========");
@@ -13,9 +18,13 @@ export async function POST(req: Request) {
   try {
     await connectToDatabase();
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const session = await auth();
     const userId = session?.user?.id;
     const currentLoginUsername = session?.user?.username;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (!userId) {
       return NextResponse.json(
@@ -23,6 +32,8 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const { postId } = await req.json();
     if (!postId || !mongoose.Types.ObjectId.isValid(postId)) {
@@ -32,7 +43,11 @@ export async function POST(req: Request) {
       );
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const postObjectId = new mongoose.Types.ObjectId(postId);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const postResult = await Post.aggregate([
       { $match: { _id: postObjectId } },
@@ -105,14 +120,20 @@ export async function POST(req: Request) {
       },
     ]);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const post = postResult[0];
     if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const currentUserProfile = post.userId?.toString() === userId;
 
-    // 🧠 Fetch top 10 comments for this post
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Fetch top 10 comments for this post
     const topComments = await Comment.aggregate([
       { $match: { postId: post._id } },
       { $sort: { createdAt: -1 } },
@@ -130,7 +151,11 @@ export async function POST(req: Request) {
       },
     ]);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     delete post.userId;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return NextResponse.json({
       success: true,

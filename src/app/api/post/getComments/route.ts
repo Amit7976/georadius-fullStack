@@ -6,9 +6,14 @@ import { Post } from "@/src/models/postModel";
 import { auth } from "@/src/auth";
 import { UserProfile } from "@/src/models/UserProfileModel";
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 interface PostWithComments {
   comments?: mongoose.Types.ObjectId[] | string[];
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   // console.log("====================================");
@@ -16,10 +21,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   // console.log("====================================");
 
   try {
-    // ✅ DB connect
+    // DB connect
     await connectToDatabase();
 
-    // ✅ Auth check
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Auth check
     const session = await auth();
     const userId = session?.user?.id;
 
@@ -27,6 +34,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       // console.log("❌ Unauthorized - no session user ID");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const userProfile = await UserProfile.findOne({ userId }, { username: 1 });
     if (!userProfile) {
@@ -37,10 +46,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const currentUserId = userId.toString();
     const currentUsername = userProfile.username;
 
-    // ✅ Request body
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Request body
     const body = await req.json();
     const {
       postId,
@@ -53,6 +66,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       excludeIds?: string[];
     } = body;
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     if (!postId) {
       return NextResponse.json(
         { error: "postId is required" },
@@ -60,7 +75,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
-    // ✅ Get post and comment IDs
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Get post and comment IDs
     const post = (await Post.findById(postId).lean()) as PostWithComments;
 
     if (!post || !post.comments || post.comments.length === 0) {
@@ -74,6 +91,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const commentObjectIds = post.comments.map(
       (id) => new mongoose.Types.ObjectId(id)
     );
@@ -81,7 +100,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       (id) => new mongoose.Types.ObjectId(id)
     );
 
-    // ✅ Aggregate filtered, sorted, paginated comments
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Aggregate filtered, sorted, paginated comments
     const commentDocs = await Comment.aggregate([
       {
         $match: {
@@ -122,7 +143,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       },
     ]);
 
-    // ✅ Format for client
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Format for client
     const comments = commentDocs.map((comment) => ({
       _id: comment._id,
       comment: comment.comment,
@@ -133,6 +156,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       updatedAt: comment.updatedAt,
       reports: comment.reports,
     }));
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return NextResponse.json(
       {

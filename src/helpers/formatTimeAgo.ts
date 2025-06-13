@@ -6,6 +6,8 @@ export const formatTimeAgo = (publish_time: string) => {
   const now = new Date();
   const diff = Math.floor((now.getTime() - time.getTime()) / 1000); // Difference in seconds
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+
   if (diff < 60) return `${diff} sec ago`;
   const minutes = Math.floor(diff / 60);
   if (minutes < 60) return `${minutes} min ago`;

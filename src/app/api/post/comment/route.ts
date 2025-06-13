@@ -1,10 +1,12 @@
-// comment/route.ts
 import { auth } from "@/src/auth";
 import { connectToDatabase } from "@/src/lib/utils";
 import { Comment } from "@/src/models/commentModel";
 import { Post } from "@/src/models/postModel";
 import { UserProfile } from "@/src/models/UserProfileModel";
 import { NextResponse } from "next/server";
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export async function POST(req: Request) {
   // console.log("====================================");
@@ -18,14 +20,20 @@ export async function POST(req: Request) {
     // console.log("🔗 Connecting to DB...");
     await connectToDatabase();
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     // console.log("🔐 Authenticating...");
     const session = await auth();
     const userId = session?.user?.id;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (!userId) {
       // console.log("❌ Unauthorized - no user ID");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const userProfile = await UserProfile.findOne(
       { userId },
@@ -39,10 +47,14 @@ export async function POST(req: Request) {
       );
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const body = await req.json();
     const { postId, comment, parentCommentId, replyingToUsername } = body;
 
     // console.log("📥 Request body:", body);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (!postId || !comment) {
       // console.log("❌ Missing required fields: postId or comment");
@@ -52,8 +64,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // console.log("📝 Creating new comment...");
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    // console.log("📝 Creating new comment...");
     const newComment = new Comment({
       postId,
       username: userProfile.username,
@@ -64,16 +77,20 @@ export async function POST(req: Request) {
     });
 
     await newComment.save();
-    // console.log("✅ Comment saved with ID:", newComment._id);
+    // console.log("Comment saved with ID:", newComment._id);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // console.log("🔄 Updating Post to include comment...");
     await Post.findByIdAndUpdate(postId, {
       $push: { comments: newComment._id },
     });
 
-    // console.log("✅ Post updated with new comment");
+    // console.log("Post updated with new comment");
 
-    // console.log("✅ Post updated with new comment ID");
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // console.log("Post updated with new comment ID");
 
     return NextResponse.json(
       {

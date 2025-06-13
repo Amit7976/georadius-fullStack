@@ -15,6 +15,9 @@ export const getDistanceFromCurrentLocation = async (
       reject("Geolocation is not supported by this browser.");
       return;
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     if (typeof navigator !== "undefined" && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -25,7 +28,11 @@ export const getDistanceFromCurrentLocation = async (
           const currentLon = parseFloat(position.coords.longitude.toFixed(2));
           // console.log("Current location fetched:", { currentLat, currentLon });
 
+          /////////////////////////////////////////////////////////////////////////////////////////////////////
+
           const toRad = (degree: number) => (degree * Math.PI) / 180;
+
+          /////////////////////////////////////////////////////////////////////////////////////////////////////
 
           const R = 6371; // Earth's radius in km
           const dLat = toRad(currentLat - lat);
@@ -33,21 +40,29 @@ export const getDistanceFromCurrentLocation = async (
 
           // console.log("Converted to radians:", { dLat, dLon });
 
+          /////////////////////////////////////////////////////////////////////////////////////////////////////
+
           const a =
             Math.sin(dLat / 2) * Math.sin(dLat / 2) +
             Math.cos(toRad(lat)) *
-            Math.cos(toRad(currentLat)) *
-            Math.sin(dLon / 2) *
-            Math.sin(dLon / 2);
+              Math.cos(toRad(currentLat)) *
+              Math.sin(dLon / 2) *
+              Math.sin(dLon / 2);
 
           // console.log("Haversine formula 'a' value:", a);
+
+          /////////////////////////////////////////////////////////////////////////////////////////////////////
 
           const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
           // console.log("Haversine formula 'c' value:", c);
 
+          /////////////////////////////////////////////////////////////////////////////////////////////////////
+
           const distance = R * c; // Distance in km
           // console.log("Calculated distance (km):", distance);
+
+          /////////////////////////////////////////////////////////////////////////////////////////////////////
 
           // Format distance
           let formattedDistance = "";
@@ -59,6 +74,8 @@ export const getDistanceFromCurrentLocation = async (
           } else {
             formattedDistance = `${Math.round(distance)}km`;
           }
+
+          /////////////////////////////////////////////////////////////////////////////////////////////////////
 
           // console.log("Formatted distance:", formattedDistance);
 

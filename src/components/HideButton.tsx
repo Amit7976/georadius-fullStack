@@ -5,8 +5,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { EyeOff } from "lucide-react";
 import { t } from "../helpers/i18n";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 const HideButton = ({ postId, onHide }: { postId: string; onHide: (id: string) => void }) => {
+
     const [open, setOpen] = useState(false);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const handleHidePost = () => {
         const hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");
@@ -19,6 +27,8 @@ const HideButton = ({ postId, onHide }: { postId: string; onHide: (id: string) =
         onHide(postId);
         setOpen(false);
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>

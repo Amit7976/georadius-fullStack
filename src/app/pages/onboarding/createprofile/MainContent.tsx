@@ -16,6 +16,10 @@ import { PiCircleNotch } from "react-icons/pi";
 import { toast } from "sonner";
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 export default function MainContent() {
     const {
         register,
@@ -29,6 +33,8 @@ export default function MainContent() {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [locationLoading, setLocationLoading] = useState(false)
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     // Handle profile image selection
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -37,6 +43,8 @@ export default function MainContent() {
             setImagePreview(URL.createObjectURL(file));
         }
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Get current location
     const handleGetLocation = async () => {
@@ -47,6 +55,8 @@ export default function MainContent() {
             setLocationLoading(false);
             return;
         }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         try {
             const permissionStatus = await navigator.permissions.query({ name: "geolocation" as PermissionName });
@@ -70,13 +80,15 @@ export default function MainContent() {
         setLocationLoading(false);
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const router = useRouter();
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const onSubmit = async (data: FormDataType) => {
         if (isSubmitting) return; // Prevent multiple clicks
@@ -88,7 +100,6 @@ export default function MainContent() {
             // console.log("====================================");
 
             // console.log("Received Form Data:", data);
-
             const formData = new FormData();
             formData.append("username", data.username);
             formData.append("fullName", data.fullName);
@@ -96,11 +107,12 @@ export default function MainContent() {
             formData.append("dob", data.dob);
             formData.append("location", data.location);
             formData.append("bio", data.bio);
+            // console.log("Basic fields appended!");
 
-            // console.log("✅ Basic fields appended!");
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
 
             if (data.profileImage instanceof File) {
-                // console.log("✅ Profile Image detected, appending...");
+                // console.log("Profile Image detected, appending...");
                 formData.append("profileImage", data.profileImage);
 
                 // console.log("====================================");
@@ -113,36 +125,35 @@ export default function MainContent() {
                     method: "POST",
                     body: formData,
                 });
-
                 const result: { error?: string } = await response.json();
-                // console.log("✅ API Response Received:", result);
+                // console.log("API Response Received:", result);
+
+                /////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 if (!response.ok) {
-                    console.error("❌ API Error:", result.error);
+                    console.error("API Error:", result.error);
                     throw new Error(result.error || "Failed to update profile");
                 }
 
-                // console.log("✅ Profile Created successfully!", result);
-                toast.success("Profile Created successfully!");
+                /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+                // console.log("Profile Created successfully!", result);
+                toast.success("Profile Created successfully!");
                 router.replace("/pages/onboarding/interest");
 
             } else {
-                // console.log("⚠️ No valid profile image provided.");
+                // console.log("No valid profile image provided.");
                 toast.warning("No valid profile image provided.");
             }
         } catch (error) {
-            console.error("❌ Error updating profile:", error);
+            console.error("Error updating profile:", error);
             toast.error("Failed to create profile.");
         } finally {
             setIsSubmitting(false);
         }
     };
 
-
-
-
-
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <div className="max-w-lg mx-auto px-3 py-0">
@@ -247,7 +258,7 @@ export default function MainContent() {
                         defaultValue="2000-01-01"
                         max={new Date(new Date().setFullYear(new Date().getFullYear() - 16))
                             .toISOString()
-                            .split("T")[0]} // ✅ max = today - 16 years
+                            .split("T")[0]} // max = today - 16 years
                     />
 
                     {errors.dob && <p className="text-red-500">{errors.dob.message}</p>}

@@ -6,9 +6,16 @@ import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import { t } from "../helpers/i18n";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 const QrButton = ({ postId }: { postId: string }) => {
     const [open, setOpen] = useState(false);
     const shareUrl = `${window.location.origin}/news/${postId}`;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -17,7 +24,6 @@ const QrButton = ({ postId }: { postId: string }) => {
                     <QrCode className="size-5" /> {t("makeQR")}
                 </Button>
             </DialogTrigger>
-
             <DialogContent className="flex flex-col items-center p-12 bg-transparent dark:bg-transparent">
                 <DialogHeader className={"relative"}>
                     <DialogTitle className="text-lg font-semibold text-center">{t("scanToView")}</DialogTitle>

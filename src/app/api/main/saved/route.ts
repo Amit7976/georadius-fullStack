@@ -5,6 +5,9 @@ import { Comment } from "@/src/models/commentModel";
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export async function GET() {
   try {
     // console.log("====================================");
@@ -15,18 +18,26 @@ export async function GET() {
     const userId = session?.user?.id;
     const currentLoginUsername = session?.user?.username;
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     interface ProfileData {
       saved: string[];
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const profileData = (await UserProfile.findOne(
       { userId },
       { saved: 1 }
     ).lean()) as ProfileData | null;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (!profileData || !profileData.saved || profileData.saved.length === 0) {
       return NextResponse.json(
@@ -35,9 +46,13 @@ export async function GET() {
       );
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const objectIds = profileData.saved.map(
       (id) => new mongoose.Types.ObjectId(id)
     );
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const posts = await Post.aggregate([
       { $match: { _id: { $in: objectIds } } },
@@ -66,7 +81,9 @@ export async function GET() {
       },
     ]);
 
-    // ✅ Add top 10 comments for each post
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Add top 10 comments for each post
     const finalPosts = [];
 
     for (const post of posts) {
@@ -93,6 +110,8 @@ export async function GET() {
         currentUserProfile: post.userId?.toString() === userId,
       });
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return NextResponse.json(
       { posts: finalPosts, currentLoginUsername },

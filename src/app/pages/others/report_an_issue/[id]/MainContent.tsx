@@ -1,11 +1,12 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import HeadingHeader from "@/src/components/HeadingHeader";
+import { issues } from "@/src/helpers/issuesArray";
+import { issueSchema } from "@/src/helpers/zodSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -14,28 +15,20 @@ import { useForm } from "react-hook-form";
 import { HiOutlineChevronRight } from "react-icons/hi2";
 import { RiUploadCloud2Line } from "react-icons/ri";
 import { toast } from "sonner";
-import { z } from "zod";
 
-const issueSchema = z.object({
-    description: z.string().min(5, "Description must be at least 5 characters"),
-    photos: z.array(z.instanceof(File)).optional(),
-});
 
-const issues = [
-    "News is not showing",
-    "Know Fake News",
-    "Nudity Suspect",
-    "Incorrect Location",
-    "Spam or Scam",
-    "Hate Speech",
-    "Other",
-];
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 const MainContent = ({ id }: { id: string | null }) => {
     const [selectedIssue, setSelectedIssue] = useState<string | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedImages, setSelectedImages] = useState<File[]>([]);
     const [loader, setLoader] = useState(false);
+    const router = useRouter();
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // console.log('====================================');
     // console.log("id: " + id);
@@ -45,12 +38,14 @@ const MainContent = ({ id }: { id: string | null }) => {
         defaultValues: { description: "", photos: [] },
     });
 
-
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     interface FormValues {
         description: string;
         photos?: File[];
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const onSubmit = async (values: FormValues): Promise<void> => {
         const formData = new FormData();
@@ -90,11 +85,7 @@ const MainContent = ({ id }: { id: string | null }) => {
         }
     };
 
-
-
-    const router = useRouter();
-
-
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -110,15 +101,18 @@ const MainContent = ({ id }: { id: string | null }) => {
 
         setSelectedImages(selectedFiles); // Only store valid images
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     // Remove individual image
     const removeImage = (index: number) => {
         setSelectedImages((prev) => prev.filter((_, i) => i !== index));
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <>
-
             <HeadingHeader heading="Report an Issue" />
 
             <div className="p-5">

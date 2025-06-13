@@ -5,12 +5,18 @@ import { connectToDatabase } from "@/src/lib/utils";
 import { UserProfile } from "@/src/models/UserProfileModel";
 
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export async function POST(req: Request) {
 
@@ -22,11 +28,12 @@ export async function POST(req: Request) {
   // console.log("[START] Processing profile update request...");
 
   try {
-   
     // console.log("[STEP 1] Authenticating user...");
 
     const session = await auth();
     const userId = session?.user?.id;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (!userId) {
       console.error("[ERROR] User ID is missing!");
@@ -38,6 +45,7 @@ export async function POST(req: Request) {
 
     // console.log("[SUCCESS] User authenticated. User ID:", userId);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // console.log("[STEP 2] Parsing form data...");
 
@@ -54,17 +62,18 @@ export async function POST(req: Request) {
 
     // console.log("[SUCCESS] Form data parsed successfully.");
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     let profileImageUrl = "";
 
-   
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const file = formData.get("profileImage") as File | null;
 
     if (file) {
-
       // console.log("[STEP 3] Uploading profile image to Cloudinary...");
 
       try {
-
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
@@ -91,35 +100,28 @@ export async function POST(req: Request) {
             .end(buffer);
         });
 
-        
-         const typedUploadResult = uploadResult as { secure_url: string };
-         profileImageUrl = typedUploadResult.secure_url || "";
-
+        const typedUploadResult = uploadResult as { secure_url: string };
+        profileImageUrl = typedUploadResult.secure_url || "";
       } catch (uploadError) {
-
         console.error("[ERROR] Image upload exception:", uploadError);
-
       }
-
     } else {
-
       // console.log("[INFO] No profile image provided, skipping upload.");
-
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // console.log("[STEP 4] Connecting to database...");
     await connectToDatabase();
     // console.log("[SUCCESS] Database connected successfully.");
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // console.log("[STEP 5] Checking if user profile exists...");
     let userProfile = await UserProfile.findOne({ userId });
 
     if (!userProfile) {
-
       // console.log("[INFO] User profile does not exist, creating new profile...");
-
       userProfile = await UserProfile.create({
         userId,
         username,
@@ -133,10 +135,10 @@ export async function POST(req: Request) {
         profileImage: profileImageUrl,
       });
 
+      /////////////////////////////////////////////////////////////////////////////////////////////////////
+
       // console.log("[SUCCESS] New profile created.");
-
     } else {
-
       // console.log("[INFO] User profile found, updating existing profile...");
 
       userProfile.username = username;
@@ -150,9 +152,9 @@ export async function POST(req: Request) {
       await userProfile.save();
 
       // console.log("[SUCCESS] User profile updated successfully.");
-
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // console.log("[END] Profile update request completed successfully.");
 
@@ -160,7 +162,6 @@ export async function POST(req: Request) {
       message: "Profile updated successfully!",
       userProfile,
     });
-
   } catch (error) {
 
     console.error("[FATAL ERROR] Error updating profile:", error);

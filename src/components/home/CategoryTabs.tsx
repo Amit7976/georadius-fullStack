@@ -4,9 +4,12 @@ import { News } from "@/src/helpers/types";
 import NewsPost from "../NewsPost";
 import { PlaceholderPost } from "./Placeholder";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 export default function CategoryTabs({ selectedCategory, setSelectedCategory, currentLoginUsername, categoriesRef, loading, newsData, handleHide }: { selectedCategory: string; setSelectedCategory: (category: string) => void;currentLoginUsername:string, categoriesRef: React.RefObject<HTMLDivElement | null>; loading: boolean; newsData: News[], handleHide: (id: string) => void }) {
-
-
     return (
         <>
             {/* Categories */}
@@ -51,9 +54,7 @@ export default function CategoryTabs({ selectedCategory, setSelectedCategory, cu
                         </div>
                     )
                 )}
-
             </div>
-
         </>
     );
 }

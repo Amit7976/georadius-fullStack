@@ -4,11 +4,16 @@ import { NextResponse } from "next/server";
 import cloudinary from "cloudinary";
 import { connectToDatabase } from "@/src/lib/utils";
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
   api_key: process.env.CLOUDINARY_API_KEY!,
   api_secret: process.env.CLOUDINARY_API_SECRET!,
 });
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export async function POST(req: Request) {
   // console.log("====================================");
@@ -19,7 +24,7 @@ export async function POST(req: Request) {
     // console.log("🔗 Connecting to database...");
     await connectToDatabase();
 
-    // console.log("📩 POST request received at /api/post/update");
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const session = await auth();
     if (!session || !session.user?.id) {
@@ -27,13 +32,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const userId = session.user.id;
-    // console.log("✅ User authenticated:", userId);
+    // console.log("User authenticated:", userId);
     // console.log("🔑 User authenticated successfully");
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const formData = await req.formData();
     // console.log("📦 FormData received");
-
     const postId = formData.get("postId") as string;
     if (!postId) {
       // console.log("❌ postId is missing in FormData");
@@ -45,7 +53,9 @@ export async function POST(req: Request) {
 
     // console.log("🆔 postId:", postId);
 
-    // console.log("✅ User owns post");
+    // console.log("User owns post");
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const post = await Post.findById(postId);
     if (!post) {
@@ -54,10 +64,14 @@ export async function POST(req: Request) {
     }
     // console.log("📄 Post found in DB:", post.title);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     if (!post.userId.equals(userId)) {
       // console.log("❌ User does not own this post:", postId);
       return NextResponse.json({ error: "Permission denied" }, { status: 404 });
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const title = formData.get("title") as string;
     const description = formData.get("description") as string;
@@ -69,12 +83,20 @@ export async function POST(req: Request) {
     const latitude = latitudeRaw ? parseFloat(latitudeRaw as string) : null;
     const longitude = longitudeRaw ? parseFloat(longitudeRaw as string) : null;
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const categories = JSON.parse(
       (formData.get("categories") as string) || "[]"
     );
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const deletedImages = JSON.parse(
       (formData.get("deletedImages") as string) || "[]"
     );
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const imageFiles = (formData.getAll("images") as File[]).filter(
       (f) => f && f.size > 0
     );
@@ -84,6 +106,8 @@ export async function POST(req: Request) {
     // console.log("🏷️ Categories:", categories);
     // console.log("🗑️ Deleted Images:", deletedImages);
     // console.log("📤 New Images Files:", imageFiles.length);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (deletedImages.length > 0) {
       // console.log("🚮 Deleting images...");
@@ -105,7 +129,11 @@ export async function POST(req: Request) {
       // console.log("🧹 Cleaned post.images:", post.images);
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const uploadedUrls: string[] = [];
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (imageFiles.length > 0) {
       // console.log("📤 Uploading new images to Cloudinary...");
@@ -125,13 +153,15 @@ export async function POST(req: Request) {
             }
           );
 
-          // console.log("✅ Uploaded:", result.secure_url);
+          // console.log("Uploaded:", result.secure_url);
           return result.secure_url;
         })
       );
 
       uploadedUrls.push(...urls);
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     post.images.push(...uploadedUrls);
     // console.log("🖼️ Final image list:", post.images);
@@ -144,8 +174,12 @@ export async function POST(req: Request) {
     post.longitude = longitude;
     post.categories = categories;
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     await post.save();
-    // console.log("✅ Post updated successfully:", post._id);
+    // console.log("Post updated successfully:", post._id);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return NextResponse.json(
       { message: "Post updated", post },

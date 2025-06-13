@@ -5,20 +5,27 @@ import { formatNumber } from "../helpers/formatNumber";
 import { ShareButtonProps } from "../helpers/types";
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 const ShareButton = ({ shareProps }: ShareButtonProps) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [shareCount, setShareCount] = useState<number>(shareProps.share || 0);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const handleShare = async (): Promise<void> => {
         if (loading) return;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         const shareUrl = `${window.location.origin}/news/${shareProps._id}`;
         const shareTitle = shareProps.title;
         const shareText = `\n📰 ${shareProps.title}\n\n${shareProps.description}\n\n`;
 
-        // 🟡 Fallback: Web Share API without image
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+
         if (navigator.share) {
             try {
                 await navigator.share({
@@ -34,7 +41,8 @@ const ShareButton = ({ shareProps }: ShareButtonProps) => {
             }
         }
 
-        // 🔴 Final fallback: Copy to clipboard
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+
         try {
             await navigator.clipboard.writeText(shareUrl);
             alert("🔗 Link copied to clipboard!");
@@ -45,7 +53,8 @@ const ShareButton = ({ shareProps }: ShareButtonProps) => {
     };
 
 
-    // 🔹 Update share count in the database
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const updateShareCount = async (): Promise<void> => {
         setLoading(true);
         try {
@@ -64,6 +73,8 @@ const ShareButton = ({ shareProps }: ShareButtonProps) => {
             setLoading(false);
         }
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <Button size="icon" variant="ghost" disabled={loading} className="flex items-center gap-1" onClick={handleShare}>

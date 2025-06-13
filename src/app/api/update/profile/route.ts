@@ -5,12 +5,18 @@ import { connectToDatabase } from "@/src/lib/utils";
 import { UserProfile } from "@/src/models/UserProfileModel";
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export async function GET() {
 
@@ -23,7 +29,6 @@ export async function GET() {
 
 
   try {
-
     // console.log("[STEP 1] Authenticating user...");
     const session = await auth();
     const userId = session?.user?.id;
@@ -37,12 +42,13 @@ export async function GET() {
     }
     // console.log("[SUCCESS] User authenticated. User ID:", userId);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  
     // console.log("[STEP 2] Connecting to database...");
     await connectToDatabase();
     // console.log("[SUCCESS] Database connected.");
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // console.log("[STEP 3] Fetching user profile from DB...");
     const userProfile = await UserProfile.findOne({ userId });
@@ -55,10 +61,10 @@ export async function GET() {
       );
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // console.log("[SUCCESS] User profile fetched.");
     return NextResponse.json(userProfile);
-    
   } catch (error) {
 
     console.error("[FATAL ERROR] Error fetching profile:", error);
@@ -70,6 +76,7 @@ export async function GET() {
   }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export async function PUT(req: Request) {
 
@@ -82,10 +89,10 @@ export async function PUT(req: Request) {
 
   
   try {
-  
     // console.log("🔗 Connecting to database...");
     await connectToDatabase();
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // console.log("[STEP 1] Authenticating user...");
     const session = await auth();
@@ -97,11 +104,13 @@ export async function PUT(req: Request) {
       );
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const userId = session.user.id;
     // console.log(`[SUCCESS] User authenticated: ${userId}`);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    
     // console.log("[STEP 2] Parsing form data...");
     const formData = await req.formData();
     // console.log(
@@ -109,8 +118,8 @@ export async function PUT(req: Request) {
     //   Object.fromEntries(formData.entries())
     // );
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-   
     const fullName = formData.get("fullName")?.toString() || "";
     const dob = formData.get("dob")
       ? new Date(formData.get("dob")!.toString())
@@ -119,17 +128,23 @@ export async function PUT(req: Request) {
     const bio = formData.get("bio")?.toString() || "";
     const profileImage = formData.get("profileImage");
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     let profileImageUrl: string | undefined;
     let oldProfileImageUrl: string | undefined;
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const currentUserProfile = await UserProfile.findOne({ userId });
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (currentUserProfile) {
       oldProfileImageUrl = currentUserProfile.profileImage;
     }
 
-   
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     if (profileImage instanceof File) {
       // console.log("[STEP 3] New profile image detected. Uploading to Cloudinary...");
 
@@ -162,10 +177,10 @@ export async function PUT(req: Request) {
         console.error("[ERROR] Image upload exception:", uploadError);
       }
 
-     
+      /////////////////////////////////////////////////////////////////////////////////////////////////////
+
       if (oldProfileImageUrl) {
         try {
-         
           const publicId = oldProfileImageUrl.split("/").pop()?.split(".")[0];
           if (publicId) {
             // console.log(`[STEP 4] Deleting old image from Cloudinary: ${publicId}`);
@@ -173,7 +188,7 @@ export async function PUT(req: Request) {
             // console.log("====================================");
             const folderPath = "profile_pictures";
             const publicIdWithFolder = `${folderPath}/${publicId}`;
-
+            
             try {
               await cloudinary.v2.uploader.destroy(publicIdWithFolder);
               // console.log("[SUCCESS] Old image deleted successfully.");
@@ -187,28 +202,23 @@ export async function PUT(req: Request) {
             // console.log("====================================");
             // console.log("[SUCCESS] Old image deleted successfully.");
           }
-
         } catch (deleteError) {
-
           console.error(
             "[ERROR] Failed to delete old image from Cloudinary:",
             deleteError
           );
-
         }
       }
-
     } else {
-
       profileImageUrl = profileImage || "";
       // console.log("[INFO] No new profile image uploaded. Keeping existing image.");
-
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // console.log("[STEP 5] Updating user profile in database...");
     // console.log("[INFO] Updated profile image URL:", profileImageUrl);
 
-  
     const userProfile = await UserProfile.findOneAndUpdate(
       { userId },
       {
@@ -221,13 +231,14 @@ export async function PUT(req: Request) {
       { new: true, upsert: true }
     );
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     // console.log("[SUCCESS] Profile updated successfully!");
 
     return NextResponse.json({
       message: "Profile updated successfully!",
       userProfile,
     });
-
   } catch (error) {
 
     console.error("[ERROR] Profile update failed:", error);

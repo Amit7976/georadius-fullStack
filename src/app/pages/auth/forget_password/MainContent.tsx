@@ -10,14 +10,23 @@ import { FaAngleLeft } from 'react-icons/fa6';
 import { toast } from "sonner";
 import { z } from 'zod';
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 const signupSchema = z.object({
     email: z.string().email('Invalid email address'),
 })
 
-function MainContent() {
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
+function MainContent() {
     const [loading, setLoading] = useState(false)
     const router = useRouter();
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         setLoading(true)
@@ -27,6 +36,8 @@ function MainContent() {
             email: formData.get('email') as string,
         }
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+
         const validation = signupSchema.safeParse(data)
         if (!validation.success) {
             validation.error.errors.forEach((error) => {
@@ -35,6 +46,8 @@ function MainContent() {
             setLoading(false)
             return
         }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         try {
             const response = await axios.post('/api/forgetPassword', data)
@@ -58,6 +71,8 @@ function MainContent() {
             setLoading(false)
         }
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">

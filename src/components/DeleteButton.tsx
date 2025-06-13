@@ -5,9 +5,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Trash } from "lucide-react";
 import { toast } from "sonner"
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 const DeleteButton = ({ postId, onHide }: { postId: string; onHide: (id: string) => void }) => {
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const handleDelete = async () => {
         setLoading(true);
@@ -17,6 +24,9 @@ const DeleteButton = ({ postId, onHide }: { postId: string; onHide: (id: string)
                 body: JSON.stringify({ postId }),
                 headers: { "Content-Type": "application/json" },
             });
+
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+
             if (res.ok) {
                 onHide(postId);
                 toast.success("Post deleted successfully");
@@ -31,6 +41,8 @@ const DeleteButton = ({ postId, onHide }: { postId: string; onHide: (id: string)
         setLoading(false);
         setOpen(false);
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>

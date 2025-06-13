@@ -9,6 +9,11 @@ import { MdAddBox, MdOutlineAddBox } from "react-icons/md";
 import { CgSearchLoading, CgSearch } from "react-icons/cg";
 import { FaUser } from "react-icons/fa";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 // 👇 Dynamic imports with ssr: false ensure they behave as client components
 const HomePage = dynamic(() => import("@/src/app/page"), { ssr: false });
 const RapidPage = dynamic(() => import("@/src/app/rapid/page"), { ssr: false });
@@ -19,6 +24,8 @@ const SearchPage = dynamic(() => import("@/src/app/search/page"), {
 const ProfilePage = dynamic(() => import("@/src/app/[profile]/page"), {
   ssr: false,
 });
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const tabs = [
   {

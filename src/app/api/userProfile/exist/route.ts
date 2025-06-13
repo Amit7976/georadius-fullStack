@@ -3,6 +3,11 @@ import { connectToDatabase } from "@/src/lib/utils";
 import { UserProfile } from "@/src/models/UserProfileModel";
 import { NextResponse } from "next/server";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 export async function GET() {
   // console.log("====================================");
   // console.log("======= Checking User Profile ======");
@@ -12,6 +17,8 @@ export async function GET() {
 
   try {
     await connectToDatabase();
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const session = await auth();
     const userId = session?.user?.id;
@@ -23,11 +30,15 @@ export async function GET() {
       );
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const profileExists = await UserProfile.exists({ userId });
 
     // console.log("====================================");
     // console.log("Does user profile exist?", profileExists);
     // console.log("====================================");
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return NextResponse.json({ exists: !!profileExists });
   } catch (error) {

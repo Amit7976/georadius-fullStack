@@ -6,6 +6,11 @@ import { compare } from "bcryptjs";
 import { connectToDatabase } from "./lib/utils";
 import { UserProfile } from "./models/UserProfileModel";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 declare module "next-auth" {
   interface Session {
     user: {
@@ -18,6 +23,8 @@ declare module "next-auth" {
   }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // DATABASE CONNECTION FUNCTION
 const LoadDb = async () => {
   try {
@@ -28,18 +35,24 @@ const LoadDb = async () => {
   }
 };
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export const { auth, handlers, signIn, signOut } = NextAuth({
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     CredentialsProvider({
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
+
       authorize: async (credentials) => {
         const email = credentials.email as string | undefined;
         const password = credentials.password as string | undefined;
@@ -48,7 +61,11 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           throw new Error("Please provide both email and password");
         }
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+
         await LoadDb();
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         const user = await User.findOne({ email }).select(
           "+password +tempPassword"
@@ -61,15 +78,20 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         // console.log(user);
         // console.log("##====================================");
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+
         if (!user) {
           throw new Error("Invalid Email or Password");
         }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         const isMatch = await compare(password, user.password);
 
         // console.log("====================================");
         // console.log(isMatch);
         // console.log("====================================");
+
         // If matches real password
         if (isMatch) {
           // Clear tempPassword if present
@@ -80,6 +102,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
           return { fullname: user.fullname, email: user.email, id: user._id };
         }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // Else try matching temp password
         if (user.tempPassword) {
@@ -101,13 +125,20 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           }
         }
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+
         throw new Error("Invalid Email or Password");
       },
     }),
   ],
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+
   pages: {
     signIn: "/pages/auth/signin",
   },
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
 
   callbacks: {
     async session({ session, token }) {
@@ -130,6 +161,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
       return session;
     },
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     signIn: async ({ user, account }) => {
       // console.log("====================================");

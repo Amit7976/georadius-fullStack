@@ -18,6 +18,9 @@ import { Post } from "@/src/helpers/types";
 import { PlaceholderSearchPost } from "@/src/components/home/Placeholder";
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 export default function CategoryPage() {
     const { name } = useParams();
@@ -27,6 +30,8 @@ export default function CategoryPage() {
     const [expandedDescriptions, setExpandedDescriptions] = useState<string[]>([]);
     const location = useGeolocation();
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const toggleDescription = (postId: string) => {
         setExpandedDescriptions((prev) =>
             prev.includes(postId)
@@ -34,6 +39,8 @@ export default function CategoryPage() {
                 : [...prev, postId]
         );
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const fetchCategoryPosts = useCallback(async (lat: number, lng: number) => {
         const r = parseInt(radius);
@@ -51,6 +58,8 @@ export default function CategoryPage() {
         setLoading(false);
     }, [name, radius]);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     useEffect(() => {
         // if ("geolocation" in navigator) {
         if (!location) return;
@@ -58,6 +67,7 @@ export default function CategoryPage() {
         // }
     }, [location, name, radius, fetchCategoryPosts]);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <div className="py-4">
@@ -83,49 +93,43 @@ export default function CategoryPage() {
                 </Select>
             </div>
 
-            {
-                loading ? (
-                    <>
-                        <PlaceholderSearchPost />
-                    </>
-                ) :
-                    (
+            {loading ? (
+                <>
+                    <PlaceholderSearchPost />
+                </>
+            ) : (
+                <div className="gap-4 flex flex-col px-4">
+                    {posts.length > 0 ? (
+                        posts.map((post) => (
+                            <LoaderLink href={`/search/results/${post._id}`} key={post._id} className="py-2 space-y-2 text-start">
+                                <p className="text-gray-500 text-xs">{formatTimeAgo(post.updatedAt)}</p>
+                                <h4 className="font-semibold text-lg leading-5">{post.title}</h4>
+                                <p className="text-xs text-gray-500 leading-5 mt-1">{post.location}</p>
 
+                                {Array.isArray(post.images) && post.images.length > 0 && (
+                                    <div className="rounded-2xl overflow-hidden mt-4 my-2">
+                                        <ImageSlider images={post.images} height={250} />
+                                    </div>
+                                )}
 
-                        <div className="gap-4 flex flex-col px-4">
-                            {posts.length > 0 ? (
-                                posts.map((post) => (
-                                    <LoaderLink href={`/search/results/${post._id}`} key={post._id} className="py-2 space-y-2 text-start">
-                                        <p className="text-gray-500 text-xs">{formatTimeAgo(post.updatedAt)}</p>
-                                        <h4 className="font-semibold text-lg leading-5">{post.title}</h4>
-                                        <p className="text-xs text-gray-500 leading-5 mt-1">{post.location}</p>
-
-                                        {Array.isArray(post.images) && post.images.length > 0 && (
-                                            <div className="rounded-2xl overflow-hidden mt-4 my-2">
-                                                <ImageSlider images={post.images} height={250} />
-                                            </div>
-                                        )}
-
-                                        <div className="flex-6 mt-4">
-                                            <p
-                                                className={`border-l-4 border-green-500 pl-3 py-0.5 text-sm text-gray-800 dark:text-gray-400 ${expandedDescriptions.includes(post._id) ? "" : "line-clamp-6"
-                                                    }`}
-                                                onClick={() => toggleDescription(post._id)}
-                                            >
-                                                {post.description}
-                                            </p>
-                                        </div>
-                                    </LoaderLink>
-                                ))
-                            ) : (
-                                <div className="w-full h-screen flex items-center justify-center text-gray-400 font-medium text-lg">
-                                    <p>{t("noPostsInCategory")}</p>
+                                <div className="flex-6 mt-4">
+                                    <p
+                                        className={`border-l-4 border-green-500 pl-3 py-0.5 text-sm text-gray-800 dark:text-gray-400 ${expandedDescriptions.includes(post._id) ? "" : "line-clamp-6"
+                                            }`}
+                                        onClick={() => toggleDescription(post._id)}
+                                    >
+                                        {post.description}
+                                    </p>
                                 </div>
-                            )}
+                            </LoaderLink>
+                        ))
+                    ) : (
+                        <div className="w-full h-screen flex items-center justify-center text-gray-400 font-medium text-lg">
+                            <p>{t("noPostsInCategory")}</p>
                         </div>
-
-
-                    )
+                    )}
+                </div>
+            )
             }
         </ div>
     );

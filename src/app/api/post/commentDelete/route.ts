@@ -5,19 +5,31 @@ import { auth } from "@/src/auth";
 import { UserProfile } from "@/src/models/UserProfileModel";
 import { Post } from "@/src/models/postModel";
 
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 async function deleteCommentWithReplies(
   commentId: string,
   deletedIds: string[]
 ) {
   const replies = await Comment.find({ parentCommentId: commentId });
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+
   for (const reply of replies) {
     await deleteCommentWithReplies(reply._id.toString(), deletedIds);
   }
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+
   deletedIds.push(commentId);
   await Comment.deleteOne({ _id: commentId });
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   // console.log("====================================");
@@ -29,11 +41,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // console.log("🔗 Connecting to database...");
     await connectToDatabase();
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const session = await auth();
     const userId = session?.user?.id;
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const { commentId } = await req.json();
     if (!commentId) {
@@ -43,9 +59,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const userProfile = await UserProfile.findOne({ userId }).select(
       "username"
     );
+
     if (!userProfile) {
       return NextResponse.json(
         { error: "User profile not found" },
@@ -53,10 +72,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const comment = await Comment.findById(commentId);
     if (!comment) {
       return NextResponse.json({ error: "Comment not found" }, { status: 404 });
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (comment.username !== userProfile.username) {
       return NextResponse.json(
@@ -65,13 +88,19 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const deletedIds: string[] = [];
     await deleteCommentWithReplies(commentId, deletedIds);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     await Post.updateOne(
       { _id: comment.postId },
       { $pull: { comments: { $in: deletedIds } } }
     );
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return NextResponse.json({ success: true });
   } catch (error) {

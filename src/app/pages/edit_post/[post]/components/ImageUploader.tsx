@@ -8,16 +8,25 @@ import Image from "next/image";
 import { t } from "@/src/helpers/i18n";
 import { FormValues } from "@/src/helpers/types";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 interface ImageUploaderProps {
     setValue: UseFormSetValue<FormValues>;
     errors: FieldErrors<FormValues>;
     data: string[]; // post.images (URLs)
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export default function ImageUploader({ setValue, errors, data }: ImageUploaderProps) {
     const [existingImages, setExistingImages] = useState<string[]>([]);
     const [newImages, setNewImages] = useState<File[]>([]);
     const [deletedImages, setDeletedImages] = useState<string[]>([]);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     useEffect(() => {
         setExistingImages(data || []);
@@ -26,6 +35,8 @@ export default function ImageUploader({ setValue, errors, data }: ImageUploaderP
         setValue("images", []);
         setValue("deletedImages", []);
     }, [data, setValue]);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -50,6 +61,8 @@ export default function ImageUploader({ setValue, errors, data }: ImageUploaderP
         event.target.value = "";
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const removeExistingImage = (index: number) => {
         const removedImage = existingImages[index];
         const updated = existingImages.filter((_, i) => i !== index);
@@ -62,11 +75,15 @@ export default function ImageUploader({ setValue, errors, data }: ImageUploaderP
         setValue("deletedImages", updatedDeleted);
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const removeNewImage = (index: number) => {
         const updated = newImages.filter((_, i) => i !== index);
         setNewImages(updated);
         setValue("images", updated);
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <div className="space-y-4">

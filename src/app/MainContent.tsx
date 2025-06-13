@@ -10,6 +10,9 @@ import LocationDeniedBanner from "../components/home/locationDenied";
 import TrendingNewsSlider from "../components/TrendingNewsSlider";
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 export default function MainContent() {
     const [selectedFilter, setSelectedFilter] = useState(t("nearby"));
@@ -20,8 +23,9 @@ export default function MainContent() {
     const [error, setError] = useState<string | null>(null);
     const categoriesRef = useRef<HTMLDivElement | null>(null);
     const [currentLoginUsername, setCurrentLoginUsername] = useState("");
-
     const location = useGeolocation();
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     useEffect(() => {
         if (error) {
@@ -29,6 +33,8 @@ export default function MainContent() {
             setError(null);
         }
     }, [error]);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const handleHide = (postId: string) => {
         setNewsData(prevNews => prevNews.filter(news => news._id !== postId.toString()));
@@ -40,13 +46,20 @@ export default function MainContent() {
         }
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     useEffect(() => {
         if (!location) return;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+
         const range = selectedFilter === "Nearby"
             ? Number(localStorage.getItem("radius")) || 10
             : selectedFilter === "District"
                 ? 100
                 : 7000;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         const fetchNearbyPosts = async (latitude: number, longitude: number) => {
             setLoading(true);
@@ -54,7 +67,7 @@ export default function MainContent() {
                 const hiddenPosts: string[] = JSON.parse(localStorage.getItem("hideNews") || "[]");
 
                 const res = await fetch(`/api/main/category`, {
-                    method: "POST", // ✅ Changed to POST
+                    method: "POST", // Changed to POST
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         hiddenPostIds: hiddenPosts,
@@ -66,8 +79,9 @@ export default function MainContent() {
                     }),
                 });
 
-                const json = await res.json();
+                /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+                const json = await res.json();
                 setCurrentLoginUsername(json.currentLoginUsername);
                 // console.log('/////////////////////////////////////////////////////');
                 // console.log(json);
@@ -75,13 +89,20 @@ export default function MainContent() {
                 // console.log(json.posts);
                 // console.log('/////////////////////////////////////////////////////');
 
-                // ✅ Remove hidden posts
+                /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                // Remove hidden posts
                 const filteredNews: News[] = json.posts.filter((news: News) => !hiddenPosts.includes(news._id));
 
                 // console.log('====================================');
                 // console.log(filteredNews);
                 // console.log('====================================');
+
+                /////////////////////////////////////////////////////////////////////////////////////////////////////
+
                 setNewsData(filteredNews);
+
+                /////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 if (selectedCategory === "All") {
                     try {
@@ -120,9 +141,13 @@ export default function MainContent() {
                             })
                         );
 
+                        /////////////////////////////////////////////////////////////////////////////////////////////////////
+
                         const sortedTop = topPostsWithImages
                             .sort((a, b) => b.upvoteCount - a.upvoteCount)
                             .slice(0, 5);
+
+                        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
                         setTrendingNews(sortedTop);
                     } catch (err) {
@@ -142,6 +167,7 @@ export default function MainContent() {
         fetchNearbyPosts(location.lat, location.lng);
     }, [selectedFilter, selectedCategory]);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <div className="h-screen w-full p-0 scroll-smooth">

@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import MainContent from "./MainContent";
 import { LoaderLink } from "@/src/components/loaderLinks";
@@ -8,9 +7,16 @@ import { t } from "@/src/helpers/i18n";
 import { News, UserData } from "@/src/helpers/types";
 import { PlaceholderPost, PlaceholderUserProfile } from "@/src/components/home/Placeholder";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 type Props = {
     profile: string;
 };
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function ProfileClientContent({ profile }: Props) {
     const [userData, setUserData] = useState<UserData | null>(null);
@@ -19,10 +25,12 @@ function ProfileClientContent({ profile }: Props) {
     const [error, setError] = useState<string | null>(null);
     const [userNotFound, setUserNotFound] = useState(false);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     useEffect(() => {
         if (!profile) return;
 
-        // console.log(`🔹 Fetching data for: ${profile}`);
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         fetch("/api/userProfile/username", {
             method: "POST",
@@ -31,12 +39,13 @@ function ProfileClientContent({ profile }: Props) {
         })
             .then(async (res) => res.json())
             .then((data) => {
-                // console.log("✅ Combined API data:", data);
-
+                
                 if (!Array.isArray(data.posts)) {
                     setUserNotFound(true);
                     return;
                 }
+
+                /////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 const formattedPosts: News[] = data.posts.map((item: News) => ({
                     _id: item._id.toString(),
@@ -62,6 +71,8 @@ function ProfileClientContent({ profile }: Props) {
                     isSaved: item.isSaved || false,
                 }));
 
+                /////////////////////////////////////////////////////////////////////////////////////////////////////
+
                 setUserData(data.user);
                 setCurrentLoginUsername(data.currentLoginUsername);
                 setNewsData(formattedPosts);
@@ -73,7 +84,9 @@ function ProfileClientContent({ profile }: Props) {
             });
     }, [profile]);
 
-    // ⛔ Filter out hidden posts once
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Filter out hidden posts once
     useEffect(() => {
         const hiddenPosts: string[] = JSON.parse(localStorage.getItem("hideNews") || "[]");
 
@@ -82,6 +95,8 @@ function ProfileClientContent({ profile }: Props) {
             setNewsData(filtered);
         }
     }, []);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const handleHide = (postId: string) => {
         setNewsData((prev) => (prev ? prev.filter((post) => post._id !== postId) : null));
@@ -92,6 +107,8 @@ function ProfileClientContent({ profile }: Props) {
             localStorage.setItem("hideNews", JSON.stringify(hiddenPosts));
         }
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (userNotFound) {
         return (
@@ -121,9 +138,13 @@ function ProfileClientContent({ profile }: Props) {
         );
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     if (error) {
         return <div className="text-center text-red-500 mt-10">{error}</div>;
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <MainContent

@@ -13,12 +13,10 @@ import { credentialsSignUp } from "../actions/register";
 
 
 const SignUpForm = () => {
-
-
-    // DEFINE TOAST FOR DISPLAYING MESSAGE
     const router = useRouter();
-
     const [loading, setLoading] = useState(false)
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <>

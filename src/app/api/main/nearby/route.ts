@@ -5,7 +5,12 @@ import { Post } from "@/src/models/postModel";
 import { UserProfile } from "@/src/models/UserProfileModel";
 import { NextRequest, NextResponse } from "next/server";
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export const dynamic = "force-dynamic";
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export async function GET(req: NextRequest) {
   // console.log("====================================");
@@ -18,9 +23,13 @@ export async function GET(req: NextRequest) {
     // console.log("➡️ Connecting to DB...");
     await connectToDatabase();
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const session = await auth();
     const userId = session?.user?.id;
     // console.log("🔐 Authenticated User ID:", userId);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const { searchParams } = new URL(req.url);
     const lat = parseFloat(searchParams.get("lat") || "");
@@ -28,6 +37,8 @@ export async function GET(req: NextRequest) {
     const range = parseInt(searchParams.get("range") || "50");
     const limit = parseInt(searchParams.get("limit") || "5");
     const images = parseInt(searchParams.get("images") || "1");
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (isNaN(lat) || isNaN(lng)) {
       // console.log("⚠️ Invalid latitude or longitude provided");
@@ -40,10 +51,15 @@ export async function GET(req: NextRequest) {
     // console.log("📍 Coordinates:", { lat, lng });
     // console.log("📏 Range:", range);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     interface ProfileData {
       saved: string[];
     }
-    // ✅ Get user profile (excluding username from DB, we’ll inject it manually)
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Get user profile (excluding username from DB, we’ll inject it manually)
     const profileData = (await UserProfile.findOne(
       { userId: userId },
       {
@@ -54,6 +70,8 @@ export async function GET(req: NextRequest) {
     if (!profileData) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // console.log("➡️ Fetching posts...");
     const posts = await Post.aggregate([
@@ -96,7 +114,7 @@ export async function GET(req: NextRequest) {
       },
       {
         $sort: {
-          voteScore: -1, // ✅ descending order: 100, 50, 0, -50, -100
+          voteScore: -1, // descending order: 100, 50, 0, -50, -100
         },
       },
       {
@@ -125,6 +143,8 @@ export async function GET(req: NextRequest) {
         $limit: limit,
       },
     ]);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const finalPosts = [];
 
@@ -155,6 +175,8 @@ export async function GET(req: NextRequest) {
     }
 
     // console.log("🔚 [END] Nearby Posts API - Returning posts");
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return NextResponse.json(
       {

@@ -18,6 +18,11 @@ import { useGeolocation } from "../../hooks/useGeolocation";
 import { Post, User } from "@/src/helpers/types";
 import { PlaceholderSearchPost, PlaceholderSearchUser } from "@/src/components/home/Placeholder";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 export default function SearchResultsClient() {
     const searchParams = useSearchParams();
     const query = searchParams.get("q") || "";
@@ -26,9 +31,9 @@ export default function SearchResultsClient() {
     const [results, setResults] = useState<User[] | Post[]>([]);
     const [expandedDescriptions, setExpandedDescriptions] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
-
-
     const location = useGeolocation();
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const fetchResults = useCallback(async (lat: number, lng: number) => {
         const r = parseInt(radius);
@@ -39,6 +44,7 @@ export default function SearchResultsClient() {
         if (!latMin || !latMax || !lngMin || !lngMax) return;
         setLoading(true);
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         const queryParams = new URLSearchParams({
             q: query,
@@ -50,14 +56,21 @@ export default function SearchResultsClient() {
             lngMax: lngMax.toString(),
         });
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+
         const res = await fetch(`/api/search/result?${queryParams}`);
         const data = await res.json();
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+
         setResults(searchType === "user" ? data.users : data.posts);
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         setLoading(false);
     }, [query, radius, searchType]);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     useEffect(() => {
         if (location) {
@@ -65,9 +78,7 @@ export default function SearchResultsClient() {
         }
     }, [query, radius, searchType, fetchResults]);
 
-
-
-
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const toggleDescription = (postId: string) => {
         setExpandedDescriptions((prev) =>
@@ -77,6 +88,7 @@ export default function SearchResultsClient() {
         );
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <div className="p-4">

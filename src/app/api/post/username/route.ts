@@ -3,11 +3,16 @@ import { UserProfile } from "@/src/models/UserProfileModel";
 import { Post } from "@/src/models/postModel";
 import { auth } from "@/src/auth";
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 interface UserProfileType {
   _id: string;
   posts: string[];
   saved: string[];
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export async function POST(req: Request) {
   // console.log("====================================");
@@ -21,6 +26,8 @@ export async function POST(req: Request) {
     const userId = session?.user?.id;
     // console.log("🔍 Authenticated User ID:", userId);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     if (!userId) {
       console.error("[ERROR] User ID is missing!");
       return NextResponse.json(
@@ -28,6 +35,8 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const { username } = await req.json();
     // console.log("🔍 Fetching profile for username:", username);
@@ -39,6 +48,8 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const userProfile = await UserProfile.findOne(
       { username },
@@ -55,13 +66,17 @@ export async function POST(req: Request) {
 
     // console.log("📌 UserProfile Data:", userProfile);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     if (!userProfile) {
       console.error("[ERROR] User not found");
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const postIds = Array.isArray(userProfile.posts) ? userProfile.posts : [];
-    // console.log("✅ User's Posts IDs:", postIds);
+    // console.log("User's Posts IDs:", postIds);
 
     if (postIds.length === 0) {
       // console.log("⚠️ No posts found for user");
@@ -71,10 +86,14 @@ export async function POST(req: Request) {
       );
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const savedIds = Array.isArray(userProfile.saved)
       ? userProfile.saved.map((id) => id.toString())
       : [];
-    // console.log("✅ User's Saved Posts IDs:", savedIds);
+    // console.log("User's Saved Posts IDs:", savedIds);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // console.log("🔄 Fetching posts from DB...");
     const posts = await Post.find(
@@ -101,7 +120,9 @@ export async function POST(req: Request) {
       }
     ).sort({ createdAt: -1 });
 
-    // console.log("✅ Posts fetched successfully, Count:", posts.length);
+    // console.log("Posts fetched successfully, Count:", posts.length);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const finalPosts = posts.map((post) => {
       const postIdStr = post._id.toString();
@@ -116,7 +137,9 @@ export async function POST(req: Request) {
       };
     });
 
-    // console.log("✅ Final Posts Processed, Sending Response");
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // console.log("Final Posts Processed, Sending Response");
 
     return NextResponse.json(
       { message: "Posts retrieved successfully", posts: finalPosts },

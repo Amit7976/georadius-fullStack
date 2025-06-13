@@ -5,6 +5,8 @@ import { NextResponse } from "next/server";
 import cloudinary from "cloudinary";
 import { connectToDatabase } from "@/src/lib/utils";
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
@@ -12,8 +14,9 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET!,
 });
 
-export async function POST(req: Request) {
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
+export async function POST(req: Request) {
   // console.log("====================================");
   // console.log("======== New Post API ============");
   // console.log("====================================");
@@ -21,6 +24,8 @@ export async function POST(req: Request) {
   try {
     // console.log("🔗 Connecting to database...");
     await connectToDatabase();
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const session = await auth();
     const userId = session?.user?.id;
@@ -33,6 +38,7 @@ export async function POST(req: Request) {
     }
     // console.log("🔑 Authenticated User ID:", userId);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const userProfile = await UserProfile.findOne({ userId }).select(
       "username profileImage"
@@ -47,10 +53,10 @@ export async function POST(req: Request) {
     //   profileImage: userProfile.profileImage,
     // });
 
-    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const formData = await req.formData();
     // console.log("📩 FormData received");
-
 
     const title = formData.get("title") as string;
     const description = formData.get("description") as string;
@@ -62,7 +68,6 @@ export async function POST(req: Request) {
     ) as string[];
     const images = formData.getAll("images") as File[];
 
-
     // console.log("📝 Extracted Data:", {
     //   title,
     //   description,
@@ -73,7 +78,8 @@ export async function POST(req: Request) {
     // console.log("🏷 Categories:", categories);
     // console.log("🖼 Total Images Received:", images.length);
 
-   
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const imageUrls: string[] = await Promise.all(
       images.map(async (image) => {
         const buffer = await image.arrayBuffer();
@@ -88,11 +94,12 @@ export async function POST(req: Request) {
             ],
           }
         );
-        // console.log("✅ Image uploaded:", uploadedResponse.secure_url);
+        // console.log("Image uploaded:", uploadedResponse.secure_url);
         return uploadedResponse.secure_url;
       })
     );
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const newPost = await Post.create({
       title,
@@ -113,21 +120,21 @@ export async function POST(req: Request) {
       createdAt: new Date(),
     });
 
-    // console.log("✅ Post saved in database:", newPost._id);
+    // console.log("Post saved in database:", newPost._id);
 
-    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     await UserProfile.updateOne({ userId }, { $push: { posts: newPost._id } });
-    // console.log("✅ Post ID pushed to user profile");
+    // console.log("Post ID pushed to user profile");
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return NextResponse.json(
       { message: "Post created successfully", postId: newPost._id },
       { status: 201 }
     );
-
   } catch (error) {
-
     console.error("❌ Error processing request:", error);
     return NextResponse.json({ message: "Server error" }, { status: 500 });
-
   }
 }

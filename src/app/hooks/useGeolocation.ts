@@ -1,10 +1,17 @@
 import { useEffect, useState } from "react";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 export function useGeolocation() {
   const jaipurCenter = { lat: 26.9124, lng: 75.7873 }; // Jaipur's center coordinates
   const [location, setLocation] = useState<{ lat: number; lng: number }>(
     jaipurCenter
   );
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
 
   useEffect(() => {
     if (typeof navigator !== "undefined" && navigator.geolocation) {
@@ -24,10 +31,11 @@ export function useGeolocation() {
         }
       );
     } else {
-      // Geolocation not supported
       setLocation(jaipurCenter);
     }
   }, []);
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+  
   return location;
 }

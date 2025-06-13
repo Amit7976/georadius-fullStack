@@ -7,6 +7,11 @@ import { Comment } from "@/src/models/commentModel";
 import mongoose from "mongoose";
 import { connectToDatabase } from "@/src/lib/utils";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 const cloudinaryV2 = cloudinary.v2;
 cloudinaryV2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -14,20 +19,28 @@ cloudinaryV2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 async function deleteCommentWithReplies(
   commentId: string,
   deletedIds: string[]
 ) {
   const replies = await Comment.find({ parentCommentId: commentId });
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+
   for (const reply of replies) {
     await deleteCommentWithReplies(reply._id.toString(), deletedIds);
   }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
 
   deletedIds.push(commentId);
   await Comment.deleteOne({ _id: commentId });
 }
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export async function DELETE(req: Request): Promise<NextResponse> {
   // console.log("====================================");
@@ -38,6 +51,8 @@ export async function DELETE(req: Request): Promise<NextResponse> {
   try {
     // console.log("🔗 Connecting to database...");
     await connectToDatabase();
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const session = await auth();
     const userId = session?.user?.id;
@@ -50,15 +65,21 @@ export async function DELETE(req: Request): Promise<NextResponse> {
     }
     // console.log(`[INFO] Authenticated user: ${userId}`);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const body = await req.json();
     const postId = body.postId?.trim();
 
     // console.log(`[INFO] Received request to delete post: ${postId}`);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     if (!postId || !mongoose.Types.ObjectId.isValid(postId)) {
       // console.log("[ERROR] Invalid post ID");
       return NextResponse.json({ error: "Invalid post ID" }, { status: 400 });
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const post = await Post.findById(postId, {
       userId: 1,
@@ -72,10 +93,14 @@ export async function DELETE(req: Request): Promise<NextResponse> {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     if (post.userId !== userId) {
       // console.log("[ERROR] Unauthorized: User is not the post creator.");
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // console.log("[INFO] User is the creator. Proceeding with deletion...");
 
@@ -88,6 +113,8 @@ export async function DELETE(req: Request): Promise<NextResponse> {
 
       // console.log(`[INFO] Deleted ${deletedIds.length} comments from this post.` );
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (post.images?.length > 0) {
       try {
@@ -111,12 +138,16 @@ export async function DELETE(req: Request): Promise<NextResponse> {
       // console.log("[INFO] No images found for this post.");
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     await UserProfile.findOneAndUpdate(
       { userId },
       { $pull: { posts: postId } }
     );
 
     // console.log("[INFO] Post removed from user's profile:", updatedUserProfile);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     await UserProfile.updateMany(
       { saved: postId },
@@ -125,9 +156,13 @@ export async function DELETE(req: Request): Promise<NextResponse> {
 
     // console.log(`[DEBUG] Users updated: ${updatedUsers.modifiedCount}`);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     await Post.findByIdAndDelete(postId);
 
     // console.log("[SUCCESS] Post deleted successfully from database.");
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return NextResponse.json(
       { message: "Post deleted successfully" },

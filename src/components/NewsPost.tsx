@@ -25,16 +25,24 @@ import { DialogTitle } from "@/components/ui/dialog";
 import { CommentType, News } from "../helpers/types";
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 const NewsPost = ({ news, onHide, fullDescription, currentLoginUsername }: { news: News, currentLoginUsername: string, fullDescription: boolean; onHide: (id: string) => void }) => {
     const [distance, setDistance] = useState<string | null>(null);
     const [openDrawerId, setOpenDrawerId] = useState<string | null>(null);
     const [comments, setComments] = useState<CommentType[]>([...news.topComments]);
     const [hasMore, setHasMore] = useState(false);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     // console.log("📰 News Post Data:", news);
 
     const [showAddress, setShowAddress] = useState(false);
     const [showDescription, setShowDescription] = useState(fullDescription);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     useEffect(() => {
         if (news.latitude !== undefined && news.longitude !== undefined) {
@@ -46,17 +54,19 @@ const NewsPost = ({ news, onHide, fullDescription, currentLoginUsername }: { new
         }
     }, [news.latitude, news.longitude]);
 
-
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const router = useRouter();
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const handleEditClick = () => {
         sessionStorage.setItem("editNewsData", JSON.stringify(news));
         router.push(`/pages/edit_post/${news._id}`);
     };
 
-    ;
-
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    
     useEffect(() => {
         const onHashChange = () => {
             if (!window.location.hash && openDrawerId) {
@@ -67,6 +77,8 @@ const NewsPost = ({ news, onHide, fullDescription, currentLoginUsername }: { new
         return () => window.removeEventListener("hashchange", onHashChange);
     }, [openDrawerId]);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     useEffect(() => {
         // Restore state if someone lands on a hash
         if (window.location.hash) {
@@ -75,7 +87,7 @@ const NewsPost = ({ news, onHide, fullDescription, currentLoginUsername }: { new
         }
     }, []);
 
-
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <div key={String(news._id)}>
@@ -154,13 +166,10 @@ const NewsPost = ({ news, onHide, fullDescription, currentLoginUsername }: { new
                     </Drawer>
                 </div>
 
-
-
                 {/* Image Slider */}
                 {news.images.length > 0 && <ImageSlider images={news.images} height={400} />}
 
-
-
+                {/* Title & Description */}
                 <div className="pl-1">
                     <p className={`pl-2 pb-3 text-base font-medium text-gray-800 dark:text-gray-300`}>
                         {news.title}

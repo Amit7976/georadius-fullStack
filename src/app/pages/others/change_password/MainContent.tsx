@@ -1,36 +1,25 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import HeadingHeader from "@/src/components/HeadingHeader";
 import { t } from "@/src/helpers/i18n";
 import { ChangePasswordRequest, ChangePasswordResponse } from "@/src/helpers/types";
+import { passwordSchema } from "@/src/helpers/zodSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
-// ✅ Zod Schema for Validation
-const passwordSchema = z
-    .object({
-        currentPassword: z.string().min(6, "Current password is required"),
-        newPassword: z
-            .string()
-            .min(8, "Password must be at least 8 characters long")
-            .regex(/[A-Z]/, "Must include at least one uppercase letter")
-            .regex(/[a-z]/, "Must include at least one lowercase letter")
-            .regex(/[0-9]/, "Must include at least one number")
-            .regex(/[^A-Za-z0-9]/, "Must include at least one special character"),
-        confirmPassword: z.string(),
-    })
-    .refine((data) => data.newPassword === data.confirmPassword, {
-        message: "Passwords do not match",
-        path: ["confirmPassword"],
-    });
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 type PasswordFormValues = z.infer<typeof passwordSchema>;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export default function ChangePassword() {
     const {
@@ -47,7 +36,9 @@ export default function ChangePassword() {
     const [passwordColor, setPasswordColor] = useState("bg-red-500");
     const [loading, setLoading] = useState(false)
 
-    // ✅ Password Strength Checker with Colors
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Password Strength Checker with Colors
     const checkPasswordStrength = (password: string) => {
         let strength = 0;
         if (password.length >= 8) strength += 25;
@@ -69,7 +60,9 @@ export default function ChangePassword() {
         }
     };
 
-    // ✅ Generate Secure Password
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Generate Secure Password
     const generateSecurePassword = () => {
         const charset =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
@@ -82,11 +75,11 @@ export default function ChangePassword() {
         checkPasswordStrength(password);
     };
 
-    const newPassword = watch("newPassword");
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    const newPassword = watch("newPassword");    
 
-
-    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const onSubmit = async (data: PasswordFormValues): Promise<void> => {
         try {
@@ -99,10 +92,13 @@ export default function ChangePassword() {
                     newPassword: data.newPassword,
                 } as ChangePasswordRequest),
             });
+            
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
 
             const result: ChangePasswordResponse = await response.json();
-
             if (!response.ok) throw new Error(result.error || t("somethingWrong"));
+
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
 
             toast.success(t("passwordUpdatedSuccessfully"));
         } catch (error) {
@@ -112,7 +108,7 @@ export default function ChangePassword() {
         }
     };
 
-
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <div className="w-white">

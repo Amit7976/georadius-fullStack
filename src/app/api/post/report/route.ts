@@ -5,12 +5,17 @@ import { Report } from "@/src/models/reportModel";
 import mongoose from "mongoose";
 import { connectToDatabase } from "@/src/lib/utils";
 
-// ✅ Cloudinary Config
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Cloudinary Config
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
   api_key: process.env.CLOUDINARY_API_KEY!,
   api_secret: process.env.CLOUDINARY_API_SECRET!,
 });
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export async function POST(req: Request) {
   // console.log("====================================");
@@ -23,6 +28,8 @@ export async function POST(req: Request) {
     // console.log("🔗 Connecting to database...");
     await connectToDatabase();
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     // console.log("🐞 Report API called");
 
     const formData = await req.formData();
@@ -30,9 +37,13 @@ export async function POST(req: Request) {
     const postIdString = formData.get("postId") as string;
     const photos = formData.getAll("photos") as File[];
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     if (!description || !postIdString) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const postId = new mongoose.Types.ObjectId(postIdString);
 
@@ -40,7 +51,11 @@ export async function POST(req: Request) {
     // console.log("📝 Post ID:", postId);
     // console.log("🖼 Images received:", photos.length);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     let uploadedImageUrls: string[] = [];
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (photos.length > 0) {
       uploadedImageUrls = await Promise.all(
@@ -59,11 +74,13 @@ export async function POST(req: Request) {
             }
           );
 
-          // console.log("✅ Uploaded:", uploadResult.secure_url);
+          // console.log("Uploaded:", uploadResult.secure_url);
           return uploadResult.secure_url;
         })
       );
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const newReport = new Report({
       postId,
@@ -74,10 +91,14 @@ export async function POST(req: Request) {
     await newReport.save();
     // console.log("📝 Report saved:", newReport._id);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     await Post.findByIdAndUpdate(postId, {
       $push: { report: newReport._id.toString() },
     });
     // console.log("📌 Report ID pushed to Post");
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return NextResponse.json(
       {

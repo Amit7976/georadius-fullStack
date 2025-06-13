@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { Post } from "@/src/models/postModel";
 import { auth } from "@/src/auth";
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export async function POST(req: Request) {
   // console.log("====================================");
   // console.log("====== Post Upvote, Downvote =======");
@@ -14,6 +17,8 @@ export async function POST(req: Request) {
     const userId = session?.user?.id;
     // console.log("🔍 Authenticated User ID:", userId);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     if (!userId) {
       console.error("[ERROR] User ID is missing!");
       return NextResponse.json(
@@ -21,6 +26,8 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const { postId, vote } = await req.json();
     // console.log("🔍 Post ID:", postId, "| Vote:", vote);
@@ -30,16 +37,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const postExists = await Post.exists({ _id: postId });
     if (!postExists) {
       console.error("[ERROR] Post not found");
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     await Post.updateOne(
       { _id: postId },
       { $pull: { upvote: userId, downvote: userId } }
     );
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (vote === 1) {
       await Post.updateOne({ _id: postId }, { $addToSet: { upvote: userId } });
@@ -50,7 +63,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // console.log("✅ Vote Updated Successfully");
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // console.log("Vote Updated Successfully");
     return NextResponse.json(
       { message: "Vote updated successfully" },
       { status: 200 }

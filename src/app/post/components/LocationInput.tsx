@@ -21,6 +21,11 @@ import {
 import { t } from "@/src/helpers/i18n";
 import { FormValues, Prediction } from "@/src/helpers/types";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 interface LocationInputProps {
     register: UseFormRegister<FormValues>;
     setValue: UseFormSetValue<FormValues>;
@@ -32,6 +37,7 @@ interface LocationInputProps {
     };
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export default function LocationInput({
     register,
@@ -47,10 +53,11 @@ export default function LocationInput({
     const [latitude, setLatitude] = useState<number | null>(data?.latitude || null);
     const [longitude, setLongitude] = useState<number | null>(data?.longitude || null);
     const [location, setLocation] = useState<string | null>(data?.location || null);
-
     const router = useRouter();
 
-    // ✅ Fetch current location
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Fetch current location
     const handleGetLocation = useCallback(async () => {
         // console.log("Fetching current location...");
         const currentLocation = await getAddress();
@@ -71,6 +78,8 @@ export default function LocationInput({
         }
     }, [setValue]);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     useEffect(() => {
         // console.log("Checking location permissions...");
         if (!navigator.geolocation) {
@@ -87,7 +96,9 @@ export default function LocationInput({
         });
     }, [handleGetLocation, router]);
 
-    // ✅ Fetch coordinates for custom location
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Fetch coordinates for custom location
     const fetchCoordinatesForCustomLocation = async (customAddress: string) => {
         // console.log("Fetching coordinates for custom address:", customAddress);
         const coordinates = await getCoordinates(customAddress);
@@ -102,8 +113,9 @@ export default function LocationInput({
         }
     };
 
-    // ✅ Debounced fetch suggestions
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    // Debounced fetch suggestions
     const debouncedFetchSuggestions = useMemo(() =>
         debounce(async (query: string) => {
             if (!query.trim()) {
@@ -111,16 +123,16 @@ export default function LocationInput({
                 return;
             }
 
-            const API_KEY = "txBOleR58lHkyz1Aio6WJc5zPW223xIabWR3Yd4k";
+            const API_KEY = process.env.OLA_API_KEY;
             const url = `https://api.olamaps.io/places/v1/autocomplete?input=${encodeURIComponent(
                 query
             )}&api_key=${API_KEY}`;
 
             try {
-                // console.log("🔍 Fetching suggestions from:", url);
+                // console.log("Fetching suggestions from:", url);
                 const response = await fetch(url);
                 const data = await response.json();
-                // console.log("📜 API Response Data:", data);
+                // console.log("API Response Data:", data);
 
                 if (data.predictions) {
                     setSuggestions(
@@ -130,18 +142,21 @@ export default function LocationInput({
                     setSuggestions([]);
                 }
             } catch (err) {
-                console.error("❌ Error fetching suggestions:", err);
+                console.error("Error fetching suggestions:", err);
             }
         }, 300)
         , []);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // ✅ Handle input change
+    // Handle input change
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setInputValue(value);
         debouncedFetchSuggestions(value);
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <div className="flex flex-col space-y-2">
@@ -165,7 +180,7 @@ export default function LocationInput({
                             </DialogTitle>
                         </DialogHeader>
 
-                        {/* ✅ Input with autocomplete */}
+                        {/* Input with autocomplete */}
                         <input
                             type="text"
                             {...register("location")}
@@ -180,7 +195,7 @@ export default function LocationInput({
                             </p>
                         )}
 
-                        {/* ✅ Suggestions */}
+                        {/* Suggestions */}
                         {suggestions.length > 0 && (
                             <ul className="bg-white dark:bg-neutral-900 border rounded-lg mt-2 max-h-40 overflow-auto">
                                 {suggestions.map((suggestion, index) => (
@@ -224,17 +239,17 @@ export default function LocationInput({
                 </Dialog>
             </div>
 
-            {/* ✅ Coordinates display */}
+            {/* Coordinates display */}
             {latitude !== null && longitude !== null && (
                 <p className="text-gray-600 text-sm">
                     📍 Lat: {latitude}, Lng: {longitude}
                 </p>
             )}
 
-            {/* ✅ Error message */}
+            {/* Error message */}
             {error && <p className="text-red-500 text-sm">{error}</p>}
 
-            {/* ✅ Reset to current location */}
+            {/* Reset to current location */}
             {customLocation && (
                 <Button
 

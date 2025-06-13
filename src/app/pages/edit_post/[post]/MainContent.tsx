@@ -1,31 +1,22 @@
 "use client"
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import TitleInput from "./components/TitleInput";
-import LocationInput from "./components/LocationInput";
-import DescriptionInput from "./components/DescriptionInput";
-import CategorySelector from "./components/CategorySelector";
 import { Button } from "@/components/ui/button";
-import ImageUploader from "./components/ImageUploader";
-import { useRouter } from "next/navigation";
 import { t } from "@/src/helpers/i18n";
-import { toast } from "sonner";
 import { FormValues, MainPostTypes } from "@/src/helpers/types";
+import { formSchemaForEditPost } from "@/src/helpers/zodSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import CategorySelector from "./components/CategorySelector";
+import DescriptionInput from "./components/DescriptionInput";
+import ImageUploader from "./components/ImageUploader";
+import LocationInput from "./components/LocationInput";
+import TitleInput from "./components/TitleInput";
 
-// Zod Validation Schema
-const formSchema = z.object({
-    title: z.string().min(3, t("titleTooShort")),
-    description: z.string().min(10, t("descriptionTooShort")),
-    location: z.string().min(10, t("locationRequired")),
-    latitude: z.number().min(1, t("latitudeRequired")),
-    longitude: z.number().min(1, t("longitudeRequired")),
-    categories: z.array(z.string()).min(1, t("categoryRequired")),
-    images: z.array(z.any()).max(3, t("maxImages")).optional(),
-    deletedImages: z.array(z.any()).max(3, "You can only delete up to 3 images").optional(),
-});
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 export default function MainContent() {
@@ -43,9 +34,10 @@ export default function MainContent() {
     });
     const [selectedCategories, setSelectedCategories] = useState<string[]>(post.categories || []);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<FormValues>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(formSchemaForEditPost),
         defaultValues: {
             title: "",
             description: "",
@@ -57,6 +49,8 @@ export default function MainContent() {
             deletedImages: [],
         },
     });
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     useEffect(() => {
         const storedData = sessionStorage.getItem("editNewsData");
@@ -79,11 +73,7 @@ export default function MainContent() {
         }
     }, [reset]);
 
-
-
-    useEffect(() => {
-        // console.log("Current Errors:", errors);
-    }, [errors]);
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const onSubmit = async (values: FormValues) => {
         setProcessing(true);
@@ -95,10 +85,10 @@ export default function MainContent() {
             formData.append("location", values.location);
             formData.append("latitude", values.latitude.toString());
             formData.append("longitude", values.longitude.toString());
-
-            // Append categories as a JSON string
             formData.append("categories", JSON.stringify(values.categories));
             formData.append("deletedImages", JSON.stringify(values.deletedImages));
+
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
 
             // Append images if present
             if (values.images && values.images.length > 0) {
@@ -107,15 +97,21 @@ export default function MainContent() {
                 });
             }
 
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+
             const response = await fetch("/api/update/post", {
                 method: "POST",
                 body: formData,
             });
 
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+
             const data = await response.json();
             if (!response.ok) {
                 throw new Error(data.message || "Failed to upload");
             }
+
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
 
             // Reset form on success
             reset();
@@ -130,6 +126,8 @@ export default function MainContent() {
             setProcessing(false);
         }
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <div className="p-5 space-y-10">

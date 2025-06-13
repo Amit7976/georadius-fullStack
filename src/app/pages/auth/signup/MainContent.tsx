@@ -7,8 +7,12 @@ import SignUpForm from "./signUpForm";
 import { handleSignIn } from "../actions/server";
 import { Button } from "@/components/ui/button";
 
-function MainContent() {
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+function MainContent() {
   return (
     <>
       <div className="p-2 flex flex-col items-center h-[94.3vh] rounded-b-3xl">

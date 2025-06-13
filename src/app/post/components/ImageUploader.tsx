@@ -9,19 +9,31 @@ import { t } from "@/src/helpers/i18n";
 import { FormValues } from "@/src/helpers/types";
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 interface ImageUploaderProps {
     setValue: UseFormSetValue<FormValues>;
     errors: FieldErrors;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export default function ImageUploader({ setValue, errors }: ImageUploaderProps) {
     const [selectedImages, setSelectedImages] = useState<File[]>([]);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
         if (!files) return;
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+
         const selectedFiles = Array.from(files);
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // Max 3 images allowed
         if (selectedFiles.length + selectedImages.length > 3) {
@@ -29,21 +41,29 @@ export default function ImageUploader({ setValue, errors }: ImageUploaderProps) 
             return;
         }
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+
         // Filter out large files (>2MB)
         const validFiles = selectedFiles.filter((file) => file.size <= 2 * 1024 * 1024);
         if (validFiles.length < selectedFiles.length) {
             alert("Some files are too large (Max 2MB per file).");
         }
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+
         setSelectedImages((prev) => [...prev, ...validFiles]);
         setValue("images", [...selectedImages, ...validFiles]);
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const removeImage = (index: number) => {
         const updatedImages = selectedImages.filter((_, i) => i !== index);
         setSelectedImages(updatedImages);
         setValue("images", updatedImages);
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <div className="space-y-4">

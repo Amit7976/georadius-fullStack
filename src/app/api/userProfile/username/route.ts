@@ -4,6 +4,9 @@ import { Comment } from "@/src/models/commentModel";
 import { Post } from "@/src/models/postModel";
 import { NextResponse } from "next/server";
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export async function POST(req: Request) {
   try {
     // console.log("====================================");
@@ -13,8 +16,13 @@ export async function POST(req: Request) {
     const session = await auth();
     const userId = session?.user?.id;
     const sessionUsername = session?.user?.username;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     if (!userId)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const { username } = await req.json();
     if (!username)
@@ -23,11 +31,15 @@ export async function POST(req: Request) {
         { status: 400 }
       );
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     interface ProfileData {
       saved: string[];
     }
 
-    // ✅ Get user profile (excluding username from DB, we’ll inject it manually)
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Get user profile (excluding username from DB, we’ll inject it manually)
     const profileData = (await UserProfile.findOne(
       { username },
       {
@@ -43,14 +55,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // ✅ Add username manually to user profile
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Add username manually to user profile
     const userProfile = {
       ...profileData,
       username,
       currentUserProfile: username === sessionUsername,
     };
 
-    // ✅ Aggregate posts with only counts, no full arrays
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Aggregate posts with only counts, no full arrays
     const posts = await Post.aggregate([
       { $match: { creatorName: username } },
       { $sort: { createdAt: -1 } },
@@ -77,7 +93,9 @@ export async function POST(req: Request) {
       },
     ]);
 
-    // ✅ Add top comments & creatorName
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Add top comments & creatorName
     const finalPosts = [];
 
     for (const post of posts) {
@@ -106,6 +124,8 @@ export async function POST(req: Request) {
         topComments,
       });
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return NextResponse.json(
       {

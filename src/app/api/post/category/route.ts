@@ -2,7 +2,12 @@ import { connectToDatabase } from "@/src/lib/utils";
 import { Post } from "@/src/models/postModel";
 import { NextRequest, NextResponse } from "next/server";
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export const dynamic = "force-dynamic";
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export async function GET(req: NextRequest) {
   console.log("====================================");
@@ -14,6 +19,8 @@ export async function GET(req: NextRequest) {
     console.log("➡️ Connecting to DB...");
     await connectToDatabase();
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const { searchParams } = new URL(req.url);
     const category = searchParams.get("category");
     // const radius = parseInt(searchParams.get("radius") || "50");
@@ -21,6 +28,8 @@ export async function GET(req: NextRequest) {
     const latMax = parseFloat(searchParams.get("latMax") || "");
     const lngMin = parseFloat(searchParams.get("lngMin") || "");
     const lngMax = parseFloat(searchParams.get("lngMax") || "");
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (!category) {
       return NextResponse.json(
@@ -42,6 +51,8 @@ export async function GET(req: NextRequest) {
     //   lngMax
     // );
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const query: {
       categories: { $in: string[] };
       latitude?: { $gte: number; $lte: number };
@@ -50,10 +61,14 @@ export async function GET(req: NextRequest) {
       categories: { $in: [category] },
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     if (!isNaN(latMin) && !isNaN(latMax) && !isNaN(lngMin) && !isNaN(lngMax)) {
       query.latitude = { $gte: latMin, $lte: latMax };
       query.longitude = { $gte: lngMin, $lte: lngMax };
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const posts = await Post.find(query)
       .sort({ createdAt: -1 })
@@ -61,7 +76,9 @@ export async function GET(req: NextRequest) {
         "_id title description images location latitude longitude updatedAt createdAt"
       );
 
-    console.log(`✅ Found ${posts.length} posts`);
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    console.log(`Found ${posts.length} posts`);
 
     return NextResponse.json(posts);
   } catch (err) {

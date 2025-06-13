@@ -3,6 +3,11 @@ import { t } from '@/src/helpers/i18n';
 import { redirect } from 'next/navigation';
 import React from 'react'
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 function ActionButtons({ currentUserProfile, username }: { currentUserProfile: boolean, username: string }) {
     const handleShare = () => {
         const url = `${window.location.origin}/${username}`;
@@ -19,6 +24,7 @@ function ActionButtons({ currentUserProfile, username }: { currentUserProfile: b
         }
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <>

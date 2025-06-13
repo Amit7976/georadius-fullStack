@@ -1,12 +1,18 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { FaLocationDot } from "react-icons/fa6";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 export default function ClientPermissionHandler() {
     const router = useRouter();
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const setLocationPermissionCookie = () => {
         const expires = new Date();
@@ -14,10 +20,14 @@ export default function ClientPermissionHandler() {
         document.cookie = `LPS=true; expires=${expires.toUTCString()}; path=/;`;
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const redirectToNext = () => {
         setLocationPermissionCookie();
         router.replace("/pages/onboarding/permissions/notification");
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const requestLocationPermission = () => {
         if (!navigator.permissions || !navigator.geolocation) {
@@ -43,9 +53,13 @@ export default function ClientPermissionHandler() {
         });
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const handleSkip = () => {
         redirectToNext();
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <>

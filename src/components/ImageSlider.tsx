@@ -1,16 +1,24 @@
 "use client"
 import { useState, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Swiper as SwiperType } from "swiper"; // ✅ Import Swiper type
+import { Swiper as SwiperType } from "swiper";
 import { Pagination } from "swiper/modules";
 import Image from "next/image";
 import "swiper/css";
 import "swiper/css/pagination";
 import { ImageSliderProps } from "../helpers/types";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 const ImageSlider: React.FC<ImageSliderProps> = ({ images, height }) => {
+    
     const [currentSlide, setCurrentSlide] = useState(1);
-    const swiperRef = useRef<SwiperType | null>(null); // ✅ Typed ref
+    const swiperRef = useRef<SwiperType | null>(null);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <>
@@ -18,7 +26,7 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ images, height }) => {
                 onSlideChange={(swiper) => setCurrentSlide(swiper.activeIndex + 1)}
                 modules={[Pagination]}
                 className="w-full"
-                onSwiper={(swiper) => (swiperRef.current = swiper)} // ✅ Attach swiper to ref
+                onSwiper={(swiper) => (swiperRef.current = swiper)}
                 style={{ height: height ? `${height}px` : "auto" }}
             >
                 {images.map((image, index) => (

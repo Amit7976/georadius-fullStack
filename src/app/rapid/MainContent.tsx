@@ -1,5 +1,4 @@
 "use client";
-
 import { DialogTitle } from "@/components/ui/dialog";
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import DeleteButton from "@/src/components/DeleteButton";
@@ -21,6 +20,11 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { useGeolocation } from "../hooks/useGeolocation";
 import GetDistance from "./GetDistance";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 export default function MainContent() {
     const [newsData, setNewsData] = useState<News[]>([]);
     const [posts, setPosts] = useState<News[]>([]);
@@ -29,11 +33,15 @@ export default function MainContent() {
     const location = useGeolocation();
     const [openDrawerId, setOpenDrawerId] = useState<string | null>(null);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     useEffect(() => {
         const hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");
         const filteredNews = posts.filter((news: News) => !hiddenPosts.includes(news._id));
         setNewsData(filteredNews);
     }, [posts]);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const handleHide = (postId: string) => {
         setNewsData(prev => prev.filter(news => news._id !== postId));
@@ -43,6 +51,8 @@ export default function MainContent() {
             localStorage.setItem("hideNews", JSON.stringify(hidden));
         }
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     useEffect(() => {
         if (!location) return;
@@ -61,20 +71,27 @@ export default function MainContent() {
         fetchNearbyPosts(location.lat, location.lng);
     }, [location]);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const handleRefresh = async () => {
         window.location.reload();
     };
 
-    // 💡 Hash sync logic
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const handleDrawerOpen = (postId: string) => {
         setOpenDrawerId(postId);
         window.location.hash = postId;
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const handleDrawerClose = () => {
         setOpenDrawerId(null);
         history.pushState("", document.title, window.location.pathname + window.location.search);
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     useEffect(() => {
         const onHashChange = () => {
@@ -86,16 +103,24 @@ export default function MainContent() {
         return () => window.removeEventListener("hashchange", onHashChange);
     }, [openDrawerId]);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     useEffect(() => {
-        // Restore state if someone lands on a hash
         if (window.location.hash) {
             const hash = window.location.hash.replace("#", "");
             setOpenDrawerId(hash);
         }
     }, []);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     if (loadingPosts) return <div className="flex items-center justify-center h-[94vh]"><div className="loader"></div></div>;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     if (error) return <p className="text-red-500">{error}</p>;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <PullToRefresh onRefresh={handleRefresh} resistance={5}>

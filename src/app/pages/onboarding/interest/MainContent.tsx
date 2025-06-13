@@ -3,9 +3,16 @@ import { Button } from "@/components/ui/button";
 import interestsList from "@/public/json/interestList.json";
 import { useEffect, useMemo, useState, useCallback } from "react";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 function MainContent() {
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
 
   useEffect(() => {
     const controller = new AbortController();
@@ -26,8 +33,10 @@ function MainContent() {
 
     fetchInterests();
 
-    return () => controller.abort(); // clean up fetch on unmount
+    return () => controller.abort();
   }, []);
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const toggleInterest = useCallback((interest: string) => {
     setSelectedInterests((prev) =>
@@ -36,6 +45,8 @@ function MainContent() {
         : [...prev, interest]
     );
   }, []);
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
 
   const handleSaveInterests = async () => {
     if (selectedInterests.length < 3 || loading) return;
@@ -60,6 +71,8 @@ function MainContent() {
     }
   };
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+
   const categorizedInterests = useMemo(() => [
     {
       title: "Recommended",
@@ -71,7 +84,11 @@ function MainContent() {
     },
   ], []);
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+
   const isDisabled = selectedInterests.length < 3 || loading;
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
 
   return (
     <>

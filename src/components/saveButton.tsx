@@ -4,14 +4,21 @@ import { TbBookmark, TbBookmarkFilled } from "react-icons/tb";
 import { SavedButtonProps } from "../helpers/types";
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 const SaveButton = ({ news }: SavedButtonProps) => {
     const [saved, setSaved] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     useEffect(() => {
         if (news.isSaved) setSaved(true);
     }, [news]);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const handleSave = async (): Promise<void> => {
         if (loading) return;
@@ -35,6 +42,8 @@ const SaveButton = ({ news }: SavedButtonProps) => {
             setLoading(false);
         }
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <Button className={""} size="icon" variant="ghost" disabled={loading} onClick={handleSave}>

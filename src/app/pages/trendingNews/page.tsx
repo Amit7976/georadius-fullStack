@@ -1,5 +1,4 @@
 "use client";
-
 import NewsPost from '@/src/components/NewsPost';
 import { useEffect, useState } from 'react';
 import { useGeolocation } from '../../hooks/useGeolocation';
@@ -9,6 +8,9 @@ import { News } from '@/src/helpers/types';
 import { PlaceholderPost } from '@/src/components/home/Placeholder';
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 function Page() {
     const [data, setData] = useState<News[]>([]);
@@ -16,6 +18,8 @@ function Page() {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const location = useGeolocation();
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     useEffect(() => {
         const fetchNearbyPosts = async (latitude: number, longitude: number) => {
@@ -41,10 +45,13 @@ function Page() {
         fetchNearbyPosts(location.lat, location.lng);
     }, []);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     if (error) return <p className="text-red-500 text-center">{error}</p>;
 
-    if (loading) return (
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    if (loading) return (
         <div className='py-3'>
             <div className='flex justify-start items-center gap-0'>
                 <BackButton classname='relative text-sm pl-0 pr-5' />
@@ -56,6 +63,8 @@ function Page() {
         </div>
     );
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     if (!data || data.length === 0) return (
         <>
             <div className="h-screen w-full flex items-center justify-center">
@@ -63,6 +72,8 @@ function Page() {
             </div>
         </>
     );
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const handleHide = (postId: string) => {
         setData(prevNews => prevNews.filter(news => news._id !== postId.toString()));
@@ -73,6 +84,8 @@ function Page() {
             localStorage.setItem("hideNews", JSON.stringify(hiddenPosts));
         }
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <div className='py-3'>

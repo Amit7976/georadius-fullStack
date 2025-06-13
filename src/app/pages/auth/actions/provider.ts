@@ -1,5 +1,4 @@
 "use client";
-
 import { signIn } from "@/src/auth";
 import { CredentialsSignin } from "next-auth";
 

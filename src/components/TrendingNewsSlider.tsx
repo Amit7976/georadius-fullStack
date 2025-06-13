@@ -10,6 +10,9 @@ import { TrendingNewsPost } from '../helpers/types';
 import { LoaderLink } from './loaderLinks';
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 const TrendingNewsSlider = ({ trendingNews, loading }: { trendingNews: TrendingNewsPost[], loading: boolean }) => {
     if (loading) return (
@@ -26,6 +29,8 @@ const TrendingNewsSlider = ({ trendingNews, loading }: { trendingNews: TrendingN
             </div>
         </div>
     );
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <>
@@ -69,9 +74,9 @@ const TrendingNewsSlider = ({ trendingNews, loading }: { trendingNews: TrendingN
 
     );
 };
-
 export default TrendingNewsSlider;
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const HeaderForTrendingNews = () => {
     return (

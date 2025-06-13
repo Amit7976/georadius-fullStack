@@ -1,22 +1,24 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import HeadingHeader from "@/src/components/HeadingHeader";
 import { t } from "@/src/helpers/i18n";
+import { twoFASchema } from "@/src/helpers/zodSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const twoFASchema = z.object({
-    password: z.string().min(6, "Current password is required"),
-    email: z.string().email("Invalid email address").optional(),
-});
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 type TwoFAFormValues = z.infer<typeof twoFASchema>;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export default function MainContent() {
     const {
@@ -25,11 +27,14 @@ export default function MainContent() {
     } = useForm<TwoFAFormValues>({
         resolver: zodResolver(twoFASchema),
     });
-
     const [is2FAEnabled, setIs2FAEnabled] = useState(false);
     const defaultEmail = "";
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const handleToggle2FA = () => setIs2FAEnabled((prev) => !prev);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <div className="space-y-6">

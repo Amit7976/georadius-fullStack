@@ -7,12 +7,19 @@ import { UseFormSetValue, FieldErrors } from "react-hook-form";
 import { t } from "@/src/helpers/i18n";
 import { FormValues } from "@/src/helpers/types";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 interface CategorySelectorProps {
     selectedCategories: string[];
     setSelectedCategories: React.Dispatch<React.SetStateAction<string[]>>;
     setValue: UseFormSetValue<FormValues>;
     errors: FieldErrors<FormValues>;
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export default function CategorySelector({
     selectedCategories,
@@ -30,9 +37,13 @@ export default function CategorySelector({
         });
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     useEffect(() => {
         setValue("categories", selectedCategories);
     }, [selectedCategories, setValue]);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <div className="space-y-4">

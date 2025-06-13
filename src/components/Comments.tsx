@@ -1,5 +1,4 @@
 'use client';
-
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -13,19 +12,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { t } from "../helpers/i18n";
-import { CommentType } from "../helpers/types";
-
+import { CommentProps, CommentType } from "../helpers/types";
 import { LoaderLink } from "./loaderLinks";
 
-type CommentProps = {
-    news_id: string;
-    currentLoginUsername: string;
-    comments: CommentType[];
-    setComments: React.Dispatch<React.SetStateAction<CommentType[]>>;
-    hasMore: boolean;
-    setHasMore: React.Dispatch<React.SetStateAction<boolean>>;
-    totalComments: number;
-};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 const Comments = ({
     news_id,
@@ -36,14 +29,16 @@ const Comments = ({
     setHasMore,
     totalComments,
 }: CommentProps) => {
+    
     const [deleteCommentId, setDeleteCommentId] = useState<string | null>(null);
     const [input, setInput] = useState('');
     const [replyingTo, setReplyingTo] = useState<{ parentId: string; replyingToUsername: string } | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const fetchedCount = useRef(comments.length);
-
     const rootComments = comments.filter(c => !c.parentCommentId);
     const getReplies = (id: string) => comments.filter(c => c.parentCommentId === id);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const fetchMoreComments = async () => {
         setIsLoading(true);
@@ -54,6 +49,9 @@ const Comments = ({
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ postId: news_id, excludeIds: alreadyFetchedIds }),
             });
+
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+
             const data = await res.json();
             if (res.ok && data?.comments?.length > 0) {
                 setComments(prev => [...prev, ...data.comments]);
@@ -70,14 +68,22 @@ const Comments = ({
             setIsLoading(false);
         }
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     useEffect(() => {
         if (totalComments > 10) {
             fetchMoreComments();
         }
     }, [])
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
     const handleSubmit = async () => {
         if (!input.trim()) return;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         try {
             const res = await fetch('/api/post/comment', {
@@ -91,6 +97,8 @@ const Comments = ({
                 }),
             });
 
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+
             const data = await res.json();
             if (res.ok && data?.comment) {
                 const savedComment: CommentType = { ...data.comment, reports: false };
@@ -103,6 +111,8 @@ const Comments = ({
         }
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const handleDelete = async () => {
         if (!deleteCommentId) return;
 
@@ -112,6 +122,8 @@ const Comments = ({
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ commentId: deleteCommentId }),
             });
+
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
 
             if (res.ok) {
                 const idsToDelete = new Set<string>();
@@ -128,6 +140,8 @@ const Comments = ({
         setDeleteCommentId(null);
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const handleReport = async (id: string) => {
         const isReported = comments.find(c => c._id === id)?.reports;
         try {
@@ -136,6 +150,8 @@ const Comments = ({
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ commentId: id, report: isReported ? 0 : 1 }),
             });
+
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
 
             const data = await res.json();
             if (res.ok && typeof data.reported === 'boolean') {
@@ -146,18 +162,24 @@ const Comments = ({
         }
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const [longPressedCommentId, setLongPressedCommentId] = useState<string | null>(null);
     let pressTimer: NodeJS.Timeout;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const handleLongPressStart = (id: string) => {
         pressTimer = setTimeout(() => setLongPressedCommentId(id), 600);
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const handleLongPressEnd = () => {
         clearTimeout(pressTimer);
     };
 
-
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const CommentItem = ({ comment, level = 0 }: { comment: CommentType; level?: number }) => {
         const replies = getReplies(comment._id);
@@ -220,6 +242,8 @@ const Comments = ({
             </div>
         );
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <>

@@ -5,11 +5,18 @@ import BottomNavigation from "../components/BottomNavigation";
 import { ThemeHandler } from "../components/ThemeHandler";
 import "./globals.css";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
   display: "swap",
 });
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -17,13 +24,20 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export const metadata = {
   title: "Geo Radius News Application",
   description: "The local news are covered by our friendly neighborhood news app the Geo radius news where users can share, verify and access updates based on location.",
 };
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+
   const session = await auth();
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
 
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>

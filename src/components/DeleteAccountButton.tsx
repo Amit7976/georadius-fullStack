@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,11 @@ import { signOut } from "next-auth/react";
 import { toast } from "sonner";
 import { t } from "../helpers/i18n";
 
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 export default function DeleteAccountDialog() {
     const [open, setOpen] = useState(false);
     const [password, setPassword] = useState("");
@@ -16,10 +20,14 @@ export default function DeleteAccountDialog() {
     const [confirmed, setConfirmed] = useState(false);
     const [countdown, setCountdown] = useState(0);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const handleLogout = async () => {
         await signOut({ redirect: false });
         window.location.href = "/pages/auth/signin";
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const handleDelete = async () => {
         setLoading(true);
@@ -32,13 +40,16 @@ export default function DeleteAccountDialog() {
                 body: JSON.stringify({ password }),
             });
 
-            const result = await res.json();
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+            const result = await res.json();
             if (!res.ok) {
                 toast.error(result.message || t("somethingWrong"));
                 handleLogout();
                 return;
             }
+
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
 
             toast.success(t("accountDeleted"));
             handleLogout();
@@ -51,7 +62,9 @@ export default function DeleteAccountDialog() {
         }
     };
 
-    // Countdown effect when checkbox is clicked
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Countdown after checkbox is clicked
     useEffect(() => {
         let timer: NodeJS.Timeout;
 
@@ -64,6 +77,8 @@ export default function DeleteAccountDialog() {
         return () => clearTimeout(timer);
     }, [confirmed, countdown]);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const handleCheckboxClick = () => {
         if (!confirmed) {
             setConfirmed(true);
@@ -75,7 +90,11 @@ export default function DeleteAccountDialog() {
         }
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const isDeleteButtonEnabled = countdown === 0 && confirmed;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <>

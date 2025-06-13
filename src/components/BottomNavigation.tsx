@@ -9,12 +9,18 @@ import { t } from "../helpers/i18n";
 import { LoaderLink } from "./loaderLinks";
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 export default function BottomNavigation({ username }: { username: string | boolean }) {
+    
     const pathname = usePathname();
     const [isVisible, setIsVisible] = useState(true);
     const lastScrollY = useRef(0);
-
     const allowedRoutes = ['home', 'rapid', 'search', username, 'post'];
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Determine current tab from pathname
     const currentTab = (() => {
@@ -23,8 +29,7 @@ export default function BottomNavigation({ username }: { username: string | bool
         return path || "home";
     })();
 
-
-
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const tabs = [
         { key: "home", name: t("home"), icon: IoHomeOutline, icon2: IoHome, href: "/home" },
@@ -33,9 +38,9 @@ export default function BottomNavigation({ username }: { username: string | bool
         { key: "search", name: t("search"), icon: CgSearch, icon2: CgSearchLoading, href: "/search" },
         { key: `${username}`, name: t("profile"), icon: FaRegUser, icon2: FaUser, href: `/${username}` },
     ];
-
-
     
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     // Hide nav on scroll down, show on scroll up
     useEffect(() => {
         
@@ -48,10 +53,13 @@ export default function BottomNavigation({ username }: { username: string | bool
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
-    
-    
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     // Set allowed status
     if (!allowedRoutes.includes(currentTab)) return null;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <nav

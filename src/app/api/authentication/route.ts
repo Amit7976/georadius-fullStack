@@ -1,7 +1,7 @@
-// app/api/auth/route.ts
 import { auth } from "@/src/auth";
 import { NextResponse } from "next/server";
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export async function GET() {
   try {

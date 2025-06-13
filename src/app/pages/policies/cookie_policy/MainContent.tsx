@@ -1,11 +1,14 @@
 import HeadingHeader from '@/src/components/HeadingHeader'
 import { LoaderLink } from '@/src/components/loaderLinks'
 
-function MainContent() {
-     
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+function MainContent() {     
   return (
     <>
-      
       <HeadingHeader heading="Cookie Policy" />
 
       <div className='p-4'>

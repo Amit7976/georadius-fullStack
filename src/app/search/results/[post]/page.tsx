@@ -1,17 +1,21 @@
 "use client";
-
 import { useEffect, useState } from "react";
-import { use } from "react"; // <-- for unwrapping the `params` Promise
+import { use } from "react";
 import NewsPost from "@/src/components/NewsPost";
 import BackButton from "@/src/components/BackButton";
 import { News } from "@/src/helpers/types";
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 export default function SinglePostPage({ params }: { params: Promise<{ post: string }> }) {
     const { post } = use(params);
-
     const [newsData, setNewsData] = useState<News[]>([]);
     const [currentLoginUsername, setCurrentLoginUsername] = useState("");
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     useEffect(() => {
         const fetchPost = async () => {
@@ -21,6 +25,8 @@ export default function SinglePostPage({ params }: { params: Promise<{ post: str
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ postId: post }),
                 });
+
+                /////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 const data = await res.json();
                 if (data?.post) {
@@ -35,9 +41,13 @@ export default function SinglePostPage({ params }: { params: Promise<{ post: str
         fetchPost();
     }, [post]);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const handleHide = (id: string) => {
         setNewsData(prev => prev.filter(post => post._id !== id.toString()));
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <>

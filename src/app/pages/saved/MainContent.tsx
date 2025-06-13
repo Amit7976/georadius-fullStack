@@ -7,11 +7,16 @@ import { News } from '@/src/helpers/types';
 import { useEffect, useState } from 'react';
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 function MainContent() {
     const [data, setData] = useState<News[]>([]);
     const [currentLoginUsername, setCurrentLoginUsername] = useState("");
     const [error, setError] = useState<string | null>(null);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     useEffect(() => {
         const fetchNearbyPosts = async () => {
@@ -31,7 +36,12 @@ function MainContent() {
         fetchNearbyPosts();
     }, []);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     if (error) return <p className="text-red-500 text-center">{error}</p>;
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     if (!data || data.length === 0) return (
         <div className='py-3'>
             <div className='flex justify-start items-center gap-0'>
@@ -44,6 +54,8 @@ function MainContent() {
         </div>
     );
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const handleHide = (postId: string) => {
         setData(prevNews => prevNews.filter(news => news._id !== postId.toString()));
 
@@ -53,6 +65,8 @@ function MainContent() {
             localStorage.setItem("hideNews", JSON.stringify(hiddenPosts));
         }
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <div className='py-3'>

@@ -5,26 +5,31 @@ import { formatNumber } from "../helpers/formatNumber";
 import { News } from "../helpers/types";
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 const VoteButtons = ({ news }: { news: News }) => {
     const [vote, setVote] = useState<number>(0); // 0 = No vote, 1 = Upvote, 2 = Downvote
     const [loading, setLoading] = useState<boolean>(false);
-
-    // 🔹 Store vote counts in state
     const [upvoteCount, setUpvoteCount] = useState<number>(news.upvoteCount);
     const [downvoteCount, setDownvoteCount] = useState<number>(news.downvoteCount);
 
-    // 🔹 Set initial vote state based on user interaction
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     useEffect(() => {
         if (news.isUserUpvote) setVote(1);
         if (news.isUserDownvote) setVote(2);
     }, [news]);
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+
     const handleVote = async (type: number) => {
         if (loading) return;
-
-        const newVote = vote === type ? 0 : type; // Toggle vote (if already selected, set to 0)
+       
+        const newVote = vote === type ? 0 : type;
         setLoading(true);
-
+       
         try {
             const response = await fetch("/api/post/vote", {
                 method: "POST",
@@ -32,11 +37,10 @@ const VoteButtons = ({ news }: { news: News }) => {
                 body: JSON.stringify({ postId: news._id, vote: newVote }),
             });
 
-            if (response.ok) {
-                // ✅ Update vote state
-                setVote(newVote);
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                // ✅ Update counts locally
+            if (response.ok) {
+                setVote(newVote);
                 setUpvoteCount((prev: number) => prev + (newVote === 1 ? 1 : vote === 1 ? -1 : 0));
                 setDownvoteCount((prev: number) => prev + (newVote === 2 ? 1 : vote === 2 ? -1 : 0));
             }
@@ -46,6 +50,8 @@ const VoteButtons = ({ news }: { news: News }) => {
             setLoading(false);
         }
     };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <div className="flex gap-2">
