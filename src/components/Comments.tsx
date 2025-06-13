@@ -58,8 +58,8 @@ const Comments = ({
             if (res.ok && data?.comments?.length > 0) {
                 setComments(prev => [...prev, ...data.comments]);
                 fetchedCount.current += data.comments.length;
-                if (fetchedCount.current >= totalComments) {
-                    setHasMore(false);
+                if (comments.length < totalComments) {
+                    setHasMore(true);
                 }
             } else {
                 setHasMore(false);
@@ -223,7 +223,7 @@ const Comments = ({
 
     return (
         <>
-            <div className="w-full mx-auto mb-28">
+            <div className="w-full mx-auto mb-16">
                 <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-neutral-900 shadow-md p-4 border-t z-50">
                     {replyingTo && (
                         <div className="text-sm text-gray-500 mb-1">
@@ -250,7 +250,7 @@ const Comments = ({
                         <CommentItem key={comment._id} comment={comment} />
                     ))}
 
-                    {hasMore && (
+                    {hasMore && (comments.length < totalComments) && (
                         <div className="text-center mt-4">
                             <Button onClick={fetchMoreComments} disabled={isLoading} className="bg-gray-200 dark:bg-neutral-800 text-gray-700 dark:text-gray-300">
                                 {isLoading ? 'Loading...' : 'Load More Comments'}

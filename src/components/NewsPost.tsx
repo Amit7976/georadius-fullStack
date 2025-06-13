@@ -29,7 +29,7 @@ const NewsPost = ({ news, onHide, fullDescription, currentLoginUsername }: { new
     const [distance, setDistance] = useState<string | null>(null);
     const [openDrawerId, setOpenDrawerId] = useState<string | null>(null);
     const [comments, setComments] = useState<CommentType[]>([...news.topComments]);
-    const [hasMore, setHasMore] = useState(true);
+    const [hasMore, setHasMore] = useState(false);
 
     console.log("📰 News Post Data:", news);
 
@@ -199,7 +199,7 @@ const NewsPost = ({ news, onHide, fullDescription, currentLoginUsername }: { new
                             </DrawerContent>
                         </Drawer>
                         {/* Share Button */}
-                        <ShareButton ShareProps={news} />
+                        <ShareButton shareProps={news} />
                     </div>
 
                     {/* Save Button */}

@@ -6,6 +6,7 @@ import { LoaderLink } from "@/src/components/loaderLinks";
 import { AnimatedText } from "@/src/components/Animate";
 import { t } from "@/src/helpers/i18n";
 import { News, UserData } from "@/src/helpers/types";
+import { PlaceholderPost, PlaceholderUserProfile } from "@/src/components/home/Placeholder";
 
 type Props = {
     profile: string;
@@ -94,7 +95,7 @@ function ProfileClientContent({ profile }: Props) {
 
     if (userNotFound) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-800">
+            <div className="flex flex-col items-center justify-center min-h-screen bg-transparent">
                 <div className="rounded-xl p-8 w-full text-center space-y-6">
                     <div className="text-red-500">
                         <AnimatedText text="Oops!" />
@@ -113,9 +114,10 @@ function ProfileClientContent({ profile }: Props) {
         );
     } else if (!userData || !newsData) {
         return (
-            <div className="flex items-center justify-center h-screen">
-                <div className="loader"></div>
-            </div>
+            <>
+                <PlaceholderUserProfile />
+                <PlaceholderPost />
+            </>
         );
     }
 

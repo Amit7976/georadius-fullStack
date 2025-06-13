@@ -69,25 +69,25 @@ export default function MainContent() {
                 const json = await res.json();
 
                 setCurrentLoginUsername(json.currentLoginUsername);
-                console.log('/////////////////////////////////////////////////////');
-                console.log(json);
-                console.log('/////////////////////////////////////////////////////');
-                console.log(json.posts);
-                console.log('/////////////////////////////////////////////////////');
+                // console.log('/////////////////////////////////////////////////////');
+                // console.log(json);
+                // console.log('/////////////////////////////////////////////////////');
+                // console.log(json.posts);
+                // console.log('/////////////////////////////////////////////////////');
 
                 // ✅ Remove hidden posts
                 const filteredNews: News[] = json.posts.filter((news: News) => !hiddenPosts.includes(news._id));
 
-                console.log('====================================');
-                console.log(filteredNews);
-                console.log('====================================');
+                // console.log('====================================');
+                // console.log(filteredNews);
+                // console.log('====================================');
                 setNewsData(filteredNews);
 
                 if (selectedCategory === "All") {
                     try {
-                        console.log('====================================');
-                        console.log("all");
-                        console.log('====================================');
+                        // console.log('====================================');
+                        // console.log("all");
+                        // console.log('====================================');
 
                         const postsWithImages = filteredNews.filter(
                             (post: News) => Array.isArray(post.images) && post.images.length > 0
@@ -126,9 +126,9 @@ export default function MainContent() {
 
                         setTrendingNews(sortedTop);
                     } catch (err) {
-                        console.log('====================================');
+                        // console.log('====================================');
                         console.log(err);
-                        console.log('====================================');
+                        // console.log('====================================');
                     }
                 }
             } catch (err) {
@@ -151,11 +151,6 @@ export default function MainContent() {
 
             {/* Location Banner */}
             <LocationDeniedBanner />
-
-
-
-
-
 
 
             {/* Trending News */}

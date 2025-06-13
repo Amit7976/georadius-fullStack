@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import interestsList from "@/public/json/interestList.json";
 import { News } from "@/src/helpers/types";
 import NewsPost from "../NewsPost";
-import Placeholder from "./Placeholder";
+import Placeholder, { PlaceholderPost } from "./Placeholder";
 
 export default function CategoryTabs({ selectedCategory, setSelectedCategory, currentLoginUsername, categoriesRef, loading, newsData, handleHide }: { selectedCategory: string; setSelectedCategory: (category: string) => void;currentLoginUsername:string, categoriesRef: React.RefObject<HTMLDivElement | null>; loading: boolean; newsData: News[], handleHide: (id: string) => void }) {
 
@@ -37,7 +37,7 @@ export default function CategoryTabs({ selectedCategory, setSelectedCategory, cu
             {/* News Posts */}
             <div>
                 {loading ? (
-                    <Placeholder />
+                    <PlaceholderPost />
                 ) : (
                     newsData.length > 0 ? (
                         newsData.map((news) => (

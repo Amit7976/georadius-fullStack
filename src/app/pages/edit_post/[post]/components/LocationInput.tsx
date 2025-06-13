@@ -183,7 +183,7 @@ export default function LocationInput({
 
                         {/* ✅ Suggestions */}
                         {suggestions.length > 0 && (
-                            <ul className="bg-white border rounded-lg mt-2 max-h-40 overflow-auto">
+                            <ul className="bg-white dark:bg-neutral-900 border rounded-lg mt-2 max-h-40 overflow-auto">
                                 {suggestions.map((suggestion, index) => (
                                     <li
                                         key={index}
@@ -192,7 +192,7 @@ export default function LocationInput({
                                             setSuggestions([]);
                                             fetchCoordinatesForCustomLocation(suggestion);
                                         }}
-                                        className="px-4 py-2 cursor-pointer hover:bg-gray-200"
+                                        className="px-4 py-2 cursor-pointer hover:bg-gray-200 dark:bg-neutral-800"
                                     >
                                         {suggestion}
                                     </li>

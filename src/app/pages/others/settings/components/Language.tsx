@@ -49,7 +49,7 @@ function Language() {
     return (
         <Dialog>
             <DialogTrigger className="flex justify-between items-center gap-5 active:scale-95 duration-300 w-full">
-                <div className="flex gap-3 items-center py-5">
+                <div className="flex gap-3 flex-row items-center py-5">
                     <IoLanguage className='text-3xl shrink-0' />
                     <label className="text-start overflow-hidden">
                         <h4 className='text-base font-medium'>{t("languageTitle")}</h4>

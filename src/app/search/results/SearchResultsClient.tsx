@@ -16,6 +16,7 @@ import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useGeolocation } from "../../hooks/useGeolocation";
 import { Post, User } from "@/src/helpers/types";
+import { PlaceholderSearchPost, PlaceholderSearchUser } from "@/src/components/home/Placeholder";
 
 export default function SearchResultsClient() {
     const searchParams = useSearchParams();
@@ -24,6 +25,7 @@ export default function SearchResultsClient() {
     const [searchType, setSearchType] = useState("post");
     const [results, setResults] = useState<User[] | Post[]>([]);
     const [expandedDescriptions, setExpandedDescriptions] = useState<string[]>([]);
+    const [loading, setLoading] = useState(false);
 
 
     const location = useGeolocation();
@@ -34,8 +36,8 @@ export default function SearchResultsClient() {
         const latMax = lat + r / 111;
         const lngMin = lng - r / (111 * Math.cos(lat * (Math.PI / 180)));
         const lngMax = lng + r / (111 * Math.cos(lat * (Math.PI / 180)));
-
         if (!latMin || !latMax || !lngMin || !lngMax) return;
+        setLoading(true);
 
 
         const queryParams = new URLSearchParams({
@@ -52,6 +54,8 @@ export default function SearchResultsClient() {
         const data = await res.json();
 
         setResults(searchType === "user" ? data.users : data.posts);
+
+        setLoading(false);
     }, [query, radius, searchType]);
 
 
@@ -120,70 +124,82 @@ export default function SearchResultsClient() {
                 </div>
             </div>
 
-            {searchType === "user" && results.length > 0 && (
-                <div className="my-6">
-                    {results.map((result) => {
-                        if (
-                            "username" in result &&
-                            result.username.trim() !== "" &&
-                            "fullname" in result &&
-                            "profileImage" in result
-                        ) {
-                            const user = result as User;
-                            return (
-                                <LoaderLink href={"/" + user.username} key={user._id} className="flex items-center py-2 mt-2">
-                                    <div className="w-16 shrink-0">
-                                        <Image
-                                            width={100}
-                                            height={100}
-                                            src={user.profileImage}
-                                            alt="Profile Pic"
-                                            className="w-12 h-12 rounded-full object-cover shrink-0"
-                                        />
-                                    </div>
-                                    <div className="mt-1 w-full text-start">
-                                        <p className="text-gray-500 text-sm font-medium">@{user.username}</p>
-                                        <h3 className="text-xl font-bold">{user.fullname}</h3>
-                                    </div>
-                                </LoaderLink>
-                            );
-                        }
-                        return null;
-                    })}
-                </div>
-            )}
-
-            {searchType === "post" && results.length > 0 && (
-                <div className="my-6">
-                    <div className="divider-y-2 border-gray-200 mb-4">
-                        <div className="flex flex-col gap-6">
-                            {results.filter((result): result is Post => "title" in result).map((post) => (
-                                <LoaderLink href={"/search/results/" + post._id} key={post._id} className="py-2 space-y-2 text-start">
-                                    <p className="text-gray-500 text-xs">{formatTimeAgo(post.updatedAt)}</p>
-                                    <h4 className="font-semibold text-lg leading-5">{post.title}</h4>
-                                    <p className="text-xs text-gray-500 leading-5 mt-1">{post.location}</p>
-
-                                    {Array.isArray(post.images) && post.images.length > 0 && (
-                                        <div className="rounded-2xl overflow-hidden mt-4 my-2">
-                                            <ImageSlider images={post.images} height={250} />
+            {searchType === "user" && loading ? (
+                <>
+                    <PlaceholderSearchUser />
+                </>
+            ) :
+                results.length > 0 && (
+                    <div className="my-6">
+                        {results.map((result) => {
+                            if (
+                                "username" in result &&
+                                result.username.trim() !== "" &&
+                                "fullname" in result &&
+                                "profileImage" in result
+                            ) {
+                                const user = result as User;
+                                return (
+                                    <LoaderLink href={"/" + user.username} key={user._id} className="flex items-center py-2 mt-2">
+                                        <div className="w-16 shrink-0">
+                                            <Image
+                                                width={100}
+                                                height={100}
+                                                src={user.profileImage}
+                                                alt="Profile Pic"
+                                                className="w-12 h-12 rounded-full object-cover shrink-0"
+                                            />
                                         </div>
-                                    )}
+                                        <div className="mt-1 w-full text-start">
+                                            <p className="text-gray-500 text-sm font-medium">@{user.username}</p>
+                                            <h3 className="text-xl font-bold">{user.fullname}</h3>
+                                        </div>
+                                    </LoaderLink>
+                                );
+                            }
+                            return null;
+                        })}
+                    </div>
+                )
+            }
 
-                                    <div className="flex-6 mt-4">
-                                        <p
-                                            className={`border-l-4 border-green-500 pl-3 py-0.5 text-sm text-gray-800 dark:text-gray-400 ${expandedDescriptions.includes(post._id) ? "" : "line-clamp-6"
-                                                }`}
-                                            onClick={() => toggleDescription(post._id)}
-                                        >
-                                            {post.description}
-                                        </p>
-                                    </div>
-                                </LoaderLink>
-                            ))}
+            {searchType === "post" && loading ? (
+                <>
+                    <PlaceholderSearchPost />
+                </>
+            ) :
+                searchType === "post" && results.length > 0 && (
+                    <div className="my-6">
+                        <div className="divider-y-2 border-gray-200 mb-4">
+                            <div className="flex flex-col gap-6">
+                                {results.filter((result): result is Post => "title" in result).map((post) => (
+                                    <LoaderLink href={"/search/results/" + post._id} key={post._id} className="py-2 space-y-2 text-start">
+                                        <p className="text-gray-500 text-xs">{formatTimeAgo(post.updatedAt)}</p>
+                                        <h4 className="font-semibold text-lg leading-5">{post.title}</h4>
+                                        <p className="text-xs text-gray-500 leading-5 mt-1">{post.location}</p>
+
+                                        {Array.isArray(post.images) && post.images.length > 0 && (
+                                            <div className="rounded-2xl overflow-hidden mt-4 my-2">
+                                                <ImageSlider images={post.images} height={250} />
+                                            </div>
+                                        )}
+
+                                        <div className="flex-6 mt-4">
+                                            <p
+                                                className={`border-l-4 border-green-500 pl-3 py-0.5 text-sm text-gray-800 dark:text-gray-400 ${expandedDescriptions.includes(post._id) ? "" : "line-clamp-6"
+                                                    }`}
+                                                onClick={() => toggleDescription(post._id)}
+                                            >
+                                                {post.description}
+                                            </p>
+                                        </div>
+                                    </LoaderLink>
+                                ))}
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )
+            }
         </div>
     );
 }

@@ -72,11 +72,10 @@ const MainContent = () => {
 
             <div className='pt-4 px-5'>
                 <h2 className='text-lg font-semibold mb-2'>{t("appSettings")}</h2>
-
-                <Language />
-                <Notification />
-                <Display />
-                <Radius />
+                    <Language />
+                    <Notification />
+                    <Display />
+                    <Radius />
             </div>
 
             <div className='pt-4 px-5'>

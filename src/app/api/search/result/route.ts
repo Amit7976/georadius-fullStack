@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
      
       const users = await UserProfile.find({
         $or: [{ username: regex }, { fullname: regex }, { location: regex }],
-      }).select("_id userId username fullname profileImage bio");
+      }).select("username fullname profileImage");
       console.log("✅ Users found:", users.length);
       return NextResponse.json({ users });
 

@@ -6,40 +6,18 @@ import { ShareButtonProps } from "../helpers/types";
 
 
 
-const ShareButton = ({ ShareProps }: ShareButtonProps) => {
+const ShareButton = ({ shareProps }: ShareButtonProps) => {
     const [loading, setLoading] = useState<boolean>(false);
-    const [shareCount, setShareCount] = useState<number>(ShareProps.share || 0);
+    const [shareCount, setShareCount] = useState<number>(shareProps.share || 0);
 
 
     const handleShare = async (): Promise<void> => {
         if (loading) return;
 
-        const shareUrl = `${window.location.origin}/news/${ShareProps._id}`;
-        const shareTitle = ShareProps.title;
-        const shareText = `📰 ${ShareProps.title}\n\n${ShareProps.description}`;
-        const imageUrl = ShareProps.images?.[0];
-
-        // 🧠 Try Web Share API v2 with image (if browser supports it)
-        if (navigator.canShare && navigator.canShare({ files: [] }) && imageUrl) {
-            try {
-                const response = await fetch(imageUrl);
-                const blob = await response.blob();
-                const file = new File([blob], "share-image.jpg", { type: blob.type });
-
-                await navigator.share({
-                    title: shareTitle,
-                    text: shareText,
-                    url: shareUrl,
-                    files: [file],
-                });
-
-                await updateShareCount();
-                return;
-            } catch (error) {
-                console.warn("Web Share with image failed:", error);
-            }
-        }
-
+        const shareUrl = `${window.location.origin}/news/${shareProps._id}`;
+        const shareTitle = shareProps.title;
+        const shareText = `\n📰 ${shareProps.title}\n\n${shareProps.description}\n\n`;
+        
         // 🟡 Fallback: Web Share API without image
         if (navigator.share) {
             try {
@@ -65,7 +43,7 @@ const ShareButton = ({ ShareProps }: ShareButtonProps) => {
             console.error("Clipboard fallback failed:", error);
         }
     };
-    
+
 
     // 🔹 Update share count in the database
     const updateShareCount = async (): Promise<void> => {
@@ -74,7 +52,7 @@ const ShareButton = ({ ShareProps }: ShareButtonProps) => {
             const response = await fetch("/api/post/share", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ postId: ShareProps._id }),
+                body: JSON.stringify({ postId: shareProps._id }),
             });
 
             if (response.ok) {

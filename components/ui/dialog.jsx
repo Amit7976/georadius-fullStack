@@ -12,7 +12,6 @@ function Dialog({
 }
 
 function DialogTrigger({
-  className = "",
   ...props
 }) {
   return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;

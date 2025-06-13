@@ -1,6 +1,8 @@
 import { auth } from "@/src/auth";
 import { connectToDatabase } from "@/src/lib/utils";
+import { Comment } from "@/src/models/commentModel";
 import { Post } from "@/src/models/postModel";
+import { UserProfile } from "@/src/models/UserProfileModel";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -37,6 +39,21 @@ export async function GET(req: NextRequest) {
 
     console.log("📍 Coordinates:", { lat, lng });
     console.log("📏 Range:", range);
+
+    interface ProfileData {
+      saved: string[];
+    }
+    // ✅ Get user profile (excluding username from DB, we’ll inject it manually)
+    const profileData = (await UserProfile.findOne(
+      { userId: userId },
+      {
+        saved: 1,
+      }
+    ).lean()) as ProfileData | null;
+
+    if (!profileData) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
 
     console.log("➡️ Fetching posts...");
     const posts = await Post.aggregate([
@@ -109,19 +126,40 @@ export async function GET(req: NextRequest) {
       },
     ]);
 
-    console.log("📝 Posts fetched:", posts.length);
+    const finalPosts = [];
 
-    const enrichedPosts = posts.map((post) => ({
-      ...post,
-      currentUserProfile: userId && post.userId?.toString() === userId,
-    }));
+    for (const post of posts) {
+      const topComments = await Comment.aggregate([
+        { $match: { postId: post._id } },
+        { $sort: { createdAt: -1 } },
+        { $limit: 10 },
+        {
+          $project: {
+            _id: 1,
+            comment: 1,
+            username: 1,
+            parentCommentId: 1,
+            replyingToUsername: 1,
+            profileImage: 1,
+            updatedAt: 1,
+          },
+        },
+      ]);
+
+      finalPosts.push({
+        ...post,
+        isSaved: profileData.saved.includes(post._id.toString()),
+        currentUserProfile: post.userId?.toString() === userId,
+        topComments,
+      });
+    }
 
     console.log("🔚 [END] Nearby Posts API - Returning posts");
 
     return NextResponse.json(
       {
         message: "Posts fetched successfully",
-        posts: enrichedPosts,
+        posts: finalPosts,
         currentLoginUsername: session?.user.username,
       },
       { status: 200 }

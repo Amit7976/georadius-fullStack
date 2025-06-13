@@ -1,5 +1,6 @@
 "use client";
 import BackButton from '@/src/components/BackButton';
+import { PlaceholderPost } from '@/src/components/home/Placeholder';
 import NewsPost from '@/src/components/NewsPost';
 import { t } from '@/src/helpers/i18n';
 import { News } from '@/src/helpers/types';
@@ -32,11 +33,15 @@ function MainContent() {
 
     if (error) return <p className="text-red-500 text-center">{error}</p>;
     if (!data || data.length === 0) return (
-        <>
-            <div className="h-screen w-full flex items-center justify-center">
-                <p className='text-xl font-medium text-gray-500'>{t("noNewsSavedYet")}</p>
+        <div className='py-3'>
+            <div className='flex justify-start items-center gap-0'>
+                <BackButton classname='relative text-sm pl-0 pr-5' />
+                <h2 className="text-xl font-bold">{t("saved")} <span className='text-green-500'>{t("news")}</span></h2>
             </div>
-        </>
+            <div className="py-6 px-0">
+                <PlaceholderPost />
+            </div>
+        </div>
     );
 
     const handleHide = (postId: string) => {
