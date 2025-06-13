@@ -15,6 +15,7 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useGeolocation } from "../../hooks/useGeolocation";
+import { Post, User } from "@/src/helpers/types";
 
 export default function SearchResultsClient() {
     const searchParams = useSearchParams();
@@ -22,21 +23,6 @@ export default function SearchResultsClient() {
     const [radius, setRadius] = useState("5000000");
     const [searchType, setSearchType] = useState("post");
 
-    interface User {
-        _id: string;
-        username: string;
-        fullname: string;
-        profileImage: string;
-    }
-
-    interface Post {
-        _id: string;
-        title: string;
-        description: string;
-        location: string;
-        updatedAt: string;
-        images: string[];
-    }
 
     const [results, setResults] = useState<User[] | Post[]>([]);
     const [expandedDescriptions, setExpandedDescriptions] = useState<string[]>([]);

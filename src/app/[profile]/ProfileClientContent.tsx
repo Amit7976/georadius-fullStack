@@ -5,81 +5,39 @@ import MainContent from "./MainContent";
 import { LoaderLink } from "@/src/components/loaderLinks";
 import { AnimatedText } from "@/src/components/Animate";
 import { t } from "@/src/helpers/i18n";
+import { News, UserData } from "@/src/helpers/types";
 
 type Props = {
     profile: string;
 };
 
-interface News {
-    _id: string;
-    title: string;
-    description: string;
-    latitude?: number;
-    longitude?: number;
-    creatorName: string;
-    creatorImage: string;
-    createdAt: string;
-    location: string;
-    likes: number;
-    comments: number;
-    categories: string[];
-    images: string[];
-    commentsCount: number;
-    currentUserProfile: boolean;
-    // Add these
-    upvoteCount: number;
-    downvoteCount: number;
-    isUserUpvote: boolean;
-    isUserDownvote: boolean;
-    isSaved: boolean;
-}
-
-
-interface UserData {
-    fullname: string;
-    profileImage: string;
-    bio: string;
-    location: string;
-    currentUserProfile: boolean;
-}
-
 function ProfileClientContent({ profile }: Props) {
     const [userData, setUserData] = useState<UserData | null>(null);
+    const [currentLoginUsername, setCurrentLoginUsername] = useState("");
     const [newsData, setNewsData] = useState<News[] | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [userNotFound, setUserNotFound] = useState(false)
+    const [userNotFound, setUserNotFound] = useState(false);
 
     useEffect(() => {
         if (!profile) return;
 
         console.log(`🔹 Fetching data for: ${profile}`);
 
-        Promise.all([
-            fetch("/api/userProfile/username", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username: profile }),
-            }).then(async (res) => {
-                return res.json();
-            }),
-            fetch("/api/post/username", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username: profile }),
-            }).then(async (res) => {
-                return res.json();
-            }),
-        ])
-            .then(([userDataRes, postDataRes]) => {
-                console.log("✅ Post data raw:", postDataRes);
+        fetch("/api/userProfile/username", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: profile }),
+        })
+            .then(async (res) => res.json())
+            .then((data) => {
+                console.log("✅ Combined API data:", data);
 
-                const postsArray = postDataRes.posts;
-                if (!Array.isArray(postsArray)) {
-                    setUserNotFound(true)
+                if (!Array.isArray(data.posts)) {
+                    setUserNotFound(true);
                     return;
                 }
 
-                const formattedPosts: News[] = postsArray.map((item): News => ({
+                const formattedPosts: News[] = data.posts.map((item: News) => ({
                     _id: item._id.toString(),
                     title: item.title,
                     description: item.description || "",
@@ -94,6 +52,7 @@ function ProfileClientContent({ profile }: Props) {
                     categories: item.categories || [],
                     images: item.images || [],
                     commentsCount: item.commentsCount || 0,
+                    topComments: item.topComments || [],
                     currentUserProfile: item.currentUserProfile ?? false,
                     upvoteCount: item.upvoteCount || 0,
                     downvoteCount: item.downvoteCount || 0,
@@ -102,16 +61,36 @@ function ProfileClientContent({ profile }: Props) {
                     isSaved: item.isSaved || false,
                 }));
 
-                setUserData(userDataRes);
+                setUserData(data.user);
+                setCurrentLoginUsername(data.currentLoginUsername);
                 setNewsData(formattedPosts);
                 setError(null);
             })
             .catch((err) => {
                 setError(err.message);
-                setUserNotFound(true)
+                setUserNotFound(true);
             });
     }, [profile]);
 
+    // ⛔ Filter out hidden posts once
+    useEffect(() => {
+        const hiddenPosts: string[] = JSON.parse(localStorage.getItem("hideNews") || "[]");
+
+        if (Array.isArray(newsData)) {
+            const filtered = newsData.filter((post) => !hiddenPosts.includes(post._id));
+            setNewsData(filtered);
+        }
+    }, []);
+
+    const handleHide = (postId: string) => {
+        setNewsData((prev) => (prev ? prev.filter((post) => post._id !== postId) : null));
+
+        const hiddenPosts: string[] = JSON.parse(localStorage.getItem("hideNews") || "[]");
+        if (!hiddenPosts.includes(postId)) {
+            hiddenPosts.push(postId);
+            localStorage.setItem("hideNews", JSON.stringify(hiddenPosts));
+        }
+    };
 
     if (userNotFound) {
         return (
@@ -132,16 +111,12 @@ function ProfileClientContent({ profile }: Props) {
                 </div>
             </div>
         );
-
-    } else {
-
-        if (!userData || !newsData) {
-            return (
-                <div className="flex items-center justify-center h-screen">
-                    <div className="loader"></div>
-                </div>
-            );
-        }
+    } else if (!userData || !newsData) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <div className="loader"></div>
+            </div>
+        );
     }
 
     if (error) {
@@ -149,13 +124,13 @@ function ProfileClientContent({ profile }: Props) {
     }
 
     return (
-        <>
-            <MainContent
-                username={profile}
-                userData={userData}
-                userPosts={{ posts: newsData }}
-            />
-        </>
+        <MainContent
+            username={profile}
+            userData={userData}
+            handleHide={handleHide}
+            currentLoginUsername={currentLoginUsername}
+            userPosts={newsData}
+        />
     );
 }
 

@@ -31,11 +31,7 @@ const issues = [
     "Other",
 ];
 
-interface MainContentProps {
-    id: string | null;
-}
-
-const MainContent: React.FC<MainContentProps> = ({ id }) => {
+const MainContent = ({ id }: { id: string | null }) => {
     const [selectedIssue, setSelectedIssue] = useState<string | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedImages, setSelectedImages] = useState<File[]>([]);

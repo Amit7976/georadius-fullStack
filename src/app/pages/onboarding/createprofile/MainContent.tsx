@@ -1,44 +1,20 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
+import { getAddress } from "@/src/helpers/AddressFunc";
+import { t } from "@/src/helpers/i18n";
+import { FormDataType } from "@/src/helpers/types";
+import { profileSchema } from "@/src/helpers/zodSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { getAddress } from "@/src/helpers/AddressFunc";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { PiCircleNotch } from "react-icons/pi";
-import { t } from "@/src/helpers/i18n";
+import { toast } from "sonner";
 
-const profileSchema = z.object({
-    profileImage: z
-        .instanceof(File, { message: t("profileImageRequired") })
-        .or(z.string().min(1, t("profileImageRequired"))),
-
-    username: z.string().min(3, t("usernameTooShort")),
-    fullName: z.string().min(3, t("fullNameRequired")),
-    phoneNumber: z.string().optional(),
-    dob: z
-        .string()
-        .min(1, t("dobRequired"))
-        .refine((dob) => {
-            const inputDate = new Date(dob);
-            return (
-                !isNaN(inputDate.getTime()) &&
-                inputDate <= new Date(new Date().setFullYear(new Date().getFullYear() - 16))
-            );
-        }, {
-            message: t("ageRequirement"),
-        }),
-    location: z.string().min(1, t("locationRequired")),
-    bio: z.string().min(10, t("bioTooShort")),
-});
-  
 
 export default function MainContent() {
     const {
@@ -100,15 +76,7 @@ export default function MainContent() {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    interface FormDataType {
-        username: string;
-        fullName: string;
-        phoneNumber?: string;
-        dob: string;
-        location: string;
-        bio: string;
-        profileImage: File | string;
-    }
+
 
     const onSubmit = async (data: FormDataType) => {
         if (isSubmitting) return; // Prevent multiple clicks
@@ -218,7 +186,7 @@ export default function MainContent() {
 
                     {/* Username */}
                     <div className="rounded-lg space-y-2 flex-2">
-                        <Label className={"text-sm text-gray-500 font-medium"}>{t("username")}</Label>
+                        <Label className={"text-sm text-gray-600 dark:text-gray-400 font-medium"}>{t("username")}</Label>
                         <Input
                             className={"border-0 border-b-2 focus-visible:ring-0 rounded-none rounded-t-lg text-base font-medium p-0 focus-visible:border-green-500 focus-visible:border-b-4 focus-visible:outline-0"}
                             type={"text"}
@@ -239,7 +207,7 @@ export default function MainContent() {
 
                 {/* Full Name */}
                 <div className="border border-gray-200 w-full p-6 rounded-lg flex flex-col gap-2">
-                    <Label className={"text-sm text-gray-500 font-medium"}>{t("fullName")}</Label>
+                    <Label className={"text-sm text-gray-600 dark:text-gray-400 font-medium"}>{t("fullName")}</Label>
                     <Input
                         type={"text"}
                         autoComplete="name"
@@ -254,7 +222,7 @@ export default function MainContent() {
 
                 {/* Phone Number (Optional) */}
                 <div className="border border-gray-200 w-full p-6 rounded-lg flex flex-col gap-2">
-                    <Label className={"text-sm text-gray-500 font-medium"}>{t("phoneNumber")}</Label>
+                    <Label className={"text-sm text-gray-600 dark:text-gray-400 font-medium"}>{t("phoneNumber")}</Label>
                     <Input
                         className={"h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"}
                         {...register("phoneNumber")}
@@ -288,7 +256,7 @@ export default function MainContent() {
 
                 {/* Location + Get Current Location Button */}
                 <div className="border border-gray-200 w-full p-6 rounded-lg flex flex-col justify-center-center gap-2">
-                    <Label className={"text-sm text-gray-500 font-medium"}>{t("location")}</Label>
+                    <Label className={"text-sm text-gray-600 dark:text-gray-400 font-medium"}>{t("location")}</Label>
                     <div className="flex items-center gap-2" >
                         <div className="flex-3">
                             <Input
@@ -319,7 +287,7 @@ export default function MainContent() {
 
                 {/* Bio */}
                 <div className="border border-gray-200 w-full p-6 rounded-lg flex flex-col gap-2">
-                    <Label className={"text-sm text-gray-500 font-medium"}>{t("bio")}</Label>
+                    <Label className={"text-sm text-gray-600 dark:text-gray-400 font-medium"}>{t("bio")}</Label>
                     <Textarea className={"h-40 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"} {...register("bio")} placeholder={t("bio")} />
                     {errors.bio && <p className="text-red-500">{errors.bio.message}</p>}
                 </div>

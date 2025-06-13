@@ -15,18 +15,16 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   console.log("======== Post Fetch Comments ========");
   console.log("====================================");
 
-  console.log("📌 [START] Fetching post comments");
-
   try {
-    console.log("🔗 Connecting to DB...");
+    // ✅ DB connect
     await connectToDatabase();
 
-    console.log("🔐 Authenticating...");
+    // ✅ Auth check
     const session = await auth();
     const userId = session?.user?.id;
 
     if (!userId) {
-      console.log("❌ Unauthorized - no user ID");
+      console.log("❌ Unauthorized - no session user ID");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -39,51 +37,74 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const currentUserId = userId;
+    const currentUserId = userId.toString();
     const currentUsername = userProfile.username;
 
-    console.log("👤 Current user:", currentUsername);
-    console.log("👤 Current user:", currentUserId);
-
+    // ✅ Request body
     const body = await req.json();
-    const { postId } = body;
+    const {
+      postId,
+      limit = 10,
+      excludeIds = [], // 🧹 newly added
+    }: {
+      postId?: string;
+      page?: number;
+      limit?: number;
+      excludeIds?: string[];
+    } = body;
 
     if (!postId) {
-      console.log("❌ postId missing in request");
       return NextResponse.json(
         { error: "postId is required" },
         { status: 400 }
       );
     }
 
-    console.log("🔍 Finding post by ID:", postId);
+    // ✅ Get post and comment IDs
     const post = (await Post.findById(postId).lean()) as PostWithComments;
 
-    if (!post) {
-      console.log("❌ Post not found");
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
-    }
-
-    if (!post.comments || post.comments.length === 0) {
-      console.log("ℹ️ Post has no comments");
-      return NextResponse.json({ comments: [] }, { status: 200 });
+    if (!post || !post.comments || post.comments.length === 0) {
+      return NextResponse.json(
+        {
+          comments: [],
+          totalComments: 0,
+          currentUser: { username: currentUsername },
+        },
+        { status: 200 }
+      );
     }
 
     const commentObjectIds = post.comments.map(
       (id) => new mongoose.Types.ObjectId(id)
     );
+    const excludedObjectIds = excludeIds.map(
+      (id) => new mongoose.Types.ObjectId(id)
+    );
+    
 
-    const stringCurrentUserId = currentUserId.toString();
-    console.log("stringCurrentUserId:", stringCurrentUserId);
-
+    // ✅ Aggregate filtered, sorted, paginated comments
     const commentDocs = await Comment.aggregate([
       {
         $match: {
-          _id: { $in: commentObjectIds },
+          _id: {
+            $in: commentObjectIds,
+            $nin: excludedObjectIds, // 🚫 exclude already shown
+          },
         },
       },
       {
-        $sort: { createdAt: 1 },
+        $addFields: {
+          likesCount: { $size: "$likes" },
+        },
+      },
+      {
+        $sort: {
+          likesCount: -1,
+          createdAt: -1,
+        },
+      },
+      {
+        $limit: limit,
       },
       {
         $project: {
@@ -98,7 +119,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             $gt: [
               {
                 $size: {
-                  $setIntersection: [[stringCurrentUserId], "$likes"],
+                  $setIntersection: [[currentUserId], "$likes"],
                 },
               },
               0,
@@ -108,7 +129,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             $gt: [
               {
                 $size: {
-                  $setIntersection: [[stringCurrentUserId], "$reports"],
+                  $setIntersection: [[currentUserId], "$reports"],
                 },
               },
               0,
@@ -118,6 +139,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       },
     ]);
 
+    // ✅ Format for client
     const comments = commentDocs.map((comment) => ({
       _id: comment._id,
       comment: comment.comment,
@@ -130,10 +152,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       reports: comment.reports,
     }));
 
-    console.log("✅ Processed comments:", comments.length);
-
     return NextResponse.json(
-      { comments, currentUser: { username: currentUsername } },
+      {
+        comments,
+        totalComments: commentObjectIds.length,
+        currentUser: { username: currentUsername },
+      },
       { status: 200 }
     );
   } catch (error) {

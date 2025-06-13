@@ -120,7 +120,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
         const userProfile = await UserProfile.findOne(
           { userId: user._id },
-          { username: 1 } // Only fetch username
+          { username: 1 }
         );
 
         session.user.username = userProfile ? userProfile.username : false;

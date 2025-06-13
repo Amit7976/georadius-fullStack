@@ -1,13 +1,14 @@
 'use client'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { toast } from "sonner";
-import axios from 'axios'
-import { FormEvent, useState } from 'react'
-import { z } from 'zod'
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { LoaderLink } from '@/src/components/loaderLinks';
+import axios from 'axios';
 import { useRouter } from 'next/navigation';
-
+import { FormEvent, useState } from 'react';
+import { FaAngleLeft } from 'react-icons/fa6';
+import { toast } from "sonner";
+import { z } from 'zod';
 
 const signupSchema = z.object({
     email: z.string().email('Invalid email address'),
@@ -64,9 +65,11 @@ function MainContent() {
                 <div className="space-y-4">
                     <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-5xl">Forget Password</h1>
                     <p className="text-gray-500 text-lg">Enter your email to get your temporary password</p>
-                    <form onSubmit={handleSubmit} className="space-y-6 text-left mt-6">
+                    <form onSubmit={handleSubmit} className="space-y-8 text-left mt-8">
                         <div>
-                            <Label htmlFor="email" className="text-base text-gray-500 font-medium pl-5">Email Address</Label>
+                            <Label htmlFor="email" className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                                Email
+                            </Label>
                             <Input
                                 id="email"
                                 name="email"
@@ -77,20 +80,24 @@ function MainContent() {
                                 }}
                                 placeholder="example@gmail.com"
                                 required
-                                className="h-14 rounded-full mt-2 px-8 text-base font-semibold tracking-wider border-[3px]"
+                                className="rounded-lg mt-2 px-5 h-16 text-base font-semibold tracking-wider border-[3px]"
                             />
                         </div>
 
-                        <div className="pt-3 flex gap-5 flex-col items-center">
+                        <div className="flex gap-5 flex-col items-center">
                             <Button
 
                                 type="submit"
                                 variant={'default'}
-                                className="h-12 px-10 bg-green-600 text-base rounded-full duration-500 border-white shadow border-2"
+                                className="h-12 px-20 bg-green-600 text-base rounded-full duration-500 shadow text-white"
                                 disabled={loading}
                             >
                                 {loading ? 'Loading...' : 'Send email'}
                             </Button>
+
+                            <LoaderLink href='/pages/auth/signin'>
+                                <span className='flex gap-2 items-center'><FaAngleLeft /> Back to Login</span>
+                            </LoaderLink>
                         </div>
                     </form>
                 </div>

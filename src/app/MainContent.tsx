@@ -1,58 +1,34 @@
 "use client";
-
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import interestsList from "@/public/json/interestList.json";
-import NewsPost from "@/src/components/NewsPost";
-import { useRouter } from "next/navigation";
+import { useGeolocation } from "@/src/app/hooks/useGeolocation";
+import { getDistanceFromCurrentLocation } from "@/src/helpers/getDistanceFromCurrentLocation";
+import { t } from "@/src/helpers/i18n";
+import { News, TrendingNewsPost } from "@/src/helpers/types";
 import { useEffect, useRef, useState } from "react";
-import { IoMapOutline } from "react-icons/io5";
-import { LoaderLink } from "../components/loaderLinks";
+import CategoryTabs from "../components/home/CategoryTabs";
+import HeaderFilter from "../components/home/HeaderFilter";
+import LocationDeniedBanner from "../components/home/locationDenied";
 import TrendingNewsSlider from "../components/TrendingNewsSlider";
-import { useGeolocation } from "./hooks/useGeolocation";
-import { t } from "../helpers/i18n";
 
-const filterOptions = [t("nearby"), t("district"), t("worldwide")];
-
-
-interface NewsPostType {
-    _id: string;
-    title: string;
-    description: string;
-    latitude?: number;
-    longitude?: number;
-    creatorName: string;
-    creatorImage: string;
-    createdAt: string;
-    location: string;
-    likes: number;
-    comments: number;
-    categories: string[];
-    images: string[];
-    commentsCount: number;
-    currentUserProfile: boolean;
-    upvoteCount: number;
-    downvoteCount: number;
-    isUserUpvote: boolean;
-    isUserDownvote: boolean;
-    isSaved: boolean;
-}
 
 
 export default function MainContent() {
     const [selectedFilter, setSelectedFilter] = useState(t("nearby"));
     const [selectedCategory, setSelectedCategory] = useState("All");
-    const [newsData, setNewsData] = useState<NewsPostType[]>([]);
+    const [newsData, setNewsData] = useState<News[]>([]);
+    const [trendingNews, setTrendingNews] = useState<TrendingNewsPost[]>([]);
     const [loading, setLoading] = useState(true);
-    const [showFixedHeader, setShowFixedHeader] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const lastScrollY = useRef(0);
     const categoriesRef = useRef<HTMLDivElement | null>(null);
-    const router = useRouter();
+    const [currentLoginUsername, setCurrentLoginUsername] = useState("");
+
     let location = useGeolocation();
-    const [locationDenied, setLocationDenied] = useState(false);
 
-
+    useEffect(() => {
+        if (error) {
+            alert(error);
+            setError(null);
+        }
+    }, [error]);
 
     const handleHide = (postId: string) => {
         setNewsData(prevNews => prevNews.filter(news => news._id !== postId.toString()));
@@ -64,32 +40,8 @@ export default function MainContent() {
         }
     };
 
-
-
     useEffect(() => {
-        if (!navigator.geolocation) {
-            setLocationDenied(true);
-            return;
-        }
-
-        navigator.geolocation.getCurrentPosition(
-            () => {
-                // access granted — do nothing or set flag
-            },
-            (error) => {
-                if (error.code === error.PERMISSION_DENIED) {
-                    setLocationDenied(true); // show banner
-                }
-            }
-        );
-    }, []);
-
-
-
-    useEffect(() => {
-        if (!location) {
-            location = { lat: 26.92, lng: 75.78 } //Default Jaipur Latitude & Longitude
-        };
+        if (!location) return;
         const range = selectedFilter === "Nearby"
             ? Number(localStorage.getItem("radius")) || 10
             : selectedFilter === "District"
@@ -99,17 +51,86 @@ export default function MainContent() {
         const fetchNearbyPosts = async (latitude: number, longitude: number) => {
             setLoading(true);
             try {
-                const res = await fetch(`/api/main/category?category=${selectedCategory}&lat=${latitude}&lng=${longitude}&range=${range}&limit=50`);
+                const hiddenPosts: string[] = JSON.parse(localStorage.getItem("hideNews") || "[]");
+
+                const res = await fetch(`/api/main/category`, {
+                    method: "POST", // ✅ Changed to POST
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        hiddenPostIds: hiddenPosts,
+                        category: selectedCategory,
+                        lat: latitude,
+                        lng: longitude,
+                        range: range,
+                        limit: 50,
+                    }),
+                });
+
                 const json = await res.json();
 
-                console.log('====================================');
+                setCurrentLoginUsername(json.currentLoginUsername);
+                console.log('/////////////////////////////////////////////////////');
                 console.log(json);
-                console.log('====================================');
+                console.log('/////////////////////////////////////////////////////');
+                console.log(json.posts);
+                console.log('/////////////////////////////////////////////////////');
 
-                const hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");
-                const filteredNews: NewsPostType[] = json.filter((news: NewsPostType) => !hiddenPosts.includes(news._id));
+                // ✅ Remove hidden posts
+                const filteredNews: News[] = json.posts.filter((news: News) => !hiddenPosts.includes(news._id));
+
+                console.log('====================================');
+                console.log(filteredNews);
+                console.log('====================================');
                 setNewsData(filteredNews);
 
+                if (selectedCategory === "All") {
+                    try {
+                        console.log('====================================');
+                        console.log("all");
+                        console.log('====================================');
+
+                        const postsWithImages = filteredNews.filter(
+                            (post: News) => Array.isArray(post.images) && post.images.length > 0
+                        );
+
+                        const topPostsWithImages = await Promise.all(
+                            postsWithImages.map(async (post: News) => {
+                                const upvoteCount = post.upvoteCount;
+                                let distance = "";
+
+                                try {
+                                    const { formattedDistance } = await getDistanceFromCurrentLocation(
+                                        post.latitude ?? 0,
+                                        post.longitude ?? 0
+                                    );
+                                    distance = formattedDistance;
+                                } catch {
+                                    distance = t("nearby");
+                                }
+
+                                return {
+                                    _id: post._id,
+                                    image: post.images[0],
+                                    title: post.title,
+                                    creatorName: post.creatorName,
+                                    createdAt: post.createdAt,
+                                    distance,
+                                    upvoteCount,
+                                };
+                            })
+                        );
+
+                        const sortedTop = topPostsWithImages
+                            .sort((a, b) => b.upvoteCount - a.upvoteCount)
+                            .slice(0, 5);
+
+                        setTrendingNews(sortedTop);
+                    } catch (err) {
+                        console.log('====================================');
+                        console.log(err);
+                        console.log('====================================');
+                    }
+                }
             } catch (err) {
                 console.error("API fetch error:", err);
                 setError("Failed to fetch nearby posts.");
@@ -118,111 +139,19 @@ export default function MainContent() {
             }
         };
 
-
-
-
         fetchNearbyPosts(location.lat, location.lng);
-
-    }, [selectedFilter, selectedCategory, location]);
-
-
-    useEffect(() => {
-        if (error) {
-            alert(error);
-            setError(null);
-        }
-    }, [error]);
-
-
-    useEffect(() => {
-        const handleScroll = () => {
-            const currentScrollY = window.scrollY;
-            const screenHeight = window.innerHeight;
-
-            // Scroll up
-            if (currentScrollY > screenHeight && currentScrollY < lastScrollY.current) {
-                setShowFixedHeader(true);
-            }
-            // Scroll down
-            else if (currentScrollY > screenHeight && currentScrollY > lastScrollY.current) {
-                setShowFixedHeader(false);
-            }
-
-            // At the top, hide fixed
-            if (currentScrollY === 0) {
-                setShowFixedHeader(false);
-            }
-
-            lastScrollY.current = currentScrollY;
-        };
-
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
-
-    const Placeholder = () => (
-        <div className="flex flex-col gap-4 px-4 py-6">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
-                <div key={i} className="animate-pulse bg-gray-100 dark:bg-neutral-800 rounded-lg h-32 w-full" />
-            ))}
-        </div>
-    );
-
+    }, [selectedFilter, selectedCategory]);
 
 
     return (
         <div className="h-screen w-full p-0 scroll-smooth">
 
+            {/* Header Filter */}
+            <HeaderFilter selectedFilter={selectedFilter} setSelectedFilter={setSelectedFilter} />
 
-            <div className="sticky top-0 w-full z-50 transition-shadow">
-                <div className="flex justify-between items-center p-3 pb-1.5 bg-white dark:bg-neutral-900">
-                    <Select value={selectedFilter} onValueChange={setSelectedFilter}>
-                        <SelectTrigger className="w-fit border-0 text-2xl font-bold shadow-none px-0 scale-90">
-                            <SelectValue placeholder="Select Filter" />
-                        </SelectTrigger>
-                        <SelectContent className={""}>
-                            {filterOptions.map((option) => (
-                                <SelectItem key={option} value={option} className="text-xl font-semibold py-2">
-                                    {option}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+            {/* Location Banner */}
+            <LocationDeniedBanner />
 
-                    <LoaderLink href="/pages/others/map" className="flex items-center gap-4 pr-1">
-                        <IoMapOutline className="text-3xl scale-95" />
-                    </LoaderLink>
-                </div>
-            </div>
-
-
-
-
-            {!locationDenied && (
-                <div className="bg-green-600 text-white font-medium p-2 pr-5 my-2 text-sm overflow-hidden whitespace-nowrap relative flex items-center">
-                    <div
-                        className="relative flex items-center gap- flex-4"
-                        style={{
-                            animation: 'scrollText 30s linear infinite ',
-                        }}
-                    >
-                        <span>
-                            {t("locationAccessDeniedBanner")}
-                        </span>
-                    </div>
-
-                    <style jsx>{`
-            @keyframes scrollText {
-                0% {
-                    transform: translateX(10%);
-                }
-                100% {
-                    transform: translateX(-100%);
-                }
-            }
-        `}</style>
-                </div>
-            )}
 
 
 
@@ -230,117 +159,10 @@ export default function MainContent() {
 
 
             {/* Trending News */}
-            <div className="py-3 px-0">
-                <div className="flex justify-between items-end p-2">
-                    <h2 className="text-3xl font-bold">{t("breaking")} <span className='text-green-500'>{t("news")}</span></h2>
-                    <LoaderLink href={'/pages/trendingNews'} className="text-xs font-bold pb-2 text-gray-500 active:scale-95">
-                        {t("viewAll")}
-                    </LoaderLink>
-                </div>
-                <TrendingNewsSlider
-                    range={
-                        selectedFilter === "Nearby"
-                            ? Number(localStorage.getItem("radius")) || 10
-                            : selectedFilter === "District"
-                                ? 100
-                                : 7000
-                    }
-                />
-            </div>
+            <TrendingNewsSlider trendingNews={trendingNews} loading={loading} />
 
-
-            {/* Categories */}
-            <div ref={categoriesRef} className="w-full py-2 pb-3 bg-white dark:bg-neutral-900">
-                <div className="flex gap-2 px-2 overflow-x-auto whitespace-nowrap">
-                    <Button
-                        variant="outline"
-                        className={`rounded-lg px-8 py-2 font-bold text-xs dark:bg-neutral-800 dark:border-neutral-700 ${selectedCategory === "All" ? "bg-black text-white dark:bg-neutral-600" : ""}`}
-                        onClick={() => setSelectedCategory("All")}
-                    >
-                        All
-                    </Button>
-                    {interestsList.map((category, index) => (
-                        <Button
-                            key={index}
-                            variant="outline"
-                            className={`rounded-lg px-6 py-2 font-bold text-xs dark:bg-neutral-800 dark:border-neutral-700 ${selectedCategory === category.name ? "bg-black text-white dark:bg-neutral-600" : ""}`}
-                            onClick={() => setSelectedCategory(category.name)}
-                        >
-                            {category.name}
-                        </Button>
-                    ))}
-                </div>
-            </div>
-
-            {showFixedHeader && (
-                <div className="fixed left-0 top-0 w-full flex justify-center z-50">
-                    <div className="w-full bg-white dark:bg-neutral-900 shadow-md transition-transform duration-300">
-                        {/* Header */}
-                        <div className="flex justify-between items-center p-3 pb-2">
-                            <Select value={selectedFilter} onValueChange={setSelectedFilter}>
-                                <SelectTrigger className="w-fit border-0 text-2xl font-bold shadow-none px-0 scale-90">
-                                    <SelectValue placeholder="Select Filter" />
-                                </SelectTrigger>
-                                <SelectContent className={""}>
-                                    {filterOptions.map((option) => (
-                                        <SelectItem key={option} value={option} className="text-xl font-semibold py-2">
-                                            {option}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-
-                            <div className="flex items-center gap-4 pr-1">
-                                <IoMapOutline className="text-3xl scale-95" onClick={() => router.push("/pages/others/map")} />
-                            </div>
-                        </div>
-
-                        {/* Fixed Categories */}
-                        {/* <div className="w-full pb-1.5 dark:pb-2 bg-white dark:bg-neutral-900">
-                            <div className="flex gap-2 px-2 overflow-x-auto whitespace-nowrap">
-                                <Button
-                                    variant="outline"
-                                    className={`rounded-lg px-6 py-2 font-bold text-xs ${selectedCategory === "All" ? "bg-black text-white" : ""}`}
-                                    onClick={() => setSelectedCategory("All")}
-                                >
-                                    All
-                                </Button>
-                                {interestsList.map((category, index) => (
-                                    <Button
-                                        key={index}
-                                        variant="outline"
-                                        className={`rounded-lg px-6 py-2 font-bold text-xs ${selectedCategory === category.name ? "bg-black text-white" : ""}`}
-                                        onClick={() => setSelectedCategory(category.name)}
-                                    >
-                                        {category.name}
-                                    </Button>
-                                ))}
-                            </div>
-                        </div> */}
-                    </div>
-                </div>
-            )}
-
-
-            {/* News Posts */}
-            <div>
-                {loading ? (
-                    <Placeholder />
-                ) : (
-                    newsData.length > 0 ? (
-                        newsData.map((news) => (
-                            <div key={news._id} className="snap-start">
-                                <NewsPost news={news} key={news._id} onHide={handleHide} fullDescription={false} />
-                            </div>
-                        ))
-                    ) : (
-                        <div className="flex flex-col gap-2 py-10">
-                            <p className="text-center text-gray-500">No News Available.</p>
-                        </div>
-                    )
-                )}
-
-            </div>
+            {/* Categories News */}
+            <CategoryTabs selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} currentLoginUsername={currentLoginUsername} handleHide={handleHide} loading={loading} newsData={newsData} categoriesRef={categoriesRef} />
 
         </div>
     );

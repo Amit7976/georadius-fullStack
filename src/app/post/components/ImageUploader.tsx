@@ -4,9 +4,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { RiUploadCloud2Line } from "react-icons/ri";
 import { useState } from "react";
-import type { FormValues } from "../MainContent";
 import Image from "next/image";
 import { t } from "@/src/helpers/i18n";
+import { FormValues } from "@/src/helpers/types";
 
 
 interface ImageUploaderProps {

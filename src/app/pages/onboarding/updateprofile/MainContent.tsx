@@ -7,6 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import BackButton from "@/src/components/BackButton";
 import { getAddress } from "@/src/helpers/AddressFunc";
 import { t } from "@/src/helpers/i18n";
+import { FormDataType } from "@/src/helpers/types";
+import { profileSchema } from "@/src/helpers/zodSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -14,26 +16,6 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { PiCircleNotch } from "react-icons/pi";
 import { toast } from "sonner";
-import { z } from "zod";
-// Zod Schema
-const profileSchema = z.object({
-    profileImage: z.string().min(1, t("profileImageRequired")),
-    username: z.string().min(3, t("usernameTooShort")),
-    fullName: z.string().min(3, t("fullNameRequired")),
-    phoneNumber: z.string().optional(),
-    dob: z
-        .string()
-        .min(1, t("dobRequired"))
-        .refine((dob) => {
-            const inputDate = new Date(dob);
-            return !isNaN(inputDate.getTime()) && inputDate <= new Date(new Date().setFullYear(new Date().getFullYear() - 16));
-        }, {
-            message: t("ageRequirement"),
-        }),
-    location: z.string().min(1, t("locationRequired")),
-    bio: z.string().min(10, t("bioTooShort")),
-});
-
 
 export default function MainContent() {
     const router = useRouter();
@@ -129,16 +111,9 @@ export default function MainContent() {
 
 
     // Handle form submission
-    interface ProfileFormData {
-        fullName: string;
-        phoneNumber?: string;
-        dob: string;
-        location: string;
-        bio: string;
-        profileImage: string;
-    }
 
-    const onSubmit = async (data: ProfileFormData) => {
+
+    const onSubmit = async (data: FormDataType) => {
         if (isSubmitting) return;
         setIsSubmitting(true);
 
@@ -189,7 +164,7 @@ export default function MainContent() {
         <div className="max-w-lg mx-auto p-2">
             <div className='flex items-center justify-center relative my-5'>
                 <BackButton />
-                <h1 className="text-xl font-semibold text-gray-500 text-center">{t("updateYour")} <span className="text-green-600">Profile</span></h1>
+                <h1 className="text-xl font-semibold text-gray-600 dark:text-gray-400 text-center">{t("updateYour")} <span className="text-green-600">Profile</span></h1>
             </div>
 
 
@@ -233,7 +208,7 @@ export default function MainContent() {
 
                     {/* Username */}
                     <div className="rounded-lg space-y-2 flex-2">
-                        <Label className={"text-sm text-gray-500 font-medium"}>{t("username")}</Label>
+                        <Label className={"text-sm text-gray-600 dark:text-gray-400 font-medium"}>{t("username")}</Label>
                         <Input
                             className={"border-0 border-b-2 focus-visible:ring-0 px-0 rounded-none rounded-t-lg text-lg font-semibold focus-visible:border-green-500 focus-visible:border-b-4 focus-visible:outline-0"}
                             type='text'
@@ -253,7 +228,7 @@ export default function MainContent() {
 
                 {/* Full Name */}
                 <div className="border border-gray-200 dark:border-neutral-700 w-full px-6 py-10 rounded-lg flex flex-col gap-2">
-                    <Label className={"text-sm text-gray-500 font-medium"}>{t("fullName")}</Label>
+                    <Label className={"text-sm text-gray-600 dark:text-gray-400 font-medium"}>{t("fullName")}</Label>
                     <Input
                         type={"text"}
                         autoComplete="name"
@@ -268,7 +243,7 @@ export default function MainContent() {
 
                 {/* Phone Number (Optional) */}
                 <div className="border border-gray-200 dark:border-neutral-700 w-full px-6 py-10 rounded-lg flex flex-col gap-2">
-                    <Label className={"text-sm text-gray-500 font-medium"}>{t("phoneNumber")}</Label>
+                    <Label className={"text-sm text-gray-600 dark:text-gray-400 font-medium"}>{t("phoneNumber")}</Label>
                     <Input
                         className={"h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"}
                         {...register("phoneNumber")}
@@ -286,7 +261,7 @@ export default function MainContent() {
 
                 {/* Date of Birth */}
                 <div className="border border-gray-200 dark:border-neutral-700 w-full p-6 rounded-lg flex flex-col gap-2">
-                    <Label className="text-sm text-gray-500 font-medium">{t("dateOfBirth")}</Label>
+                    <Label className="text-sm text-gray-600 dark:text-gray-400 font-medium">{t("dateOfBirth")}</Label>
                     <Input
                         className="h-14 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"
                         {...register("dob")}
@@ -306,7 +281,7 @@ export default function MainContent() {
 
                 {/* Location + Get Current Location Button */}
                 <div className="border border-gray-200 dark:border-neutral-700 w-full px-6 py-10 rounded-lg flex flex-col justify-center-center gap-2">
-                    <Label className={"text-sm text-gray-500 font-medium"}>{t("location")}</Label>
+                    <Label className={"text-sm text-gray-600 dark:text-gray-400 font-medium"}>{t("location")}</Label>
                     <div className="flex items-center gap-2" >
                         <div className="flex-3">
                             <Input
@@ -337,7 +312,7 @@ export default function MainContent() {
 
                 {/* Bio */}
                 <div className="border border-gray-200 dark:border-neutral-700 w-full px-6 py-10 rounded-lg flex flex-col gap-2">
-                    <Label className={"text-sm text-gray-500 font-medium"}>{t("bio")}</Label>
+                    <Label className={"text-sm text-gray-600 dark:text-gray-400 font-medium"}>{t("bio")}</Label>
                     <Textarea className={"h-40 border-2 focus-visible:ring-green-500 focus-visible:outline-0 focus-visible:border-0"} {...register("bio")} placeholder={t("bio")} />
                     {errors.bio && <p className="text-red-500">{errors.bio.message}</p>}
                 </div>
@@ -351,7 +326,7 @@ export default function MainContent() {
                         disabled={isSubmitting}
                         className="w-full bg-green-600 active:bg-green-400  duration-300 h-16 text-white text-lg font-bold rounded-full"
                     >
-                        {isSubmitting ? "Submitting..." : t("updateProfile") }
+                        {isSubmitting ? "Submitting..." : t("updateProfile")}
                     </Button>
                 </div>
             </form>

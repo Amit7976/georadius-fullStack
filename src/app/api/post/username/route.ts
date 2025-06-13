@@ -48,7 +48,7 @@ export async function POST(req: Request) {
 
     const userProfile = await UserProfile.findOne(
       { username },
-      { _id: 1, posts: 1, saved: 1 }
+      { fullname: 1, profileImage: 1, bio: 1, location: 1, userId: 1, posts: 1, saved: 1 }
     ).lean<UserProfileType>();
 
     console.log("📌 UserProfile Data:", userProfile);

@@ -1,10 +1,10 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { LoaderLink } from "@/src/components/loaderLinks";
+import { SignUpSchema } from "@/src/helpers/zodSchema";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { z } from "zod";
 import { credentialsSignUp } from "../actions/register";
 
 
@@ -17,20 +17,6 @@ const SignUpForm = () => {
 
     // DEFINE TOAST FOR DISPLAYING MESSAGE
     const router = useRouter();
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    // DEFINE THE ZOD SCHEMA
-    const SignUpSchema = z.object({
-        fullname: z.string().min(3, "Full name is required"),
-        email: z.string().email("Invalid email address"),
-        password: z.string().min(6, "Password must be at least 6 characters long"),
-    });
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     const [loading, setLoading] = useState(false)
 
@@ -82,15 +68,15 @@ const SignUpForm = () => {
                 className="mt-10 w-full px-4"
             >
                 <div className="flex flex-col space-y-3 text-center mt-10 w-full">
-                    <div className="border-t-2 relative h-6 flex justify-center mb-5">
-                        <p className="text-sm text-gray-600 absolute -top-1/2 bg-white px-2">
-                            Or sign up with email
+                    <div className="border-t-2 relative h-6 flex justify-center mb-6">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 absolute -top-1/2 bg-white dark:bg-neutral-900 px-2">
+                            Or SignUp with email
                         </p>
                     </div>
 
                     <div className="flex flex-col space-y-6 w-full px-2 text-left">
-                        <div className="flex flex-col space-y-1">
-                            <label htmlFor="fullname" className="text-lg font-semibold">
+                        <div className="flex flex-col space-y-2">
+                            <label htmlFor="fullname" className="text-sm font-semibold text-gray-600 dark:text-gray-400">
                                 Full Name
                             </label>
                             <input
@@ -99,12 +85,12 @@ const SignUpForm = () => {
                                 id="fullname"
                                 autoComplete="name"
                                 placeholder="Full Name"
-                                className="border-2 border-gray-200 rounded-md h-16 px-4 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
+                                className="border-2 border-gray-200 dark:border-neutral-600 rounded-md h-16 px-4 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
                             />
                         </div>
 
-                        <div className="flex flex-col space-y-1">
-                            <label htmlFor="email" className="text-lg font-semibold">
+                        <div className="flex flex-col space-y-2">
+                            <label htmlFor="email" className="text-sm font-semibold text-gray-600 dark:text-gray-400">
                                 Email
                             </label>
 
@@ -118,11 +104,11 @@ const SignUpForm = () => {
                                 }}
                                 autoComplete="email"
                                 placeholder="Email"
-                                className="border-2 border-gray-200 rounded-md h-16 px-4 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
+                                className="border-2 border-gray-200 dark:border-neutral-600 rounded-md h-16 px-4 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
                             />
                         </div>
-                        <div className="flex flex-col space-y-1">
-                            <label htmlFor="password" className="text-lg font-semibold">
+                        <div className="flex flex-col space-y-2">
+                            <label htmlFor="password" className="text-sm font-semibold text-gray-600 dark:text-gray-400">
                                 Password
                             </label>
 
@@ -135,9 +121,9 @@ const SignUpForm = () => {
                                     input.value = input.value.replace(/\s/g, "");
                                 }}
                                 placeholder="Password"
-                                className="border-2 border-gray-200 rounded-md h-16 px-4 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
+                                className="border-2 border-gray-200 dark:border-neutral-600 rounded-md h-16 px-4 focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent"
                             />
-                            <div className="px-2 mt-2">
+                            <div className="px-2 text-xs text-gray-600 dark:text-gray-400">
                                 <p>Must be at least 8 characters.</p>
                             </div>
                         </div>
@@ -147,12 +133,12 @@ const SignUpForm = () => {
                 <div className="flex flex-col space-y-6 text-center my-12 w-full px-5">
                     <Button
                         type="submit"
-                        className="bg-green-600 active:bg-green-500  duration-300 text-white font-bold py-2 px-4 rounded-md my-5 w-full h-16"
+                        className="bg-green-600 active:bg-green-500 duration-300 text-white text-lg font-bold py-2 px-4 rounded-md my-5 w-full h-16"
                         disabled={loading}
                     >
                         {loading ? 'Loading...' : 'Sign Up'}
                     </Button>
-                    <p className="text-base text-gray-600 font-medium">
+                    <p className="text-base text-gray-600 dark:text-gray-400 font-medium">
                         Already have an account?{" "}
                         <LoaderLink href="./signin" className="text-green-600 font-semibold">
                             Sign In

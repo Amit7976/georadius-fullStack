@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import HeadingHeader from "@/src/components/HeadingHeader";
 import { t } from "@/src/helpers/i18n";
+import { ChangePasswordRequest, ChangePasswordResponse } from "@/src/helpers/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -84,14 +85,8 @@ export default function ChangePassword() {
     const newPassword = watch("newPassword");
 
 
-    interface ChangePasswordRequest {
-        currentPassword: string;
-        newPassword: string;
-    }
 
-    interface ChangePasswordResponse {
-        error?: string;
-    }
+    
 
     const onSubmit = async (data: PasswordFormValues): Promise<void> => {
         try {

@@ -18,12 +18,8 @@ import {
     UseFormSetValue,
     FieldErrors
 } from "react-hook-form";
-import { FormValues } from "../MainContent";
 import { t } from "@/src/helpers/i18n";
-
-interface Prediction {
-    description: string;
-}
+import { FormValues, Prediction } from "@/src/helpers/types";
 
 interface LocationInputProps {
     register: UseFormRegister<FormValues>;

@@ -5,11 +5,7 @@ import { IoSearch, IoClose } from "react-icons/io5";
 import { Input } from "@/components/ui/input";
 import { t } from "../helpers/i18n";
 
-interface SearchInputProps {
-    queryParam?: string;
-}
-
-export default function SearchInput({ queryParam = "" }: SearchInputProps) {
+export default function SearchInput({ queryParam = "" }: { queryParam?: string; }) {
     const [query, setQuery] = useState(queryParam);
     const [suggestions, setSuggestions] = useState<{ name: string }[]>([]);
     const [hasTyped, setHasTyped] = useState(false);

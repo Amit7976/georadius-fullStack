@@ -2,15 +2,8 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { BiDislike, BiLike, BiSolidDislike, BiSolidLike } from "react-icons/bi";
 import { formatNumber } from "../helpers/formatNumber";
+import { News } from "../helpers/types";
 
-
-interface News {
-    _id: string;
-    upvoteCount: number;
-    downvoteCount: number;
-    isUserUpvote: boolean;
-    isUserDownvote: boolean;
-}
 
 const VoteButtons = ({ news }: { news: News }) => {
     const [vote, setVote] = useState<number>(0); // 0 = No vote, 1 = Upvote, 2 = Downvote

@@ -5,31 +5,8 @@ import { useEffect, useState } from 'react';
 import { useGeolocation } from '../../hooks/useGeolocation';
 import { t } from '@/src/helpers/i18n';
 import BackButton from '@/src/components/BackButton';
+import { News } from '@/src/helpers/types';
 
-
-interface News {
-    _id: string;
-    title: string;
-    description: string;
-    latitude?: number;
-    longitude?: number;
-    creatorName: string;
-    creatorImage: string;
-    createdAt: string;
-    location: string;
-    likes: number;
-    comments: number;
-    categories: string[];
-    images: string[];
-    commentsCount: number;
-    currentUserProfile: boolean;
-    // Add these
-    upvoteCount: number;
-    downvoteCount: number;
-    isUserUpvote: boolean;
-    isUserDownvote: boolean;
-    isSaved: boolean;
-}
 
 
 function Page() {

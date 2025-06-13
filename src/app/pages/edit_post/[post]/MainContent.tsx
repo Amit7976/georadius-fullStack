@@ -12,6 +12,7 @@ import ImageUploader from "./components/ImageUploader";
 import { useRouter } from "next/navigation";
 import { t } from "@/src/helpers/i18n";
 import { toast } from "sonner";
+import { FormValues, MainPostTypes } from "@/src/helpers/types";
 
 // Zod Validation Schema
 const formSchema = z.object({
@@ -25,33 +26,12 @@ const formSchema = z.object({
     deletedImages: z.array(z.any()).max(3, "You can only delete up to 3 images").optional(),
 });
 
-export interface FormValues {
-    title: string;
-    description: string;
-    location: string;
-    latitude: number;
-    longitude: number;
-    categories: string[];
-    images?: File[];
-    deletedImages?: string[];
-}
-interface MainContentProps {
-    post: {
-        _id: string;
-        title: string;
-        description: string;
-        location: string;
-        latitude: number;
-        longitude: number;
-        categories: string[];
-        images?: File[];
-    };
-}
+
 
 export default function MainContent() {
     const [processing, setProcessing] = useState(false);
     const router = useRouter();
-    const [post, setPost] = useState<MainContentProps["post"]>({
+    const [post, setPost] = useState<MainPostTypes["post"]>({
         _id: "",
         title: "",
         description: "",

@@ -2,7 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { auth } from "../auth";
 import BottomNavigation from "../components/BottomNavigation";
-import { ThemeProvider } from "../components/theme-provider";
+import { ThemeHandler } from "../components/ThemeHandler";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -28,26 +28,19 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="antialiased relative bg-white dark:bg-neutral-900">
-        <div
-          // className="lg:hidden"
-        >
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
+        <div className="lg:hidden">
+          <ThemeHandler>
             <main>
               <Toaster richColors position="top-right" />
               {children}
               <BottomNavigation username={session?.user.username || false} />
             </main>
             <Toaster richColors position="top-center" expand={false} closeButton />
-          </ThemeProvider>
+          </ThemeHandler>
         </div>
-        {/* <div className="hidden lg:flex items-center justify-center h-screen w-full dark:bg-neutral-900 px-10">
+        <div className="hidden lg:flex items-center justify-center h-screen w-full dark:bg-neutral-900 px-10">
           <p className="max-w-lg mx-auto text-center">You're currently viewing the web version of the Geo Radius app. For the best experience, please use a mobile device.</p>
-        </div> */}
+        </div>
       </body>
     </html>
   );

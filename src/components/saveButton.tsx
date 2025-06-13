@@ -1,17 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { TbBookmark, TbBookmarkFilled } from "react-icons/tb";
+import { SavedButtonProps } from "../helpers/types";
 
 
-
-interface News {
-    _id: string;
-    isSaved: boolean;
-}
-
-interface SavedButtonProps {
-    news: News;
-}
 
 const SaveButton = ({ news }: SavedButtonProps) => {
     const [saved, setSaved] = useState<boolean>(false);

@@ -22,34 +22,10 @@ import ShareButton from "./ShareButton";
 import VoteButtons from "./VoteButtons";
 import { t } from "../helpers/i18n";
 import { DialogTitle } from "@/components/ui/dialog";
-
-interface News {
-    _id: string;
-    title: string;
-    description: string;
-    latitude?: number;
-    longitude?: number;
-    creatorName: string;
-    creatorImage: string;
-    createdAt: string;
-    location: string;
-    likes: number;
-    comments: number;
-    categories: string[];
-    images: string[];
-    commentsCount: number;
-    currentUserProfile: boolean;
-    // Add these
-    upvoteCount: number;
-    downvoteCount: number;
-    isUserUpvote: boolean;
-    isUserDownvote: boolean;
-    isSaved: boolean;
-}
+import { News } from "../helpers/types";
 
 
-
-const NewsPost = ({ news, onHide, fullDescription }: { news: News; fullDescription: boolean; onHide: (id: string) => void }) => {
+const NewsPost = ({ news, onHide, fullDescription, currentLoginUsername }: { news: News, currentLoginUsername: string, fullDescription: boolean; onHide: (id: string) => void }) => {
     const [distance, setDistance] = useState<string | null>(null);
 
     console.log("📰 News Post Data:", news);
@@ -82,12 +58,12 @@ const NewsPost = ({ news, onHide, fullDescription }: { news: News; fullDescripti
                 {/* Header */}
                 <div className="flex justify-between items-center px-2">
                     <div className="flex items-start gap-2">
-                        <Link href={"/" + news.creatorName} target="_blank" className="mt-1 shrink-0 w-9 h-9">
+                        <Link href={"/" + news.creatorName} className="mt-1 shrink-0 w-9 h-9">
                             <Image src={news.creatorImage} alt="Profile" width={40} height={40} priority className="rounded-full w-9 h-9 aspect-square" />
                         </Link>
                         <div>
                             <div className="flex items-center gap-2">
-                                <Link href={"/" + news.creatorName} target="_blank"><span className="font-bold">{news.creatorName}</span></Link>
+                                <Link href={"/" + news.creatorName}><span className="font-bold">{news.creatorName}</span></Link>
                                 <span className="text-gray-500 text-sm">-</span>
                                 <span className="text-gray-500 text-xs">{formatTimeAgo(news.createdAt)}</span>
                             </div>
@@ -141,7 +117,7 @@ const NewsPost = ({ news, onHide, fullDescription }: { news: News; fullDescripti
                                             <LoaderLink href={"/" + news.creatorName} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer text-gray-700 hover:bg-gray-100 dark:text-gray-300 border-2 rounded-lg bg-gray-100 dark:bg-neutral-800">
                                                 <Image src={news.creatorImage} alt="Profile" width={40} height={40} className="rounded-full size-5" priority /> {t("viewProfile")}
                                             </LoaderLink>
-                                                <LoaderLink href={`/pages/others/report_an_issue/${news._id}`} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer text-gray-700 hover:bg-gray-100 dark:text-gray-300 border-2 rounded-lg bg-gray-100 dark:bg-neutral-800">
+                                            <LoaderLink href={`/pages/others/report_an_issue/${news._id}`} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer text-gray-700 hover:bg-gray-100 dark:text-gray-300 border-2 rounded-lg bg-gray-100 dark:bg-neutral-800">
                                                 <TbReport className="size-6" /> {t("report")}
                                             </LoaderLink>
                                         </>
@@ -182,13 +158,13 @@ const NewsPost = ({ news, onHide, fullDescription }: { news: News; fullDescripti
                             <DrawerContent className={"bg-white dark:bg-neutral-900 h-screen data-[vaul-drawer-direction=bottom]:max-h-[90vh]"} aria-describedby={undefined}>
                                 <DrawerHeader className="p-4 overflow-scroll">
                                     <DrawerTitle className="text-lg font-semibold mt-0 mb-5 text-start">{t("comments")}</DrawerTitle>
-                                    <Comment news_id={String(news._id)} />
+                                    <Comment news_id={String(news._id)} topComments={news.topComments} totalComments={news.commentsCount} currentLoginUsername={currentLoginUsername} />
                                 </DrawerHeader>
                             </DrawerContent>
                         </Drawer>
 
                         {/* Share Button */}
-                        <ShareButton news={news} />
+                        <ShareButton ShareProps={news} />
                     </div>
 
                     {/* Save Button */}

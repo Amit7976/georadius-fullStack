@@ -1,5 +1,4 @@
 "use client"
-
 import { useState, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Swiper as SwiperType } from "swiper"; // ✅ Import Swiper type
@@ -7,11 +6,7 @@ import { Pagination } from "swiper/modules";
 import Image from "next/image";
 import "swiper/css";
 import "swiper/css/pagination";
-
-interface ImageSliderProps {
-    images: string[];
-    height?: number;
-}
+import { ImageSliderProps } from "../helpers/types";
 
 const ImageSlider: React.FC<ImageSliderProps> = ({ images, height }) => {
     const [currentSlide, setCurrentSlide] = useState(1);

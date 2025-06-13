@@ -12,6 +12,7 @@ import ImageUploader from "./components/ImageUploader";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { t } from "@/src/helpers/i18n";
+import { FormValues } from "@/src/helpers/types";
 
 // ✅ Zod Validation Schema with Debugging
 const formSchema = z.object({
@@ -25,15 +26,6 @@ const formSchema = z.object({
 });
 
 
-export interface FormValues {
-    title: string;
-    description: string;
-    location: string;
-    latitude: number;
-    longitude: number;
-    categories: string[];
-    images?: File[];
-}
 
 export default function MainContent() {
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);

@@ -29,6 +29,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.6.1",
+    "idb-keyval": "^6.2.2",
     "jsonwebtoken": "^9.0.2",
     "locomotive-scroll": "^4.1.4",
     "lodash.debounce": "^4.0.8",

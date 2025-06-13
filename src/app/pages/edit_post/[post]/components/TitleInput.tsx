@@ -2,8 +2,8 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { UseFormRegister, FieldErrors } from "react-hook-form";
-import { FormValues } from "../MainContent";
 import { t } from "@/src/helpers/i18n";
+import { FormValues } from "@/src/helpers/types";
 
 interface TitleInputProps {
     register: UseFormRegister<FormValues>;

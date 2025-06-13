@@ -22,7 +22,7 @@ const MainContent = () => {
 
             <div className='pt-4 px-5'>
                 <h2 className='text-lg font-semibold mb-2'>{t("accountSettings")}</h2>
-                <LoaderLink href={"updateprofile"} className="flex w-full justify-between items-center gap-5 active:scale-95 duration-300 cursor-pointer">
+                <LoaderLink href={"/pages/onboarding/updateprofile"} className="flex w-full justify-between items-center gap-5 active:scale-95 duration-300 cursor-pointer">
                     <div className="flex gap-3 items-center py-5">
                         <FaRegUserCircle className='text-3xl shrink-0' />
                         <div className="text-start overflow-hidden">
@@ -48,15 +48,15 @@ const MainContent = () => {
             <div className='pt-4 px-5'>
                 <h2 className='text-lg font-semibold mb-2'>{t("appSettings")}</h2>
 
-               <Language/>
-                <Notification/>
-                <Display/>
-                <Radius/>
+                <Language />
+                <Notification />
+                <Display />
+                <Radius />
             </div>
 
             <div className='pt-4 px-5'>
                 <h2 className='text-lg font-semibold mb-2'>{t("support")}</h2>
-                
+
                 <LoaderLink href={"f&q"} className="flex w-full justify-between items-center gap-5 active:scale-95 duration-300 cursor-pointer">
                     <div className="flex gap-3 items-center py-5">
                         <SlQuestion className='text-3xl shrink-0' />

@@ -1,105 +1,120 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/src/auth";
+import mongoose from "mongoose";
 import { UserProfile } from "@/src/models/UserProfileModel";
+import { Post } from "@/src/models/postModel";
+import { Comment } from "@/src/models/commentModel";
+import { auth } from "@/src/auth";
 
 export async function POST(req: Request) {
-  console.log("====================================");
-  console.log("======= Fetch User Profile ========");
-  console.log("====================================");
-
-  console.log("🔹 Incoming request to fetch user profile...");
-
   try {
-    const session = await auth();
-    console.log("🔹 Session Data:", session);
+    console.log("====================================");
+    console.log("===== Fetch Posts by creatorName ===");
+    console.log("====================================");
 
-    if (!session?.user?.id) {
-      console.error("❌ No session or user ID found.");
-      return NextResponse.json(
-        { error: "User is not authenticated" },
-        { status: 401 }
-      );
-    }
+    const session = await auth();
+    const userId = session?.user?.id;
+    const sessionUsername = session?.user?.username;
+    if (!userId)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { username } = await req.json();
-    console.log("🔹 Username received:", username);
-
-    if (!username) {
-      console.error("❌ Username is missing in request.");
+    if (!username)
       return NextResponse.json(
         { error: "Username is required" },
         { status: 400 }
       );
-    }
 
-    console.log(`🔹 Searching for user: ${username}...`);
-    const userProfile = await UserProfile.findOne(
+    // ✅ Get user profile (excluding username from DB, we’ll inject it manually)
+    const profileData = await UserProfile.findOne(
       { username },
-      { fullname: 1, profileImage: 1, bio: 1, location: 1, userId: 1 }
-    );
+      {
+        fullname: 1,
+        profileImage: 1,
+        bio: 1,
+        location: 1,
+      }
+    ).lean();
 
-    if (!userProfile) {
-      console.warn("⚠️ No user found in database.");
-      return NextResponse.json({ error: "No user found" }, { status: 404 });
+    if (!profileData) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    console.log("✅ User profile found:", userProfile);
+    // ✅ Add username manually to user profile
+    const userProfile = {
+      ...profileData,
+      username,
+      currentUserProfile: username === sessionUsername,
+    };
 
-    const currentUserProfile =
-      userProfile.userId.toString() === session.user.id.toString();
+    // ✅ Aggregate posts with only counts, no full arrays
+    const posts = await Post.aggregate([
+      { $match: { creatorName: username } },
+      { $sort: { createdAt: -1 } },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          userId: 1,
+          description: 1,
+          location: 1,
+          longitude: 1,
+          latitude: 1,
+          images: 1,
+          creatorImage: 1, // we'll add creatorName manually
+          share: 1,
+          categories: 1,
+          createdAt: 1,
+          upvoteCount: { $size: "$upvote" },
+          downvoteCount: { $size: "$downvote" },
+          commentsCount: { $size: "$comments" },
+          isUserUpvote: { $in: [userId, "$upvote"] },
+          isUserDownvote: { $in: [userId, "$downvote"] },
+        },
+      },
+    ]);
 
-    return NextResponse.json({
-      fullname: userProfile.fullname,
-      profileImage: userProfile.profileImage,
-      bio: userProfile.bio,
-      location: userProfile.location,
-      currentUserProfile,
-    });
-  } catch (error) {
-    console.error("❌ Internal Server Error:", error);
+    // ✅ Add top comments & creatorName
+    const finalPosts = [];
+
+    for (const post of posts) {
+      const topComments = await Comment.aggregate([
+        { $match: { postId: post._id } },
+        { $addFields: { likesCount: { $size: "$likes" } } },
+        { $sort: { likesCount: -1 } },
+        { $limit: 10 },
+        {
+          $project: {
+            _id: 1,
+            comment: 1,
+            username: 1,
+            parentCommentId: 1,
+            replyingToUsername: 1,
+            profileImage: 1,
+            updatedAt: 1,
+            likesCount: 1,
+          },
+        },
+      ]);
+
+      finalPosts.push({
+        ...post,
+        creatorName: username,
+        currentUserProfile: post.userId?.toString() === userId,
+        topComments,
+      });
+    }
+    
     return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
+      {
+        message: "Posts fetched successfully",
+        user: userProfile,
+        posts: finalPosts,
+        currentLoginUsername: session?.user.username,
+      },
+      { status: 200 }
     );
-  }
-}
-
-export async function GET() {
-  console.log("====================================");
-  console.log("======= Get Current User ========");
-  console.log("====================================");
-
-  console.log("🔹 Incoming GET request to fetch current user...");
-
-  try {
-    console.log("[STEP 1] Authenticating user...");
-    const session = await auth();
-    const userId = session?.user?.id;
-
-    if (!userId) {
-      console.error("[ERROR] User ID is missing!");
-      return new NextResponse(null, { status: 204 });
-    }
-
-    console.log("[SUCCESS] User authenticated. User ID:", userId);
-
-    console.log(`🔹 Fetching profile for current user with ID: ${userId}`);
-
-    const userProfile = await UserProfile.findOne({ userId }, { username: 1 });
-
-    if (!userProfile) {
-      console.warn("⚠️ No user found in database.");
-      return NextResponse.json({ error: "No user found" }, { status: 404 });
-    }
-
-    console.log("✅ Current user profile fetched:", userProfile);
-
-    return NextResponse.json({ username: userProfile.username });
   } catch (error) {
-    console.error("❌ Internal Server Error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    console.error("❌ Server error:", error);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

@@ -14,15 +14,9 @@ import { t } from "@/src/helpers/i18n";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useGeolocation } from "../../hooks/useGeolocation";
+import { Post } from "@/src/helpers/types";
 
-type Post = {
-    _id: string;
-    title: string;
-    location: string;
-    description: string;
-    updatedAt: string;
-    images: string[];
-};
+
 
 export default function CategoryPage() {
     const { name } = useParams();

@@ -1,108 +1,27 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { IoSettingsOutline } from "react-icons/io5";
-import { FaArrowLeftLong } from "react-icons/fa6";
-import Image from "next/image";
+import BackButton from "@/src/components/BackButton";
 import NewsPost from "@/src/components/NewsPost";
 import { LoaderLink } from "@/src/components/loaderLinks";
 import { t } from "@/src/helpers/i18n";
+import { MainContentProps } from "@/src/helpers/types";
+import Image from "next/image";
+import { IoSettingsOutline } from "react-icons/io5";
+import ActionButtons from "./ActionButtons";
 
-interface News {
-    _id: string;
-    title: string;
-    description: string;
-    latitude?: number;
-    longitude?: number;
-    creatorName: string;
-    creatorImage: string;
-    createdAt: string;
-    location: string;
-    likes: number;
-    comments: number;
-    categories: string[];
-    images: string[];
-    commentsCount: number;
-    currentUserProfile: boolean;
-    // Add these
-    upvoteCount: number;
-    downvoteCount: number;
-    isUserUpvote: boolean;
-    isUserDownvote: boolean;
-    isSaved: boolean;
-}
-
-
-
-interface UserData {
-    fullname: string;
-    profileImage: string;
-    bio: string;
-    location: string;
-    currentUserProfile: boolean;
-}
-
-interface MainContentProps {
-    username: string;
-    userData: UserData;
-    userPosts: {
-        posts: News[];
-    };
-}
 
 export default function MainContent({
     username,
     userData,
     userPosts,
+    currentLoginUsername,
+    handleHide
 }: MainContentProps) {
-    const router = useRouter();
-    const [newsData, setNewsData] = useState<News[]>([]);
-
-    // Filter out hidden posts when userPosts.posts changes
-    useEffect(() => {
-        const hiddenPosts: string[] = JSON.parse(localStorage.getItem("hideNews") || "[]");
-        const postsArray = Array.isArray(userPosts.posts) ? userPosts.posts : [];
-        const filtered = postsArray.filter((post) => !hiddenPosts.includes(post._id));
-        setNewsData(filtered);
-    }, [userPosts.posts]);
-
-    const handleHide = (postId: string) => {
-        setNewsData((prev) => prev.filter((post) => post._id !== postId));
-
-        const hiddenPosts: string[] = JSON.parse(localStorage.getItem("hideNews") || "[]");
-        if (!hiddenPosts.includes(postId)) {
-            hiddenPosts.push(postId);
-            localStorage.setItem("hideNews", JSON.stringify(hiddenPosts));
-        }
-    };
-
-    const handleShare = () => {
-        const url = `${window.location.origin}/${username}`;
-        if (navigator.share) {
-            navigator
-                .share({
-                    title: t("checkProfile"),
-                    text: t("interestProfile"),
-                    url,
-                })
-                .catch((err) => console.error("Share failed:", err));
-        } else {
-            alert(t("shareNotSupported"));
-        }
-    };
-
     return (
         <>
             {/* Header */}
             <div className="flex items-center justify-between py-5 p-4">
-                <div className="flex items-center gap-4 relative">
+                <div className="flex items-center gap-0 relative">
                     {!userData.currentUserProfile && (
-                        <FaArrowLeftLong
-                            onClick={() => router.back()}
-                            className="text-lg w-5 cursor-pointer mt-1"
-                        />
+                        <BackButton  classname="relative pr-5 pl-0"/>
                     )}
                     <h2 className="text-lg font-bold">{username}</h2>
                 </div>
@@ -132,44 +51,27 @@ export default function MainContent({
                             __html: userData.bio.replace(/\r?\n/g, "<br />"),
                         }}
                     />
-                    <p className="text-gray-400 dark:text-gray-600 font-semibold text-xs mt-3">{userData.location}</p>
+                    <p className="text-gray-500 font-semibold text-xs mt-3">{userData.location}</p>
                 </div>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-row justify-between gap-3 px-3">
-                {userData.currentUserProfile && (
-                    <Button
-                        variant="primary"
-                        onClick={() => router.push("/pages/others/updateprofile")}
-                        className="bg-gray-200 dark:bg-neutral-800 w-full flex-1 h-10 text-gray-600 dark:text-gray-300 font-semibold text-sm"
-                    >
-                        {t("updateProfile")}
-                    </Button>
-                )}
-
-                <Button
-                    variant="primary"
-                    onClick={handleShare}
-                    className="bg-gray-200 dark:bg-neutral-800 w-full flex-1 h-10 text-gray-600 dark:text-gray-300 font-semibold text-sm"
-                >
-                    {t("shareProfile")}
-                </Button>
-            </div>
+            <ActionButtons currentUserProfile={userData.currentUserProfile} username={username}/>
 
             {/* News Posts */}
             <div className="py-6">
-                {newsData.length > 0 ? (
-                    newsData.map((news) => (
+                {userPosts.length > 0 ? (
+                    userPosts.map((news) => (
                         <NewsPost
                             news={news}
+                            currentLoginUsername={currentLoginUsername}
                             key={news._id}
                             onHide={() => handleHide(news._id)}
                             fullDescription={false}
                         />
                     ))
                 ) : (
-                        <p className="text-center text-gray-500">{t("noPosts")}</p>
+                    <p className="text-center text-gray-500">{t("noPosts")}</p>
                 )}
             </div>
         </>

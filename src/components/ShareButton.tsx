@@ -2,21 +2,13 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Send } from "lucide-react";
 import { formatNumber } from "../helpers/formatNumber";
+import { ShareButtonProps } from "../helpers/types";
 
-interface News {
-    _id: string;
-    title: string;
-    description: string;
-    share?: number;
-}
 
-interface ShareButtonProps {
-    news: News;
-}
 
-const ShareButton = ({ news }: ShareButtonProps) => {
+const ShareButton = ({ ShareProps }: ShareButtonProps) => {
     const [loading, setLoading] = useState<boolean>(false);
-    const [shareCount, setShareCount] = useState<number>(news.share || 0);
+    const [shareCount, setShareCount] = useState<number>(ShareProps.share || 0);
 
 
     const handleShare = async (): Promise<void> => {
@@ -26,9 +18,9 @@ const ShareButton = ({ news }: ShareButtonProps) => {
         if (navigator.share) {
             try {
                 await navigator.share({
-                    title: news.title,
-                    text: news.description,
-                    url: `${window.location.origin}/news/${news._id}`
+                    title: ShareProps.title,
+                    text: ShareProps.description,
+                    url: `${window.location.origin}/news/${ShareProps._id}`
                 });
 
                 // 🔹 If successfully shared, update the database
@@ -39,7 +31,7 @@ const ShareButton = ({ news }: ShareButtonProps) => {
         } else {
             // 🚨 Fallback: Copy Link to Clipboard (for unsupported browsers)
             try {
-                await navigator.clipboard.writeText(`${window.location.origin}/news/${news._id}`);
+                await navigator.clipboard.writeText(`${window.location.origin}/news/${ShareProps._id}`);
                 await updateShareCount(); // ✅ Update share count after copying link
             } catch (error) {
                 console.error("Clipboard error:", error);
@@ -54,7 +46,7 @@ const ShareButton = ({ news }: ShareButtonProps) => {
             const response = await fetch("/api/post/share", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ postId: news._id }),
+                body: JSON.stringify({ postId: ShareProps._id }),
             });
 
             if (response.ok) {

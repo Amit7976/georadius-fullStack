@@ -1,88 +1,66 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import interestsList from "@/public/json/interestList.json";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 
 function MainContent() {
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const checkUserInterest = async () => {
+    const controller = new AbortController();
+    const fetchInterests = async () => {
       try {
-        // 🔹 Fetch only interest array
-        console.log("====================================");
-        console.log("Fetching user interests...");
-        console.log("====================================");
-
-        const userProfileRes = await fetch(`/api/userProfile/interest`);
-        if (!userProfileRes.ok) throw new Error("Failed to fetch user interests");
-
-        const { interest } = await userProfileRes.json();
-        console.log("====================================");
-        console.log("User Interests:", interest);
-        console.log("====================================");
-
-
-        setSelectedInterests(Array.isArray(interest) ? interest : []);
-
+        const res = await fetch(`/api/userProfile/interest`, { signal: controller.signal });
+        if (!res.ok) throw new Error("Failed to fetch user interests");
+        const { interest } = await res.json();
+        if (Array.isArray(interest)) {
+          setSelectedInterests(interest);
+        }
       } catch (error) {
-        console.log("====================================");
-        console.error("Error fetching user data:", error);
-        console.log("====================================");
+        console.error("Failed to fetch interests: ", error);
       } finally {
         setLoading(false);
       }
     };
 
-    checkUserInterest();
+    fetchInterests();
+
+    return () => controller.abort(); // clean up fetch on unmount
   }, []);
 
-
-  const toggleInterest = (interest: string) => {
+  const toggleInterest = useCallback((interest: string) => {
     setSelectedInterests((prev) =>
       prev.includes(interest)
         ? prev.filter((i) => i !== interest)
         : [...prev, interest]
     );
-  };
+  }, []);
 
   const handleSaveInterests = async () => {
-    if (selectedInterests.length < 3) return;
+    if (selectedInterests.length < 3 || loading) return;
 
     setLoading(true);
     try {
-      const response = await fetch("/api/userProfile/interest", {
+      const res = await fetch("/api/userProfile/interest", {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ interests: selectedInterests }),
       });
 
-
-      if (response.ok) {
-        console.log("====================================");
-        console.log("Interests saved successfully:");
-        console.log("====================================");
-
-        window.location.replace("/")
+      if (res.ok) {
+        window.location.replace("/");
       } else {
-        console.log("====================================");
-        console.error("Failed to save interests: ", response.status);
-        console.log("====================================");
+        console.error("Failed to save interests: ", res.status);
       }
-    } catch (error) {
-      console.log("====================================");
-      console.error("Error saving interests:", error);
-      console.log("====================================");
+    } catch (err) {
+      console.error("Error saving interests:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  // Categorizing interests
-  const categorizedInterests = [
+  const categorizedInterests = useMemo(() => [
     {
       title: "Recommended",
       data: interestsList.filter((item) => item.recommendation),
@@ -91,7 +69,9 @@ function MainContent() {
       title: "All Topics",
       data: interestsList.filter((item) => !item.recommendation),
     },
-  ];
+  ], []);
+
+  const isDisabled = selectedInterests.length < 3 || loading;
 
   return (
     <>
@@ -109,20 +89,21 @@ function MainContent() {
               {section.title}
             </p>
             <div className="grid grid-cols-3 gap-2">
-              {section.data.map((item, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => toggleInterest(item.name)}
-                  className={`px-4 py-6 rounded-xl text-medium text-gray-500 ${selectedInterests.includes(item.name)
-                    ? "bg-green-200"
-                    : "bg-gray-50"
-                    }`}
-                >
-                  <p className="text-4xl mb-6">{item.icon}</p>
-                  <p className="text-sm font-semibold">{item.name}</p>
-                </button>
-              ))}
+              {section.data.map((item, idx) => {
+                const isSelected = selectedInterests.includes(item.name);
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => toggleInterest(item.name)}
+                    className={`px-4 py-6 rounded-xl text-medium text-gray-500 ${isSelected ? "bg-green-200 dark:bg-green-400 dark:text-white" : "bg-gray-50 dark:bg-neutral-800"
+                      }`}
+                  >
+                    <p className="text-4xl mb-6">{item.icon}</p>
+                    <p className="text-sm font-semibold">{item.name}</p>
+                  </button>
+                );
+              })}
             </div>
           </div>
         ))}
@@ -131,17 +112,17 @@ function MainContent() {
       <div className="p-5 pt-14 space-y-6">
         <Button
           onClick={handleSaveInterests}
-          disabled={selectedInterests.length < 3 || loading}
-          className={`w-full px-20 h-16 text-white text-xl font-extrabold rounded-full flex items-center justify-center gap-2
-          ${selectedInterests.length < 3 ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 active:bg-green-500"}`}
+          disabled={isDisabled}
+          className={`w-full px-20 h-16 text-white text-xl font-extrabold rounded-full flex items-center justify-center gap-2 ${isDisabled ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 active:bg-green-500"
+            }`}
         >
           {loading ? "Saving..." : "Build my Feed"}
         </Button>
 
         <div className="flex items-center justify-center fixed top-3 right-3">
           <Button
-            variant={'ghost'}
-            size={'sm'}
+            variant="ghost"
+            size="sm"
             className="text-black text-sm font-semibold bg-gray-100 px-7 py-1 rounded-full duration-300 cursor-pointer"
             onClick={() => window.location.replace("/")}
           >

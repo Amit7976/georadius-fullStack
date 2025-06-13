@@ -1,162 +1,179 @@
 import { auth } from "@/src/auth";
 import { connectToDatabase } from "@/src/lib/utils";
+import { Comment } from "@/src/models/commentModel";
 import { Post } from "@/src/models/postModel";
 import { UserProfile } from "@/src/models/UserProfileModel";
+import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
+
 interface UserProfileType {
   saved: string[];
 }
-export async function GET(req: NextRequest) {
 
-  console.log("====================================");
-  console.log("========= Category Posts API =========");
-  console.log("====================================");
-
-  console.log("📌 [START] Nearby Posts API");
+export async function POST(req: NextRequest) {
+  console.log("========= Optimized Category Posts API =========");
 
   try {
-
-    console.log("➡️ Connecting to DB...");
     await connectToDatabase();
-
 
     const session = await auth();
     const userId = session?.user?.id;
-    console.log("🔐 Authenticated User ID:", userId);
 
-    
-    const { searchParams } = new URL(req.url);
-    const category = searchParams.get("category") || "All";
-    const lat = parseFloat(searchParams.get("lat") || "");
-    const lng = parseFloat(searchParams.get("lng") || "");
-    const range = parseInt(searchParams.get("range") || "50");
-    const limit = parseInt(searchParams.get("limit") || "5");
+    const body = await req.json();
+    const {
+      category = "All",
+      lat,
+      lng,
+      range = 50,
+      limit = 5,
+      hiddenPostIds = [],
+    } = body;
 
-
-    if (isNaN(lat) || isNaN(lng)) {
-      console.log("⚠️ Invalid latitude or longitude provided");
+    if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
       return NextResponse.json(
         { error: "Latitude and Longitude are required" },
         { status: 400 }
       );
     }
 
+    const interestTags =
+      req.cookies.get("user_interest")?.value &&
+      JSON.parse(req.cookies.get("user_interest")!.value);
+
     const userProfile = await UserProfile.findOne(
-          { userId },
-          { saved: 1 }
-        ).lean<UserProfileType>();
-    
-        console.log("📌 UserProfile Data:", userProfile);
-    
-        if (!userProfile) {
-          console.error("[ERROR] User not found");
-          return NextResponse.json({ error: "User not found" }, { status: 404 });
-        }
+      { userId },
+      { saved: 1 }
+    ).lean<UserProfileType>();
 
-
-    console.log("📍 Coordinates:", { lat, lng });
-    console.log("📏 Range:", range);
+    if (!userProfile) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
 
     
-    console.log("➡️ Fetching posts...");
-  const posts = await Post.aggregate([
-    {
-      $match: {
-        $expr: {
-          $and: [
-            {
-              $lte: [
-                {
-                  $sqrt: {
-                    $add: [
-                      { $pow: [{ $subtract: ["$latitude", lat] }, 2] },
-                      { $pow: [{ $subtract: ["$longitude", lng] }, 2] },
-                    ],
-                  },
-                },
-                range / 100,
-              ],
-            },
-            // ✅ Category filter (optional if not "All")
-            ...(category !== "All"
-              ? [
+    const hiddenObjectIds = hiddenPostIds.map(
+      (id: string) => new mongoose.Types.ObjectId(id)
+    );
+
+    
+    const posts = await Post.aggregate([
+      {
+        $match: {
+          _id: { $nin: hiddenObjectIds },
+          $expr: {
+            $and: [
+              {
+                $lte: [
                   {
-                    $in: [category, "$categories"],
+                    $sqrt: {
+                      $add: [
+                        { $pow: [{ $subtract: ["$latitude", lat] }, 2] },
+                        { $pow: [{ $subtract: ["$longitude", lng] }, 2] },
+                      ],
+                    },
                   },
-                ]
-              : []),
-          ],
+                  range / 100,
+                ],
+              },
+              ...(category !== "All"
+                ? [{ $in: [category, "$categories"] }]
+                : []),
+            ],
+          },
         },
       },
-    },
-    {
-      $addFields: {
-        upvoteCount: { $size: "$upvote" },
-        downvoteCount: { $size: "$downvote" },
-        voteScore: {
-          $subtract: [{ $size: "$upvote" }, { $size: "$downvote" }],
+      {
+        $addFields: {
+          interestMatchScore: {
+            $size: {
+              $setIntersection: ["$categories", interestTags || []],
+            },
+          },
+          upvoteCount: { $size: "$upvote" },
+          downvoteCount: { $size: "$downvote" },
+          voteScore: {
+            $subtract: [{ $size: "$upvote" }, { $size: "$downvote" }],
+          },
         },
       },
-    },
-    {
-      $sort: {
-        voteScore: -1,
+      {
+        $sort: {
+          interestMatchScore: -1,
+          voteScore: -1,
+          createdAt: -1,
+        },
       },
-    },
-    {
-      $project: {
-        _id: 1,
-        title: 1,
-        userId: 1,
-        description: 1,
-        location: 1,
-        longitude: 1,
-        latitude: 1,
-        images: 1,
-        creatorName: 1,
-        creatorImage: 1,
-        upvoteCount: 1,
-        downvoteCount: 1,
-        share: 1,
-        categories: 1,
-        commentsCount: { $size: "$comments" },
-        createdAt: 1,
-        isUserUpvote: { $in: [userId, "$upvote"] },
-        isUserDownvote: { $in: [userId, "$downvote"] },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          userId: 1,
+          description: 1,
+          location: 1,
+          longitude: 1,
+          latitude: 1,
+          images: 1,
+          creatorName: 1,
+          creatorImage: 1,
+          upvoteCount: 1,
+          downvoteCount: 1,
+          share: 1,
+          categories: 1,
+          commentsCount: { $size: "$comments" },
+          createdAt: 1,
+          isUserUpvote: { $in: [userId, "$upvote"] },
+          isUserDownvote: { $in: [userId, "$downvote"] },
+        },
       },
-    },
-    {
-      $limit: limit,
-    },
-  ]);
+      {
+        $limit: limit,
+      },
+    ]);
 
+    const finalPosts = [];
 
+    for (const post of posts) {
+      const topComments = await Comment.aggregate([
+        { $match: { postId: post._id } },
+        { $addFields: { likesCount: { $size: "$likes" } } },
+        { $sort: { likesCount: -1 } },
+        { $limit: 10 },
+        {
+          $project: {
+            _id: 1,
+            comment: 1,
+            username: 1,
+            parentCommentId: 1,
+            replyingToUsername: 1,
+            profileImage: 1,
+            updatedAt: 1,
+            likesCount: 1,
+          },
+        },
+      ]);
 
+      finalPosts.push({
+        ...post,
+        currentUserProfile: post.userId?.toString() === userId,
+        isSaved: userProfile.saved.includes(post._id.toString()),
+        topComments,
+      });
+    }
 
-    console.log("📝 Posts fetched:", posts.length);
-
-
-   const enrichedPosts = posts.map((post) => ({
-     ...post,
-     currentUserProfile: userId && post.userId?.toString() === userId,
-     isSaved: userProfile.saved.includes(post._id.toString()),
-   }));
-
-
-
-    console.log("🔚 [END] Nearby Posts API - Returning posts");
-
-    return NextResponse.json(enrichedPosts);
-
+    return NextResponse.json(
+      {
+        message: "Posts fetched successfully",
+        posts: finalPosts,
+        currentLoginUsername: session?.user.username,
+      },
+      { status: 200 }
+    );
   } catch (err) {
-
     console.error("❌ Nearby Posts API Error:", err);
     return NextResponse.json(
       { error: "Something went wrong" },
       { status: 500 }
     );
-
   }
 }

@@ -4,31 +4,7 @@ import { useEffect, useState } from "react";
 import { use } from "react"; // <-- for unwrapping the `params` Promise
 import NewsPost from "@/src/components/NewsPost";
 import BackButton from "@/src/components/BackButton";
-
-
-interface News {
-    _id: string;
-    title: string;
-    description: string;
-    latitude?: number;
-    longitude?: number;
-    creatorName: string;
-    creatorImage: string;
-    createdAt: string;
-    location: string;
-    likes: number;
-    comments: number;
-    categories: string[];
-    images: string[];
-    commentsCount: number;
-    currentUserProfile: boolean;
-    // Add these
-    upvoteCount: number;
-    downvoteCount: number;
-    isUserUpvote: boolean;
-    isUserDownvote: boolean;
-    isSaved: boolean;
-}
+import { News } from "@/src/helpers/types";
 
 
 export default function SinglePostPage({ params }: { params: Promise<{ post: string }> }) {

@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import interestsList from "@/public/json/interestList.json";
 import { useEffect } from "react";
 import { UseFormSetValue, FieldErrors } from "react-hook-form";
-import type { FormValues } from "../MainContent";
 import { t } from "@/src/helpers/i18n";
+import { FormValues } from "@/src/helpers/types";
 
 interface CategorySelectorProps {
     selectedCategories: string[];
