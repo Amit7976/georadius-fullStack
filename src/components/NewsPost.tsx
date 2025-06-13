@@ -31,7 +31,7 @@ const NewsPost = ({ news, onHide, fullDescription, currentLoginUsername }: { new
     const [comments, setComments] = useState<CommentType[]>([...news.topComments]);
     const [hasMore, setHasMore] = useState(false);
 
-    console.log("📰 News Post Data:", news);
+    // console.log("📰 News Post Data:", news);
 
     const [showAddress, setShowAddress] = useState(false);
     const [showDescription, setShowDescription] = useState(fullDescription);
@@ -55,8 +55,8 @@ const NewsPost = ({ news, onHide, fullDescription, currentLoginUsername }: { new
         router.push(`/pages/edit_post/${news._id}`);
     };
 
-;
-   
+    ;
+
     useEffect(() => {
         const onHashChange = () => {
             if (!window.location.hash && openDrawerId) {

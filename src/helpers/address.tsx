@@ -13,7 +13,7 @@ const Address: React.FC<AddressProps> = ({ location }) => {
 
   // Extract latitude and longitude from the location string
   useEffect(() => {
-    console.log('Received location prop:', location);
+    // console.log('Received location prop:', location);
 
     const parseLocation = () => {
       const regex = /Lat:\s*(-?\d+\.\d+),\s*Lng:\s*(-?\d+\.\d+)/;
@@ -21,12 +21,12 @@ const Address: React.FC<AddressProps> = ({ location }) => {
       if (match) {
         const lat = parseFloat(match[1]);
         const lng = parseFloat(match[2]);
-        console.log('Extracted Latitude:', lat);
-        console.log('Extracted Longitude:', lng);
+        // console.log('Extracted Latitude:', lat);
+        // console.log('Extracted Longitude:', lng);
         setLatitude(lat);
         setLongitude(lng);
       } else {
-        console.log('Failed to extract latitude and longitude');
+        // console.log('Failed to extract latitude and longitude');
       }
     };
 
@@ -37,16 +37,16 @@ const Address: React.FC<AddressProps> = ({ location }) => {
 
   useEffect(() => {
     const fetchAddress = async () => {
-      console.log('Extracted Latitude:', latitude);
-      console.log('Extracted Longitude:', longitude);
+      // console.log('Extracted Latitude:', latitude);
+      // console.log('Extracted Longitude:', longitude);
       if (latitude && longitude) {
-        console.log('====================================');
-        console.log("running");
-        console.log('====================================');
+        // console.log('====================================');
+        // console.log("running");
+        // console.log('====================================');
       }
       if (latitude && longitude) {
         const url = `https://api.olamaps.io/places/v1/reverse-geocode?latlng=${latitude},${longitude}&api_key=${API_KEY}`;
-        console.log('Fetching address from:', url);
+        // console.log('Fetching address from:', url);
 
         try {
           const response = await fetch(url, {
@@ -56,25 +56,25 @@ const Address: React.FC<AddressProps> = ({ location }) => {
             },
           });
 
-          console.log('API Response Status:', response.status);
+          // console.log('API Response Status:', response.status);
           const data = await response.json();
-          console.log('API Response Data:', data);
+          // console.log('API Response Data:', data);
 
           const name = data.results[0].formatted_address;
 
           if (name) {
             setAddress(name);
-            console.log('Extracted Address:', name);
+            // console.log('Extracted Address:', name);
           } else {
             setAddress('Address not found');
-            console.log('Address not found in API response');
+            // console.log('Address not found in API response');
           }
         } catch (error) {
           setAddress('Error fetching address');
           console.log('Error fetching address:', error);
         }
       } else {
-        console.log('Latitude or Longitude is null, skipping API call');
+        // console.log('Latitude or Longitude is null, skipping API call');
       }
     };
 

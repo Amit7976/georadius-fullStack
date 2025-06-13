@@ -6,9 +6,9 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    console.log("====================================");
-    console.log("===== Fetch Posts by creatorName ===");
-    console.log("====================================");
+    // console.log("====================================");
+    // console.log("===== Fetch Posts by creatorName ===");
+    // console.log("====================================");
 
     const session = await auth();
     const userId = session?.user?.id;
@@ -23,10 +23,10 @@ export async function POST(req: Request) {
         { status: 400 }
       );
 
-      interface ProfileData {
-        saved: string[];
-      }
-    
+    interface ProfileData {
+      saved: string[];
+    }
+
     // ✅ Get user profile (excluding username from DB, we’ll inject it manually)
     const profileData = (await UserProfile.findOne(
       { username },
@@ -106,7 +106,7 @@ export async function POST(req: Request) {
         topComments,
       });
     }
-    
+
     return NextResponse.json(
       {
         message: "Posts fetched successfully",

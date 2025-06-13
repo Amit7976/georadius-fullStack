@@ -6,9 +6,9 @@ import mongoose from "mongoose";
 import { connectToDatabase } from "@/src/lib/utils";
 
 export async function POST(req: Request) {
-  console.log("====================================");
-  console.log("======== Post Fetch Single =========");
-  console.log("====================================");
+  // console.log("====================================");
+  // console.log("======== Post Fetch Single =========");
+  // console.log("====================================");
 
   try {
     await connectToDatabase();
@@ -104,7 +104,6 @@ export async function POST(req: Request) {
         },
       },
     ]);
-    
 
     const post = postResult[0];
     if (!post) {

@@ -16,13 +16,13 @@ import { FormValues } from "@/src/helpers/types";
 
 // ✅ Zod Validation Schema with Debugging
 const formSchema = z.object({
-  title: z.string().min(3, t("titleTooShort")),
-  description: z.string().min(10, t("descriptionTooShort")),
-  location: z.string().min(10, t("locationRequired")),
-  latitude: z.number().min(1, t("latitudeRequired")),
-  longitude: z.number().min(1, t("longitudeRequired")),
-  categories: z.array(z.string()).min(1, t("categoryRequired")),
-  images: z.array(z.any()).max(3, t("maxImages")).optional(),
+    title: z.string().min(3, t("titleTooShort")),
+    description: z.string().min(10, t("descriptionTooShort")),
+    location: z.string().min(10, t("locationRequired")),
+    latitude: z.number().min(1, t("latitudeRequired")),
+    longitude: z.number().min(1, t("longitudeRequired")),
+    categories: z.array(z.string()).min(1, t("categoryRequired")),
+    images: z.array(z.any()).max(3, t("maxImages")).optional(),
 });
 
 
@@ -31,7 +31,7 @@ export default function MainContent() {
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [processing, setProcessing] = useState(false);
 
-    console.log("Component Rendered");
+    // console.log("Component Rendered");
 
     // ✅ Form Setup with Debugging
     const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<FormValues>({
@@ -40,7 +40,7 @@ export default function MainContent() {
     });
 
     useEffect(() => {
-        console.log("Current Errors:", errors);
+        // console.log("Current Errors:", errors);
     }, [errors]);
 
 
@@ -50,8 +50,8 @@ export default function MainContent() {
     // ✅ Handle Form Submission with Debugging
     const onSubmit = async (values: FormValues) => {
         setProcessing(true)
-        console.log("Form Submitted");
-        console.log("Submitted Data:", values);
+        // console.log("Form Submitted");
+        // console.log("Submitted Data:", values);
 
         try {
             // ✅ Create FormData for sending images
@@ -84,7 +84,7 @@ export default function MainContent() {
                 throw new Error(data.message || "Failed to upload");
             }
 
-            console.log("Upload Successful:", data);
+            // console.log("Upload Successful:", data);
 
             toast.success(t("uploadComplete"))
             // ✅ Reset Form After Successful Submission

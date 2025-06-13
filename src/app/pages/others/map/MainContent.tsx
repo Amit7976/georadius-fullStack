@@ -13,7 +13,7 @@ function MainContent() {
 
     const router = useRouter();
     useEffect(() => {
-        console.log("Checking location permissions...");
+        // console.log("Checking location permissions...");
         if (!navigator.geolocation) {
             return;
         }

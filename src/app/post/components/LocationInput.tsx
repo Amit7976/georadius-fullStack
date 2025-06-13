@@ -52,9 +52,9 @@ export default function LocationInput({
 
     // ✅ Fetch current location
     const handleGetLocation = useCallback(async () => {
-        console.log("Fetching current location...");
+        // console.log("Fetching current location...");
         const currentLocation = await getAddress();
-        console.log("Location fetched:", currentLocation);
+        // console.log("Location fetched:", currentLocation);
 
         setLocation(currentLocation);
         setInputValue(currentLocation);
@@ -72,7 +72,7 @@ export default function LocationInput({
     }, [setValue]);
 
     useEffect(() => {
-        console.log("Checking location permissions...");
+        // console.log("Checking location permissions...");
         if (!navigator.geolocation) {
             setError("Geolocation is not supported by your browser.");
             return;
@@ -89,12 +89,12 @@ export default function LocationInput({
 
     // ✅ Fetch coordinates for custom location
     const fetchCoordinatesForCustomLocation = async (customAddress: string) => {
-        console.log("Fetching coordinates for custom address:", customAddress);
+        // console.log("Fetching coordinates for custom address:", customAddress);
         const coordinates = await getCoordinates(customAddress);
         if (coordinates) {
             setLatitude(coordinates.latitude);
             setLongitude(coordinates.longitude);
-            console.log("📍 Coordinates:", coordinates);
+            // console.log("📍 Coordinates:", coordinates);
 
             setValue("location", customAddress);
             setValue("latitude", coordinates.latitude);
@@ -117,10 +117,10 @@ export default function LocationInput({
             )}&api_key=${API_KEY}`;
 
             try {
-                console.log("🔍 Fetching suggestions from:", url);
+                // console.log("🔍 Fetching suggestions from:", url);
                 const response = await fetch(url);
                 const data = await response.json();
-                console.log("📜 API Response Data:", data);
+                // console.log("📜 API Response Data:", data);
 
                 if (data.predictions) {
                     setSuggestions(
@@ -208,7 +208,7 @@ export default function LocationInput({
                                         setError(t("locationEmpty"));
                                         return;
                                     }
-                                    console.log("Saving custom location:", inputValue);
+                                    // console.log("Saving custom location:", inputValue);
                                     setLocation(inputValue);
                                     setCustomLocation(true);
                                     fetchCoordinatesForCustomLocation(inputValue);

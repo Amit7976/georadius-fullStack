@@ -47,11 +47,11 @@ export default function MainContent() {
 
     // Fetch existing profile data from API
     useEffect(() => {
-        console.log("Fetching existing profile data...");
+        // console.log("Fetching existing profile data...");
         fetch("/api/update/profile")
             .then((res) => res.json())
             .then((data) => {
-                console.log("Profile Data:", data);
+                // console.log("Profile Data:", data);
                 if (data.error) {
                     toast.error("Failed to fetch profile data");
                     return;
@@ -125,14 +125,14 @@ export default function MainContent() {
             formData.append("location", data.location); // Use the resolved address
             formData.append("bio", data.bio);
 
-            console.log("📤 Sending Form Data:", formData);
+            // console.log("📤 Sending Form Data:", formData);
 
             // **Check if user selected a new file**
             if (selectedFile) {
-                console.log("New profile image detected, appending...");
+                // console.log("New profile image detected, appending...");
                 formData.append("profileImage", selectedFile);
             } else {
-                console.log("Using existing image URL...");
+                // console.log("Using existing image URL...");
                 formData.append("profileImage", data.profileImage); // Send existing image path
             }
 
@@ -144,7 +144,7 @@ export default function MainContent() {
             const result: { error?: string } = await response.json();
             if (!response.ok) throw new Error(result.error || "Profile update failed");
 
-            console.log("✅ Profile updated successfully!", result);
+            // console.log("✅ Profile updated successfully!", result);
             toast.success(t("profileUpdateSuccess"));
 
             router.refresh();

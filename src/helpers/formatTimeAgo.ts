@@ -1,7 +1,7 @@
 export const formatTimeAgo = (publish_time: string) => {
-  console.log("====================================");
-  console.log("triggered formatTimeAgo with publish_time:", publish_time);
-  console.log("====================================");
+  // console.log("====================================");
+  // console.log("triggered formatTimeAgo with publish_time:", publish_time);
+  // console.log("====================================");
   const time = new Date(publish_time);
   const now = new Date();
   const diff = Math.floor((now.getTime() - time.getTime()) / 1000); // Difference in seconds

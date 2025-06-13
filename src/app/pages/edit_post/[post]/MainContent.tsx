@@ -82,7 +82,7 @@ export default function MainContent() {
 
 
     useEffect(() => {
-        console.log("Current Errors:", errors);
+        // console.log("Current Errors:", errors);
     }, [errors]);
 
     const onSubmit = async (values: FormValues) => {

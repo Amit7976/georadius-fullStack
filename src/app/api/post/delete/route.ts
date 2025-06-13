@@ -30,33 +30,33 @@ async function deleteCommentWithReplies(
 
 
 export async function DELETE(req: Request): Promise<NextResponse> {
-  console.log("====================================");
-  console.log("============ Delete API ============");
-  console.log("====================================");
-  console.log("🗑️ DELETE request received at /api/post/delete");
+  // console.log("====================================");
+  // console.log("============ Delete API ============");
+  // console.log("====================================");
+  // console.log("🗑️ DELETE request received at /api/post/delete");
 
   try {
-    console.log("🔗 Connecting to database...");
+    // console.log("🔗 Connecting to database...");
     await connectToDatabase();
 
     const session = await auth();
     const userId = session?.user?.id;
     if (!session || !userId) {
-      console.log("[ERROR] User authentication failed.");
+      // console.log("[ERROR] User authentication failed.");
       return NextResponse.json(
         { error: "User ID is required" },
         { status: 400 }
       );
     }
-    console.log(`[INFO] Authenticated user: ${userId}`);
+    // console.log(`[INFO] Authenticated user: ${userId}`);
 
     const body = await req.json();
     const postId = body.postId?.trim();
 
-    console.log(`[INFO] Received request to delete post: ${postId}`);
+    // console.log(`[INFO] Received request to delete post: ${postId}`);
 
     if (!postId || !mongoose.Types.ObjectId.isValid(postId)) {
-      console.log("[ERROR] Invalid post ID");
+      // console.log("[ERROR] Invalid post ID");
       return NextResponse.json({ error: "Invalid post ID" }, { status: 400 });
     }
 
@@ -68,16 +68,16 @@ export async function DELETE(req: Request): Promise<NextResponse> {
     });
 
     if (!post) {
-      console.log("[ERROR] Post not found.");
+      // console.log("[ERROR] Post not found.");
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
     if (post.userId !== userId) {
-      console.log("[ERROR] Unauthorized: User is not the post creator.");
+      // console.log("[ERROR] Unauthorized: User is not the post creator.");
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    console.log("[INFO] User is the creator. Proceeding with deletion...");
+    // console.log("[INFO] User is the creator. Proceeding with deletion...");
 
     if (post.comments && post.comments.length > 0) {
       const deletedIds: string[] = [];
@@ -86,9 +86,7 @@ export async function DELETE(req: Request): Promise<NextResponse> {
         await deleteCommentWithReplies(commentId.toString(), deletedIds);
       }
 
-      console.log(
-        `[INFO] Deleted ${deletedIds.length} comments from this post.`
-      );
+      // console.log(`[INFO] Deleted ${deletedIds.length} comments from this post.` );
     }
 
     if (post.images?.length > 0) {
@@ -99,9 +97,7 @@ export async function DELETE(req: Request): Promise<NextResponse> {
             const publicId = publicIdMatch ? publicIdMatch[1] : null;
             if (publicId) {
               await cloudinaryV2.uploader.destroy(`news_post/${publicId}`);
-              console.log(
-                `[SUCCESS] Deleted image from Cloudinary: ${publicId}`
-              );
+              // console.log(`[SUCCESS] Deleted image from Cloudinary: ${publicId}` );
             }
           })
         );
@@ -112,26 +108,26 @@ export async function DELETE(req: Request): Promise<NextResponse> {
         );
       }
     } else {
-      console.log("[INFO] No images found for this post.");
+      // console.log("[INFO] No images found for this post.");
     }
 
-    const updatedUserProfile = await UserProfile.findOneAndUpdate(
+    await UserProfile.findOneAndUpdate(
       { userId },
       { $pull: { posts: postId } }
     );
 
-    console.log("[INFO] Post removed from user's profile:", updatedUserProfile);
+    // console.log("[INFO] Post removed from user's profile:", updatedUserProfile);
 
-    const updatedUsers = await UserProfile.updateMany(
+    await UserProfile.updateMany(
       { saved: postId },
       { $pull: { saved: postId } }
     );
 
-    console.log(`[DEBUG] Users updated: ${updatedUsers.modifiedCount}`);
+    // console.log(`[DEBUG] Users updated: ${updatedUsers.modifiedCount}`);
 
     await Post.findByIdAndDelete(postId);
 
-    console.log("[SUCCESS] Post deleted successfully from database.");
+    // console.log("[SUCCESS] Post deleted successfully from database.");
 
     return NextResponse.json(
       { message: "Post deleted successfully" },

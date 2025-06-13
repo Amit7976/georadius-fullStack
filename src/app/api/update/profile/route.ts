@@ -14,17 +14,17 @@ cloudinary.v2.config({
 
 export async function GET() {
 
-  console.log("====================================");
-  console.log("======= Get User Profile ========");
-  console.log("====================================");
+  // console.log("====================================");
+  // console.log("======= Get User Profile ========");
+  // console.log("====================================");
 
 
-  console.log("[START] Fetching user profile...");
+  // console.log("[START] Fetching user profile...");
 
 
   try {
 
-    console.log("[STEP 1] Authenticating user...");
+    // console.log("[STEP 1] Authenticating user...");
     const session = await auth();
     const userId = session?.user?.id;
 
@@ -35,16 +35,16 @@ export async function GET() {
         { status: 400 }
       );
     }
-    console.log("[SUCCESS] User authenticated. User ID:", userId);
+    // console.log("[SUCCESS] User authenticated. User ID:", userId);
 
 
   
-    console.log("[STEP 2] Connecting to database...");
+    // console.log("[STEP 2] Connecting to database...");
     await connectToDatabase();
-    console.log("[SUCCESS] Database connected.");
+    // console.log("[SUCCESS] Database connected.");
 
 
-    console.log("[STEP 3] Fetching user profile from DB...");
+    // console.log("[STEP 3] Fetching user profile from DB...");
     const userProfile = await UserProfile.findOne({ userId });
 
     if (!userProfile) {
@@ -56,7 +56,7 @@ export async function GET() {
     }
 
 
-    console.log("[SUCCESS] User profile fetched.");
+    // console.log("[SUCCESS] User profile fetched.");
     return NextResponse.json(userProfile);
     
   } catch (error) {
@@ -73,24 +73,24 @@ export async function GET() {
 
 export async function PUT(req: Request) {
 
-  console.log("====================================");
-  console.log("======= Update User Profile ========");
-  console.log("====================================");
+  // console.log("====================================");
+  // console.log("======= Update User Profile ========");
+  // console.log("====================================");
 
   
-  console.log("[START] Processing profile update request...");
+  // console.log("[START] Processing profile update request...");
 
   
   try {
   
-    console.log("🔗 Connecting to database...");
+    // console.log("🔗 Connecting to database...");
     await connectToDatabase();
 
 
-    console.log("[STEP 1] Authenticating user...");
+    // console.log("[STEP 1] Authenticating user...");
     const session = await auth();
     if (!session || !session.user?.id) {
-      console.log("[ERROR] User authentication failed.");
+      // console.log("[ERROR] User authentication failed.");
       return NextResponse.json(
         { error: "User ID is required" },
         { status: 400 }
@@ -98,16 +98,16 @@ export async function PUT(req: Request) {
     }
 
     const userId = session.user.id;
-    console.log(`[SUCCESS] User authenticated: ${userId}`);
+    // console.log(`[SUCCESS] User authenticated: ${userId}`);
 
 
     
-    console.log("[STEP 2] Parsing form data...");
+    // console.log("[STEP 2] Parsing form data...");
     const formData = await req.formData();
-    console.log(
-      "[INFO] Received form data:",
-      Object.fromEntries(formData.entries())
-    );
+    // console.log(
+    //   "[INFO] Received form data:",
+    //   Object.fromEntries(formData.entries())
+    // );
 
 
    
@@ -131,9 +131,7 @@ export async function PUT(req: Request) {
 
    
     if (profileImage instanceof File) {
-      console.log(
-        "[STEP 3] New profile image detected. Uploading to Cloudinary..."
-      );
+      // console.log("[STEP 3] New profile image detected. Uploading to Cloudinary...");
 
       try {
         const arrayBuffer = await profileImage.arrayBuffer();
@@ -153,7 +151,7 @@ export async function PUT(req: Request) {
                 console.error("[ERROR] Cloudinary upload failed:", error);
                 reject(error);
               } else {
-                console.log("[SUCCESS] Image uploaded successfully:", result);
+                // console.log("[SUCCESS] Image uploaded successfully:", result);
                 resolve(result?.secure_url);
               }
             }
@@ -170,17 +168,15 @@ export async function PUT(req: Request) {
          
           const publicId = oldProfileImageUrl.split("/").pop()?.split(".")[0];
           if (publicId) {
-            console.log(
-              `[STEP 4] Deleting old image from Cloudinary: ${publicId}`
-            );
+            // console.log(`[STEP 4] Deleting old image from Cloudinary: ${publicId}`);
 
-            console.log("====================================");
+            // console.log("====================================");
             const folderPath = "profile_pictures";
             const publicIdWithFolder = `${folderPath}/${publicId}`;
 
             try {
               await cloudinary.v2.uploader.destroy(publicIdWithFolder);
-              console.log("[SUCCESS] Old image deleted successfully.");
+              // console.log("[SUCCESS] Old image deleted successfully.");
             } catch (deleteError) {
               console.error(
                 "[ERROR] Failed to delete old image from Cloudinary:",
@@ -188,8 +184,8 @@ export async function PUT(req: Request) {
               );
             }
 
-            console.log("====================================");
-            console.log("[SUCCESS] Old image deleted successfully.");
+            // console.log("====================================");
+            // console.log("[SUCCESS] Old image deleted successfully.");
           }
 
         } catch (deleteError) {
@@ -205,14 +201,12 @@ export async function PUT(req: Request) {
     } else {
 
       profileImageUrl = profileImage || "";
-      console.log(
-        "[INFO] No new profile image uploaded. Keeping existing image."
-      );
+      // console.log("[INFO] No new profile image uploaded. Keeping existing image.");
 
     }
 
-    console.log("[STEP 5] Updating user profile in database...");
-    console.log("[INFO] Updated profile image URL:", profileImageUrl);
+    // console.log("[STEP 5] Updating user profile in database...");
+    // console.log("[INFO] Updated profile image URL:", profileImageUrl);
 
   
     const userProfile = await UserProfile.findOneAndUpdate(
@@ -227,7 +221,7 @@ export async function PUT(req: Request) {
       { new: true, upsert: true }
     );
 
-    console.log("[SUCCESS] Profile updated successfully!");
+    // console.log("[SUCCESS] Profile updated successfully!");
 
     return NextResponse.json({
       message: "Profile updated successfully!",

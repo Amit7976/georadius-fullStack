@@ -22,7 +22,7 @@ function ProfileClientContent({ profile }: Props) {
     useEffect(() => {
         if (!profile) return;
 
-        console.log(`🔹 Fetching data for: ${profile}`);
+        // console.log(`🔹 Fetching data for: ${profile}`);
 
         fetch("/api/userProfile/username", {
             method: "POST",
@@ -31,7 +31,7 @@ function ProfileClientContent({ profile }: Props) {
         })
             .then(async (res) => res.json())
             .then((data) => {
-                console.log("✅ Combined API data:", data);
+                // console.log("✅ Combined API data:", data);
 
                 if (!Array.isArray(data.posts)) {
                     setUserNotFound(true);

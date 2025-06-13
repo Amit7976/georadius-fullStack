@@ -7,9 +7,9 @@ import mongoose from "mongoose";
 
 export async function GET() {
   try {
-    console.log("====================================");
-    console.log("======= Fetch Saved Posts ==========");
-    console.log("====================================");
+    // console.log("====================================");
+    // console.log("======= Fetch Saved Posts ==========");
+    // console.log("====================================");
 
     const session = await auth();
     const userId = session?.user?.id;
@@ -27,8 +27,7 @@ export async function GET() {
       { userId },
       { saved: 1 }
     ).lean()) as ProfileData | null;
-  
-  
+
     if (!profileData || !profileData.saved || profileData.saved.length === 0) {
       return NextResponse.json(
         { posts: [], currentLoginUsername },

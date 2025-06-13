@@ -37,9 +37,9 @@ const MainContent = ({ id }: { id: string | null }) => {
     const [selectedImages, setSelectedImages] = useState<File[]>([]);
     const [loader, setLoader] = useState(false);
 
-    console.log('====================================');
-    console.log("id: " + id);
-    console.log('====================================');
+    // console.log('====================================');
+    // console.log("id: " + id);
+    // console.log('====================================');
     const form = useForm({
         resolver: zodResolver(issueSchema),
         defaultValues: { description: "", photos: [] },
@@ -76,7 +76,7 @@ const MainContent = ({ id }: { id: string | null }) => {
 
             if (res) {
                 setLoader(false);
-                console.log("Issue submitted!");
+                // console.log("Issue submitted!");
                 toast.success("Report submitted!");
                 setModalOpen(false);
                 form.reset();

@@ -13,19 +13,17 @@ cloudinary.v2.config({
 });
 
 export async function POST(req: Request) {
+  // console.log("====================================");
+  // console.log("============ Report API ============");
+  // console.log("====================================");
 
-  console.log("====================================");
-  console.log("============ Report API ============");
-  console.log("====================================");
-
-  console.log("📩 POST request received at /api/post/report")
-  
+  // console.log("📩 POST request received at /api/post/report")
 
   try {
-    console.log("🔗 Connecting to database...");
+    // console.log("🔗 Connecting to database...");
     await connectToDatabase();
 
-    console.log("🐞 Report API called");
+    // console.log("🐞 Report API called");
 
     const formData = await req.formData();
     const description = formData.get("description") as string;
@@ -38,9 +36,9 @@ export async function POST(req: Request) {
 
     const postId = new mongoose.Types.ObjectId(postIdString);
 
-    console.log("📩 Description:", description);
-    console.log("📝 Post ID:", postId);
-    console.log("🖼 Images received:", photos.length);
+    // console.log("📩 Description:", description);
+    // console.log("📝 Post ID:", postId);
+    // console.log("🖼 Images received:", photos.length);
 
     let uploadedImageUrls: string[] = [];
 
@@ -61,12 +59,11 @@ export async function POST(req: Request) {
             }
           );
 
-          console.log("✅ Uploaded:", uploadResult.secure_url);
+          // console.log("✅ Uploaded:", uploadResult.secure_url);
           return uploadResult.secure_url;
         })
       );
     }
-    
 
     const newReport = new Report({
       postId,
@@ -75,14 +72,12 @@ export async function POST(req: Request) {
     });
 
     await newReport.save();
-    console.log("📝 Report saved:", newReport._id);
-    
+    // console.log("📝 Report saved:", newReport._id);
 
     await Post.findByIdAndUpdate(postId, {
       $push: { report: newReport._id.toString() },
     });
-    console.log("📌 Report ID pushed to Post");
-
+    // console.log("📌 Report ID pushed to Post");
 
     return NextResponse.json(
       {
@@ -92,9 +87,7 @@ export async function POST(req: Request) {
       { status: 201 }
     );
   } catch (error) {
-
     console.error("❌ Report API Error:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
-
   }
 }

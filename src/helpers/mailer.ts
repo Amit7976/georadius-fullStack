@@ -6,7 +6,7 @@ import crypto from "crypto";
 
 export const sendEmail = async ({ email }: { email: string }) => {
   try {
-    console.log("🔹 Processing Temporary Password Request...");
+    // console.log("🔹 Processing Temporary Password Request...");
 
     // ✅ Generate Secure Temporary Password
     const tempPassword = crypto.randomBytes(4).toString("hex"); // 8-character random password
@@ -18,9 +18,9 @@ export const sendEmail = async ({ email }: { email: string }) => {
       { new: true }
     );
 
-    console.log('====================================');
-    console.log(updatedUser);
-    console.log('====================================');
+    // console.log('====================================');
+    // console.log(updatedUser);
+    // console.log('====================================');
 
     if (!updatedUser) {
       throw new Error("❌ User not found!");
@@ -65,10 +65,10 @@ export const sendEmail = async ({ email }: { email: string }) => {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    console.log("📩 Sending email to:", email);
+    // console.log("📩 Sending email to:", email);
     const mailResponse = await transport.sendMail(mailOptions);
-    console.log("✅ Email sent successfully!");
-    console.log("📨 Mail Response:", mailResponse);
+    // console.log("✅ Email sent successfully!");
+    // console.log("📨 Mail Response:", mailResponse);
 
     return mailResponse;
   } catch (error) {

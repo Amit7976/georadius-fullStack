@@ -54,12 +54,12 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           "+password +tempPassword"
         );
 
-        console.log("====================================");
-        console.log(password);
-        console.log("====================================");
-        console.log("##====================================");
-        console.log(user);
-        console.log("##====================================");
+        // console.log("====================================");
+        // console.log(password);
+        // console.log("====================================");
+        // console.log("##====================================");
+        // console.log(user);
+        // console.log("##====================================");
 
         if (!user) {
           throw new Error("Invalid Email or Password");
@@ -67,9 +67,9 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
         const isMatch = await compare(password, user.password);
 
-        console.log("====================================");
-        console.log(isMatch);
-        console.log("====================================");
+        // console.log("====================================");
+        // console.log(isMatch);
+        // console.log("====================================");
         // If matches real password
         if (isMatch) {
           // Clear tempPassword if present
@@ -83,20 +83,20 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
 
         // Else try matching temp password
         if (user.tempPassword) {
-          console.log("====================================");
-          console.log("enter");
-          console.log("====================================");
+          // console.log("====================================");
+          // console.log("enter");
+          // console.log("====================================");
 
           const compareTemp = password === user.tempPassword;
 
-          console.log("1====================================");
-          console.log(compareTemp);
-          console.log("1====================================");
+          // console.log("1====================================");
+          // console.log(compareTemp);
+          // console.log("1====================================");
 
           if (compareTemp) {
-            console.log("2====================================");
-            console.log(compareTemp);
-            console.log("2====================================");
+            // console.log("2====================================");
+            // console.log(compareTemp);
+            // console.log("2====================================");
             return { fullname: user.fullname, email: user.email, id: user._id };
           }
         }
@@ -132,81 +132,79 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
 
     signIn: async ({ user, account }) => {
-      console.log("====================================");
-      console.log("Google");
-      console.log("====================================");
+      // console.log("====================================");
+      // console.log("Google");
+      // console.log("====================================");
       if (account?.provider === "google") {
         try {
           const { email, name, image, id } = user;
 
-          console.log("====================================");
-          console.log("New trying....");
-          console.log("====================================");
+          // console.log("====================================");
+          // console.log("New trying....");
+          // console.log("====================================");
 
           await connectToDatabase();
 
           let alreadyUser = await User.findOne({ email });
 
-          console.log("====================================");
-          console.log(alreadyUser);
-          console.log("====================================");
+          // console.log("====================================");
+          // console.log(alreadyUser);
+          // console.log("====================================");
 
           if (!alreadyUser) {
-            console.log("====================================");
-            console.log("User Not Found");
-            console.log("====================================");
+            // console.log("====================================");
+            // console.log("User Not Found");
+            // console.log("====================================");
 
-            console.log("====================================");
-            console.log("Creating user....");
-            console.log("====================================");
+            // console.log("====================================");
+            // console.log("Creating user....");
+            // console.log("====================================");
             alreadyUser = await User.create({
               email,
               fullname: name,
               image,
               googleId: id,
             });
-            console.log("====================================");
-            console.log(alreadyUser);
-            console.log("====================================");
+            // console.log("====================================");
+            // console.log(alreadyUser);
+            // console.log("====================================");
           }
-          console.log("====================================");
-          console.log("candidate fetch data: " + alreadyUser);
-          console.log("====================================");
+          // console.log("====================================");
+          // console.log("candidate fetch data: " + alreadyUser);
+          // console.log("====================================");
 
-          console.log("====================================");
-          console.log(
-            "Create a new CandidateProfileModel entry with the candidate's _id"
-          );
-          console.log("====================================");
+          // console.log("====================================");
+          // console.log("Create a new CandidateProfileModel entry with the candidate's _id");
+          // console.log("====================================");
 
-          console.log("====================================");
-          console.log(alreadyUser);
-          console.log("====================================");
-          console.log(alreadyUser._id);
-          console.log("====================================");
-          console.log(name);
-          console.log("====================================");
-          console.log(image);
-          console.log("====================================");
+          // console.log("====================================");
+          // console.log(alreadyUser);
+          // console.log("====================================");
+          // console.log(alreadyUser._id);
+          // console.log("====================================");
+          // console.log(name);
+          // console.log("====================================");
+          // console.log(image);
+          // console.log("====================================");
 
-          const userProfile = await UserProfile.create({
+          await UserProfile.create({
             userId: alreadyUser._id,
             fullname: name,
             profileImage: image,
           });
 
-          console.log("====================================");
-          console.log(userProfile);
-          console.log("====================================");
-          console.log("data inserted");
+          // console.log("====================================");
+          // console.log(userProfile);
+          // console.log("====================================");
+          // console.log("data inserted");
 
           return true;
         } catch (error) {
-          console.log("====================================");
-          console.log("Error while creating user");
-          console.log("====================================");
+          // console.log("====================================");
+          // console.log("Error while creating user");
+          // console.log("====================================");
           console.log(error);
-          console.log("====================================");
+          // console.log("====================================");
           throw new AuthError("Error while creating user");
         }
       }

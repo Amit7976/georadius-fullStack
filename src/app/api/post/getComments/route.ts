@@ -11,9 +11,9 @@ interface PostWithComments {
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-  console.log("====================================");
-  console.log("======== Post Fetch Comments ========");
-  console.log("====================================");
+  // console.log("====================================");
+  // console.log("======== Post Fetch Comments ========");
+  // console.log("====================================");
 
   try {
     // ✅ DB connect
@@ -24,13 +24,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const userId = session?.user?.id;
 
     if (!userId) {
-      console.log("❌ Unauthorized - no session user ID");
+      // console.log("❌ Unauthorized - no session user ID");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const userProfile = await UserProfile.findOne({ userId }, { username: 1 });
     if (!userProfile) {
-      console.log("❌ User profile not found");
+      // console.log("❌ User profile not found");
       return NextResponse.json(
         { error: "User profile not found" },
         { status: 404 }
@@ -80,7 +80,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const excludedObjectIds = excludeIds.map(
       (id) => new mongoose.Types.ObjectId(id)
     );
-    
 
     // ✅ Aggregate filtered, sorted, paginated comments
     const commentDocs = await Comment.aggregate([

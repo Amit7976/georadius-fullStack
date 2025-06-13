@@ -13,7 +13,7 @@ interface UserProfileType {
 }
 
 export async function POST(req: NextRequest) {
-  console.log("========= Optimized Category Posts API =========");
+  // console.log("========= Optimized Category Posts API =========");
 
   try {
     await connectToDatabase();
@@ -51,12 +51,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    
     const hiddenObjectIds = hiddenPostIds.map(
       (id: string) => new mongoose.Types.ObjectId(id)
     );
 
-    
     const posts = await Post.aggregate([
       {
         $match: {

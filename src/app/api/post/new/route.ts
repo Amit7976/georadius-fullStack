@@ -14,42 +14,42 @@ cloudinary.v2.config({
 
 export async function POST(req: Request) {
 
-  console.log("====================================");
-  console.log("======== New Post API ============");
-  console.log("====================================");
+  // console.log("====================================");
+  // console.log("======== New Post API ============");
+  // console.log("====================================");
 
   try {
-    console.log("🔗 Connecting to database...");
+    // console.log("🔗 Connecting to database...");
     await connectToDatabase();
 
     const session = await auth();
     const userId = session?.user?.id;
     if (!userId) {
-      console.log("[ERROR] User authentication failed.");
+      // console.log("[ERROR] User authentication failed.");
       return NextResponse.json(
         { error: "User ID is required" },
         { status: 400 }
       );
     }
-    console.log("🔑 Authenticated User ID:", userId);
+    // console.log("🔑 Authenticated User ID:", userId);
 
 
     const userProfile = await UserProfile.findOne({ userId }).select(
       "username profileImage"
     );
     if (!userProfile) {
-      console.log("[ERROR] User not found in database.");
+      // console.log("[ERROR] User not found in database.");
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    console.log("👤 User found:", {
-      username: userProfile.username,
-      profileImage: userProfile.profileImage,
-    });
+    // console.log("👤 User found:", {
+    //   username: userProfile.username,
+    //   profileImage: userProfile.profileImage,
+    // });
 
     
     const formData = await req.formData();
-    console.log("📩 FormData received");
+    // console.log("📩 FormData received");
 
 
     const title = formData.get("title") as string;
@@ -63,15 +63,15 @@ export async function POST(req: Request) {
     const images = formData.getAll("images") as File[];
 
 
-    console.log("📝 Extracted Data:", {
-      title,
-      description,
-      location,
-      latitude,
-      longitude,
-    });
-    console.log("🏷 Categories:", categories);
-    console.log("🖼 Total Images Received:", images.length);
+    // console.log("📝 Extracted Data:", {
+    //   title,
+    //   description,
+    //   location,
+    //   latitude,
+    //   longitude,
+    // });
+    // console.log("🏷 Categories:", categories);
+    // console.log("🖼 Total Images Received:", images.length);
 
    
     const imageUrls: string[] = await Promise.all(
@@ -88,7 +88,7 @@ export async function POST(req: Request) {
             ],
           }
         );
-        console.log("✅ Image uploaded:", uploadedResponse.secure_url);
+        // console.log("✅ Image uploaded:", uploadedResponse.secure_url);
         return uploadedResponse.secure_url;
       })
     );
@@ -113,11 +113,11 @@ export async function POST(req: Request) {
       createdAt: new Date(),
     });
 
-    console.log("✅ Post saved in database:", newPost._id);
+    // console.log("✅ Post saved in database:", newPost._id);
 
     
     await UserProfile.updateOne({ userId }, { $push: { posts: newPost._id } });
-    console.log("✅ Post ID pushed to user profile");
+    // console.log("✅ Post ID pushed to user profile");
 
     return NextResponse.json(
       { message: "Post created successfully", postId: newPost._id },

@@ -14,16 +14,16 @@ cloudinary.v2.config({
 
 export async function POST(req: Request) {
 
-  console.log("====================================");
-  console.log("======= Update User Profile ========");
-  console.log("====================================");
+  // console.log("====================================");
+  // console.log("======= Update User Profile ========");
+  // console.log("====================================");
   
 
-  console.log("[START] Processing profile update request...");
+  // console.log("[START] Processing profile update request...");
 
   try {
    
-    console.log("[STEP 1] Authenticating user...");
+    // console.log("[STEP 1] Authenticating user...");
 
     const session = await auth();
     const userId = session?.user?.id;
@@ -36,10 +36,10 @@ export async function POST(req: Request) {
       );
     }
 
-    console.log("[SUCCESS] User authenticated. User ID:", userId);
+    // console.log("[SUCCESS] User authenticated. User ID:", userId);
 
 
-    console.log("[STEP 2] Parsing form data...");
+    // console.log("[STEP 2] Parsing form data...");
 
     const formData = await req.formData();
     const username = formData.get("username")?.toString() || "";
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     const bio = formData.get("bio")?.toString() || "";
     const interest = formData.getAll("interest").map(String) || [];
 
-    console.log("[SUCCESS] Form data parsed successfully.");
+    // console.log("[SUCCESS] Form data parsed successfully.");
 
     let profileImageUrl = "";
 
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
 
     if (file) {
 
-      console.log("[STEP 3] Uploading profile image to Cloudinary...");
+      // console.log("[STEP 3] Uploading profile image to Cloudinary...");
 
       try {
 
@@ -83,7 +83,7 @@ export async function POST(req: Request) {
                   console.error("[ERROR] Cloudinary upload failed:", error);
                   reject(error);
                 } else {
-                  console.log("[SUCCESS] Image uploaded successfully.");
+                  // console.log("[SUCCESS] Image uploaded successfully.");
                   resolve(result);
                 }
               }
@@ -103,24 +103,22 @@ export async function POST(req: Request) {
 
     } else {
 
-      console.log("[INFO] No profile image provided, skipping upload.");
+      // console.log("[INFO] No profile image provided, skipping upload.");
 
     }
 
 
-    console.log("[STEP 4] Connecting to database...");
+    // console.log("[STEP 4] Connecting to database...");
     await connectToDatabase();
-    console.log("[SUCCESS] Database connected successfully.");
+    // console.log("[SUCCESS] Database connected successfully.");
 
 
-    console.log("[STEP 5] Checking if user profile exists...");
+    // console.log("[STEP 5] Checking if user profile exists...");
     let userProfile = await UserProfile.findOne({ userId });
 
     if (!userProfile) {
 
-      console.log(
-        "[INFO] User profile does not exist, creating new profile..."
-      );
+      // console.log("[INFO] User profile does not exist, creating new profile...");
 
       userProfile = await UserProfile.create({
         userId,
@@ -135,11 +133,11 @@ export async function POST(req: Request) {
         profileImage: profileImageUrl,
       });
 
-      console.log("[SUCCESS] New profile created.");
+      // console.log("[SUCCESS] New profile created.");
 
     } else {
 
-      console.log("[INFO] User profile found, updating existing profile...");
+      // console.log("[INFO] User profile found, updating existing profile...");
 
       userProfile.username = username;
       userProfile.fullname = fullName;
@@ -151,12 +149,12 @@ export async function POST(req: Request) {
       if (profileImageUrl) userProfile.profileImage = profileImageUrl;
       await userProfile.save();
 
-      console.log("[SUCCESS] User profile updated successfully.");
+      // console.log("[SUCCESS] User profile updated successfully.");
 
     }
 
 
-    console.log("[END] Profile update request completed successfully.");
+    // console.log("[END] Profile update request completed successfully.");
 
     return NextResponse.json({
       message: "Profile updated successfully!",

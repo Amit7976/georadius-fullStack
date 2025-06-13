@@ -83,11 +83,11 @@ export default function MainContent() {
         setIsSubmitting(true);
 
         try {
-            console.log("====================================");
-            console.log("Form submission started...");
-            console.log("====================================");
+            // console.log("====================================");
+            // console.log("Form submission started...");
+            // console.log("====================================");
 
-            console.log("Received Form Data:", data);
+            // console.log("Received Form Data:", data);
 
             const formData = new FormData();
             formData.append("username", data.username);
@@ -97,17 +97,17 @@ export default function MainContent() {
             formData.append("location", data.location);
             formData.append("bio", data.bio);
 
-            console.log("✅ Basic fields appended!");
+            // console.log("✅ Basic fields appended!");
 
             if (data.profileImage instanceof File) {
-                console.log("✅ Profile Image detected, appending...");
+                // console.log("✅ Profile Image detected, appending...");
                 formData.append("profileImage", data.profileImage);
 
-                console.log("====================================");
-                console.log("Sending data to API...");
-                console.log("====================================");
+                // console.log("====================================");
+                // console.log("Sending data to API...");
+                // console.log("====================================");
 
-                console.log("📝 Final FormData Entries:", [...formData.entries()]);
+                // console.log("📝 Final FormData Entries:", [...formData.entries()]);
 
                 const response = await fetch("/api/userProfile/profile", {
                     method: "POST",
@@ -115,20 +115,20 @@ export default function MainContent() {
                 });
 
                 const result: { error?: string } = await response.json();
-                console.log("✅ API Response Received:", result);
+                // console.log("✅ API Response Received:", result);
 
                 if (!response.ok) {
                     console.error("❌ API Error:", result.error);
                     throw new Error(result.error || "Failed to update profile");
                 }
 
-                console.log("✅ Profile Created successfully!", result);
+                // console.log("✅ Profile Created successfully!", result);
                 toast.success("Profile Created successfully!");
 
                 router.replace("/pages/onboarding/interest");
 
             } else {
-                console.log("⚠️ No valid profile image provided.");
+                // console.log("⚠️ No valid profile image provided.");
                 toast.warning("No valid profile image provided.");
             }
         } catch (error) {

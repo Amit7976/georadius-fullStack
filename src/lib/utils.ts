@@ -37,7 +37,7 @@ export const connectToDatabase = async () => {
 
   try {
     cached.conn = await cached.promise;
-    console.log(`✅ Connected to MongoDB: ${cached.conn.connection.host}`);
+    // console.log(`✅ Connected to MongoDB: ${cached.conn.connection.host}`);
   } catch (error) {
     console.error("❌ MongoDB connection failed:", error);
     cached.promise = null;

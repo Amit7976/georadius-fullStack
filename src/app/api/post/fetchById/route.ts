@@ -5,14 +5,12 @@ import { Post } from "@/src/models/postModel";
 import mongoose from "mongoose";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-
-  console.log("====================================");
-  console.log("======== Post Fetch By ID ==========");
-  console.log("====================================");
+  // console.log("====================================");
+  // console.log("======== Post Fetch By ID ==========");
+  // console.log("====================================");
 
   try {
-
-    console.log("🔗 Connecting to DB...");
+    // console.log("🔗 Connecting to DB...");
     await connectToDatabase();
 
     const session = await auth();
@@ -41,14 +39,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     return NextResponse.json({ post }, { status: 200 });
-
   } catch (error) {
-
     console.error("[ERROR] Fetching post by ID:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
     );
-    
   }
 }

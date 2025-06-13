@@ -17,7 +17,7 @@ const ShareButton = ({ shareProps }: ShareButtonProps) => {
         const shareUrl = `${window.location.origin}/news/${shareProps._id}`;
         const shareTitle = shareProps.title;
         const shareText = `\n📰 ${shareProps.title}\n\n${shareProps.description}\n\n`;
-        
+
         // 🟡 Fallback: Web Share API without image
         if (navigator.share) {
             try {

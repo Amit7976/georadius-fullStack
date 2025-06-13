@@ -18,6 +18,6 @@ app.prepare().then(() => {
         handle(req, res, parsedUrl);
     }).listen(3000, (err) => {
         if (err) throw err;
-        console.log("🚀 Server running on https://localhost:3000");
+        // console.log("🚀 Server running on https://localhost:3000");
     });
 });

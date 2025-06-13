@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
 
     const { searchParams } = new URL(req.url);
     const category = searchParams.get("category");
-    const radius = parseInt(searchParams.get("radius") || "50");
+    // const radius = parseInt(searchParams.get("radius") || "50");
     const latMin = parseFloat(searchParams.get("latMin") || "");
     const latMax = parseFloat(searchParams.get("latMax") || "");
     const lngMin = parseFloat(searchParams.get("lngMin") || "");
@@ -29,18 +29,18 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    console.log("🔍 Category:", category);
-    console.log("📍 Radius:", radius, "km");
-    console.log(
-      "🧭 Bounds => lat:",
-      latMin,
-      "-",
-      latMax,
-      "| lng:",
-      lngMin,
-      "-",
-      lngMax
-    );
+    // console.log("🔍 Category:", category);
+    // console.log("📍 Radius:", radius, "km");
+    // console.log(
+    //   "🧭 Bounds => lat:",
+    //   latMin,
+    //   "-",
+    //   latMax,
+    //   "| lng:",
+    //   lngMin,
+    //   "-",
+    //   lngMax
+    // );
 
     const query: {
       categories: { $in: string[] };

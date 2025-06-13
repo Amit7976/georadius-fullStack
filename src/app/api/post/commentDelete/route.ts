@@ -5,7 +5,6 @@ import { auth } from "@/src/auth";
 import { UserProfile } from "@/src/models/UserProfileModel";
 import { Post } from "@/src/models/postModel";
 
-
 async function deleteCommentWithReplies(
   commentId: string,
   deletedIds: string[]
@@ -20,26 +19,21 @@ async function deleteCommentWithReplies(
   await Comment.deleteOne({ _id: commentId });
 }
 
-
 export async function POST(req: NextRequest): Promise<NextResponse> {
-
-  console.log("====================================");
-  console.log("======= Comment Delete API =========");
-  console.log("====================================");
-  console.log("🗑️ DELETE request received at /api/post/delete");
+  // console.log("====================================");
+  // console.log("======= Comment Delete API =========");
+  // console.log("====================================");
+  // console.log("🗑️ DELETE request received at /api/post/delete");
 
   try {
-
-    console.log("🔗 Connecting to database...");
+    // console.log("🔗 Connecting to database...");
     await connectToDatabase();
-
 
     const session = await auth();
     const userId = session?.user?.id;
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-
 
     const { commentId } = await req.json();
     if (!commentId) {
@@ -71,11 +65,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
-    
     const deletedIds: string[] = [];
     await deleteCommentWithReplies(commentId, deletedIds);
 
-    
     await Post.updateOne(
       { _id: comment.postId },
       { $pull: { comments: { $in: deletedIds } } }

@@ -8,19 +8,19 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
-  console.log("====================================");
-  console.log("========= Nearby Posts API =========");
-  console.log("====================================");
+  // console.log("====================================");
+  // console.log("========= Nearby Posts API =========");
+  // console.log("====================================");
 
-  console.log("📌 [START] Nearby Posts API");
+  // console.log("📌 [START] Nearby Posts API");
 
   try {
-    console.log("➡️ Connecting to DB...");
+    // console.log("➡️ Connecting to DB...");
     await connectToDatabase();
 
     const session = await auth();
     const userId = session?.user?.id;
-    console.log("🔐 Authenticated User ID:", userId);
+    // console.log("🔐 Authenticated User ID:", userId);
 
     const { searchParams } = new URL(req.url);
     const lat = parseFloat(searchParams.get("lat") || "");
@@ -30,15 +30,15 @@ export async function GET(req: NextRequest) {
     const images = parseInt(searchParams.get("images") || "1");
 
     if (isNaN(lat) || isNaN(lng)) {
-      console.log("⚠️ Invalid latitude or longitude provided");
+      // console.log("⚠️ Invalid latitude or longitude provided");
       return NextResponse.json(
         { error: "Latitude and Longitude are required" },
         { status: 400 }
       );
     }
 
-    console.log("📍 Coordinates:", { lat, lng });
-    console.log("📏 Range:", range);
+    // console.log("📍 Coordinates:", { lat, lng });
+    // console.log("📏 Range:", range);
 
     interface ProfileData {
       saved: string[];
@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    console.log("➡️ Fetching posts...");
+    // console.log("➡️ Fetching posts...");
     const posts = await Post.aggregate([
       {
         $match: {
@@ -154,7 +154,7 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    console.log("🔚 [END] Nearby Posts API - Returning posts");
+    // console.log("🔚 [END] Nearby Posts API - Returning posts");
 
     return NextResponse.json(
       {
