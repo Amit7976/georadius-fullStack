@@ -1,58 +1,47 @@
 import { auth } from "@/src/auth";
 import { UserProfile } from "@/src/models/UserProfileModel";
-import { Comment } from "@/src/models/commentModel";
 import { Post } from "@/src/models/postModel";
+import { Comment } from "@/src/models/commentModel";
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 
-export async function POST(req: Request) {
+export async function GET() {
   try {
     console.log("====================================");
-    console.log("===== Fetch Posts by creatorName ===");
+    console.log("======= Fetch Saved Posts ==========");
     console.log("====================================");
 
     const session = await auth();
     const userId = session?.user?.id;
-    const sessionUsername = session?.user?.username;
-    if (!userId)
+    const currentLoginUsername = session?.user?.username;
+
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const { username } = await req.json();
-    if (!username)
-      return NextResponse.json(
-        { error: "Username is required" },
-        { status: 400 }
-      );
-
-      interface ProfileData {
-        saved: string[];
-      }
-    
-    // ✅ Get user profile (excluding username from DB, we’ll inject it manually)
-    const profileData = (await UserProfile.findOne(
-      { username },
-      {
-        fullname: 1,
-        profileImage: 1,
-        bio: 1,
-        location: 1,
-        saved: 1,
-      }
-    ).lean()) as ProfileData | null;
-
-    if (!profileData) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // ✅ Add username manually to user profile
-    const userProfile = {
-      ...profileData,
-      username,
-      currentUserProfile: username === sessionUsername,
-    };
+    interface ProfileData {
+      saved: string[];
+    }
 
-    // ✅ Aggregate posts with only counts, no full arrays
+    const profileData = (await UserProfile.findOne(
+      { userId },
+      { saved: 1 }
+    ).lean()) as ProfileData | null;
+  
+  
+    if (!profileData || !profileData.saved || profileData.saved.length === 0) {
+      return NextResponse.json(
+        { posts: [], currentLoginUsername },
+        { status: 200 }
+      );
+    }
+
+    const objectIds = profileData.saved.map(
+      (id) => new mongoose.Types.ObjectId(id)
+    );
+
     const posts = await Post.aggregate([
-      { $match: { creatorName: username } },
+      { $match: { _id: { $in: objectIds } } },
       { $sort: { createdAt: -1 } },
       {
         $project: {
@@ -64,7 +53,8 @@ export async function POST(req: Request) {
           longitude: 1,
           latitude: 1,
           images: 1,
-          creatorImage: 1, // we'll add creatorName manually
+          creatorImage: 1,
+          creatorName: 1,
           share: 1,
           categories: 1,
           createdAt: 1,
@@ -77,7 +67,7 @@ export async function POST(req: Request) {
       },
     ]);
 
-    // ✅ Add top comments & creatorName
+    // ✅ Add top 10 comments for each post
     const finalPosts = [];
 
     for (const post of posts) {
@@ -100,24 +90,20 @@ export async function POST(req: Request) {
 
       finalPosts.push({
         ...post,
-        creatorName: username,
-        isSaved: userProfile.saved.includes(post._id.toString()),
-        currentUserProfile: post.userId?.toString() === userId,
         topComments,
+        currentUserProfile: post.userId?.toString() === userId,
       });
     }
-    
+
     return NextResponse.json(
-      {
-        message: "Posts fetched successfully",
-        user: userProfile,
-        posts: finalPosts,
-        currentLoginUsername: session?.user.username,
-      },
+      { posts: finalPosts, currentLoginUsername },
       { status: 200 }
     );
   } catch (error) {
     console.error("❌ Server error:", error);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch saved posts." },
+      { status: 500 }
+    );
   }
 }

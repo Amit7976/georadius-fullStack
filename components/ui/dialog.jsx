@@ -12,6 +12,7 @@ function Dialog({
 }
 
 function DialogTrigger({
+  className = "",
   ...props
 }) {
   return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
@@ -30,7 +31,7 @@ function DialogClose({
 }
 
 function DialogOverlay({
-  className,
+  className = "",
   ...props
 }) {
   return (
@@ -45,7 +46,7 @@ function DialogOverlay({
 }
 
 function DialogContent({
-  className,
+  className = "",
   children,
   ...props
 }) {
@@ -66,7 +67,7 @@ function DialogContent({
 }
 
 function DialogHeader({
-  className,
+    className = "",
   ...props
 }) {
   return (
@@ -78,7 +79,7 @@ function DialogHeader({
 }
 
 function DialogFooter({
-  className,
+    className = "",
   ...props
 }) {
   return (
@@ -90,7 +91,7 @@ function DialogFooter({
 }
 
 function DialogTitle({
-  className,
+  className = "",
   ...props
 }) {
   return (
@@ -102,7 +103,7 @@ function DialogTitle({
 }
 
 function DialogDescription({
-  className,
+    className = "",
   ...props
 }) {
   return (

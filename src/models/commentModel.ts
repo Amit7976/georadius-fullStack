@@ -26,11 +26,6 @@ const commentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Comment", // always points to root comment
     },
-    likes: [
-      {
-        type: String, // username or userId
-      },
-    ],
     reports: [
       {
         type: String, // username or userId

@@ -93,13 +93,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         },
       },
       {
-        $addFields: {
-          likesCount: { $size: "$likes" },
-        },
-      },
-      {
         $sort: {
-          likesCount: -1,
           createdAt: -1,
         },
       },
@@ -115,16 +109,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           replyingToUsername: 1,
           profileImage: 1,
           updatedAt: 1,
-          likes: {
-            $gt: [
-              {
-                $size: {
-                  $setIntersection: [[currentUserId], "$likes"],
-                },
-              },
-              0,
-            ],
-          },
           reports: {
             $gt: [
               {
@@ -148,7 +132,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       replyingToUsername: comment.replyingToUsername || null,
       profileImage: comment.profileImage || null,
       updatedAt: comment.updatedAt,
-      likes: comment.likes,
       reports: comment.reports,
     }));
 

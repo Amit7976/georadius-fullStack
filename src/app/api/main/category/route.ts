@@ -136,8 +136,7 @@ export async function POST(req: NextRequest) {
     for (const post of posts) {
       const topComments = await Comment.aggregate([
         { $match: { postId: post._id } },
-        { $addFields: { likesCount: { $size: "$likes" } } },
-        { $sort: { likesCount: -1 } },
+        { $sort: { createdAt: -1 } },
         { $limit: 10 },
         {
           $project: {
@@ -148,7 +147,6 @@ export async function POST(req: NextRequest) {
             replyingToUsername: 1,
             profileImage: 1,
             updatedAt: 1,
-            likesCount: 1,
           },
         },
       ]);

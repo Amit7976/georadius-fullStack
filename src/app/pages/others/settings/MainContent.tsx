@@ -6,7 +6,7 @@ import { t } from "@/src/helpers/i18n";
 import ProviderLogout from "@/src/helpers/logout";
 import { FaRegUserCircle } from 'react-icons/fa';
 import { HiOutlineChevronRight } from "react-icons/hi2";
-import { MdPassword } from "react-icons/md";
+import { MdBookmark, MdInterests, MdPassword } from "react-icons/md";
 import { SlQuestion } from "react-icons/sl";
 import Display from "./components/Display";
 import Language from "./components/Language";
@@ -32,6 +32,31 @@ const MainContent = () => {
                     </div>
                     <HiOutlineChevronRight className='text-2xl text-gray-500 font-light' />
                 </LoaderLink>
+
+                <LoaderLink href="/pages/onboarding/interest" className="flex w-full justify-between items-center gap-5 active:scale-95 duration-300">
+                    <div className="flex gap-3 items-center py-5">
+                        <MdInterests className="text-3xl shrink-0" />
+                        <div className="text-start overflow-hidden">
+                            <h4 className="text-base font-medium">{t("interestsAndPreferences")}</h4>
+                            <p className="text-sm font-medium text-gray-400">{t("updateYourInterests")}</p>
+                        </div>
+                    </div>
+                    <HiOutlineChevronRight className="text-2xl text-gray-500 font-light" />
+                </LoaderLink>
+
+
+                <LoaderLink href="/pages/saved" className="flex w-full justify-between items-center gap-5 active:scale-95 duration-300">
+                    <div className="flex gap-3 items-center py-5">
+                        <MdBookmark className="text-3xl shrink-0" />
+                        <div className="text-start overflow-hidden">
+                            <h4 className="text-base font-medium">{t("savedPosts")}</h4>
+                            <p className="text-sm font-medium text-gray-400">{t("viewYourSavedItems")}</p>
+                        </div>
+                    </div>
+                    <HiOutlineChevronRight className="text-2xl text-gray-500 font-light" />
+                </LoaderLink>
+
+                
 
                 <LoaderLink href={"privacy_security"} className="flex w-full justify-between items-center gap-5 active:scale-95 duration-300">
                     <div className="flex gap-3 items-center py-5">

@@ -22,11 +22,14 @@ import ShareButton from "./ShareButton";
 import VoteButtons from "./VoteButtons";
 import { t } from "../helpers/i18n";
 import { DialogTitle } from "@/components/ui/dialog";
-import { News } from "../helpers/types";
+import { CommentType, News } from "../helpers/types";
 
 
 const NewsPost = ({ news, onHide, fullDescription, currentLoginUsername }: { news: News, currentLoginUsername: string, fullDescription: boolean; onHide: (id: string) => void }) => {
     const [distance, setDistance] = useState<string | null>(null);
+    const [openDrawerId, setOpenDrawerId] = useState<string | null>(null);
+    const [comments, setComments] = useState<CommentType[]>([...news.topComments]);
+    const [hasMore, setHasMore] = useState(true);
 
     console.log("📰 News Post Data:", news);
 
@@ -51,6 +54,28 @@ const NewsPost = ({ news, onHide, fullDescription, currentLoginUsername }: { new
         sessionStorage.setItem("editNewsData", JSON.stringify(news));
         router.push(`/pages/edit_post/${news._id}`);
     };
+
+;
+   
+    useEffect(() => {
+        const onHashChange = () => {
+            if (!window.location.hash && openDrawerId) {
+                setOpenDrawerId(null);
+            }
+        };
+        window.addEventListener("hashchange", onHashChange);
+        return () => window.removeEventListener("hashchange", onHashChange);
+    }, [openDrawerId]);
+
+    useEffect(() => {
+        // Restore state if someone lands on a hash
+        if (window.location.hash) {
+            const hash = window.location.hash.replace("#", "");
+            setOpenDrawerId(hash);
+        }
+    }, []);
+
+
 
     return (
         <div key={String(news._id)}>
@@ -137,11 +162,13 @@ const NewsPost = ({ news, onHide, fullDescription, currentLoginUsername }: { new
 
 
                 <div className="pl-1">
+                    <p className={`pl-2 pb-3 text-base font-medium text-gray-800 dark:text-gray-300`}>
+                        {news.title}
+                    </p>
                     <p className={`border-l-4 border-green-500 pl-3 py-3 text-sm font-medium text-gray-800 dark:text-gray-400 ${showDescription ? "" : "line-clamp-6"}`}
                         onClick={() => setShowDescription(!showDescription)}>
                         {news.description}
                     </p>
-
                 </div>
 
                 {/* Footer */}
@@ -150,19 +177,27 @@ const NewsPost = ({ news, onHide, fullDescription, currentLoginUsername }: { new
                         <VoteButtons news={news} />
 
                         {/* Comment Drawer */}
-                        <Drawer>
+                        <Drawer className={""}>
                             <DrawerTrigger className="flex items-center gap-1">
                                 <MessageCircle className="size-4.5 text-gray-500" />
                                 <span className="font-semibold text-sm text-gray-500">{formatNumber(news.commentsCount)}</span>
                             </DrawerTrigger>
-                            <DrawerContent className={"bg-white dark:bg-neutral-900 h-screen data-[vaul-drawer-direction=bottom]:max-h-[90vh]"} aria-describedby={undefined}>
+                            <DrawerContent className={"bg-white dark:bg-neutral-900 p-4 h-screen data-[vaul-drawer-direction=bottom]:max-h-[90vh]"}>
                                 <DrawerHeader className="p-4 overflow-scroll">
                                     <DrawerTitle className="text-lg font-semibold mt-0 mb-5 text-start">{t("comments")}</DrawerTitle>
-                                    <Comment news_id={String(news._id)} topComments={news.topComments} totalComments={news.commentsCount} currentLoginUsername={currentLoginUsername} />
+
+                                    <Comment
+                                        news_id={news._id}
+                                        currentLoginUsername={currentLoginUsername}
+                                        comments={comments}
+                                        setComments={setComments}
+                                        hasMore={hasMore}
+                                        setHasMore={setHasMore}
+                                        totalComments={news.commentsCount}
+                                    />
                                 </DrawerHeader>
                             </DrawerContent>
                         </Drawer>
-
                         {/* Share Button */}
                         <ShareButton ShareProps={news} />
                     </div>

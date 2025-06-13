@@ -14,30 +14,58 @@ const ShareButton = ({ ShareProps }: ShareButtonProps) => {
     const handleShare = async (): Promise<void> => {
         if (loading) return;
 
-        // 🟢 Web Share API Supported?
+        const shareUrl = `${window.location.origin}/news/${ShareProps._id}`;
+        const shareTitle = ShareProps.title;
+        const shareText = `📰 ${ShareProps.title}\n\n${ShareProps.description}`;
+        const imageUrl = ShareProps.images?.[0];
+
+        // 🧠 Try Web Share API v2 with image (if browser supports it)
+        if (navigator.canShare && navigator.canShare({ files: [] }) && imageUrl) {
+            try {
+                const response = await fetch(imageUrl);
+                const blob = await response.blob();
+                const file = new File([blob], "share-image.jpg", { type: blob.type });
+
+                await navigator.share({
+                    title: shareTitle,
+                    text: shareText,
+                    url: shareUrl,
+                    files: [file],
+                });
+
+                await updateShareCount();
+                return;
+            } catch (error) {
+                console.warn("Web Share with image failed:", error);
+            }
+        }
+
+        // 🟡 Fallback: Web Share API without image
         if (navigator.share) {
             try {
                 await navigator.share({
-                    title: ShareProps.title,
-                    text: ShareProps.description,
-                    url: `${window.location.origin}/news/${ShareProps._id}`
+                    title: shareTitle,
+                    text: shareText,
+                    url: shareUrl,
                 });
 
-                // 🔹 If successfully shared, update the database
                 await updateShareCount();
+                return;
             } catch (error) {
-                console.error("Share failed:", error);
-            }
-        } else {
-            // 🚨 Fallback: Copy Link to Clipboard (for unsupported browsers)
-            try {
-                await navigator.clipboard.writeText(`${window.location.origin}/news/${ShareProps._id}`);
-                await updateShareCount(); // ✅ Update share count after copying link
-            } catch (error) {
-                console.error("Clipboard error:", error);
+                console.warn("Simple share failed:", error);
             }
         }
+
+        // 🔴 Final fallback: Copy to clipboard
+        try {
+            await navigator.clipboard.writeText(shareUrl);
+            alert("🔗 Link copied to clipboard!");
+            await updateShareCount();
+        } catch (error) {
+            console.error("Clipboard fallback failed:", error);
+        }
     };
+    
 
     // 🔹 Update share count in the database
     const updateShareCount = async (): Promise<void> => {

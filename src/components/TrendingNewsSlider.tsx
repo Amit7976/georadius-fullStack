@@ -35,7 +35,7 @@ const TrendingNewsSlider = ({ trendingNews, loading }: { trendingNews: TrendingN
                     <Swiper spaceBetween={0} slidesPerView={1} parallax={true} modules={[Autoplay]}>
                         {trendingNews.map((news: TrendingNewsPost, index: number) => (
                             <SwiperSlide key={news._id || index}>
-                                <div className="w-full h-80 relative overflow-hidden select-none bg-gray-100 dark:bg-neutral-800">
+                                <LoaderLink href={`/search/results/${news._id}`} className="w-full h-80 relative overflow-hidden text-start select-none bg-gray-100 dark:bg-neutral-800">
                                     <Image
                                         src={news.image || '/default-image.jpg'}
                                         alt={news.creatorName || ""}
@@ -59,7 +59,7 @@ const TrendingNewsSlider = ({ trendingNews, loading }: { trendingNews: TrendingN
                                             </p>
                                         </div>
                                     </div>
-                                </div>
+                                </LoaderLink>
                             </SwiperSlide>
                         ))}
                     </Swiper>

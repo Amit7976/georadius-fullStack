@@ -372,5 +372,31 @@ export const translations = {
       "Location access was denied, we’re using the central area of Jaipur as your default location.",
       "लोकेशन एक्सेस को अनुमति नहीं देने के कारण, आपकी डिफ़ॉल्ट लोकेशन जयपुर के सेंट्रल एरिया पर सेट की गई है।",
     ],
+    interestsAndPreferences: [
+      "Interests & Preferences",
+      "रुचियाँ और प्राथमिकताएँ",
+    ],
+    updateYourInterests: [
+      "Update what you love to see",
+      "आप जो देखना पसंद करते हैं उसे अपडेट करें",
+    ],
+    savedPosts: ["Saved Posts", "सहेजे गए पोस्ट"],
+    viewYourSavedItems: ["View your saved items", "अपने सहेजे गए आइटम देखें"],
+
+    saved: ["Saved", "सहेजा गया"],
+
+    noNewsSavedYet: [
+      "No news saved yet",
+      "अभी तक कोई समाचार सहेजा नहीं गया है",
+    ],
+    failedToFetchSavedPosts: [
+      "Failed to fetch saved posts.",
+      "सेव किए गए पोस्ट लाने में विफल।",
+    ],
+
+    failedToFetchNearbyPosts: [
+      "Failed to fetch nearby posts.",
+      "नज़दीकी पोस्ट लाने में विफल।",
+    ],
   },
 };

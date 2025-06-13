@@ -157,6 +157,7 @@ export interface ShareProps {
   title: string;
   description: string;
   share?: number;
+  images?: string[];
 }
 
 export interface ShareButtonProps {

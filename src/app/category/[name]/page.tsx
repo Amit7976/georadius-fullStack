@@ -82,7 +82,7 @@ export default function CategoryPage() {
             <div className="gap-4 flex flex-col px-4">
                 {posts.length > 0 ? (
                     posts.map((post) => (
-                        <LoaderLink href={"/post/" + post._id} key={post._id} className="py-2 space-y-2 text-start">
+                        <LoaderLink href={`/search/results/${post._id}`} key={post._id} className="py-2 space-y-2 text-start">
                             <p className="text-gray-500 text-xs">{formatTimeAgo(post.updatedAt)}</p>
                             <h4 className="font-semibold text-lg leading-5">{post.title}</h4>
                             <p className="text-xs text-gray-500 leading-5 mt-1">{post.location}</p>
