@@ -20,21 +20,13 @@ import { Post, User } from "@/src/helpers/types";
 export default function SearchResultsClient() {
     const searchParams = useSearchParams();
     const query = searchParams.get("q") || "";
-    const [radius, setRadius] = useState("5000000");
+    const [radius, setRadius] = useState("50");
     const [searchType, setSearchType] = useState("post");
-
-
     const [results, setResults] = useState<User[] | Post[]>([]);
     const [expandedDescriptions, setExpandedDescriptions] = useState<string[]>([]);
 
-    useEffect(() => {
-        setResults([]);
-        setRadius("10");
-    }, [searchType]);
-
 
     const location = useGeolocation();
-
 
     const fetchResults = useCallback(async (lat: number, lng: number) => {
         const r = parseInt(radius);
@@ -67,8 +59,8 @@ export default function SearchResultsClient() {
         if (location) {
             fetchResults(location.lat, location.lng);
         }
-    }, [location, query, radius, searchType, fetchResults]);
-      
+    }, [query, radius, searchType, fetchResults]);
+
 
 
 
@@ -108,7 +100,7 @@ export default function SearchResultsClient() {
 
                         {searchType === "post" && (
                             <div>
-                                <Select onValueChange={setRadius} defaultValue="5000000">
+                                <Select onValueChange={setRadius} defaultValue="50">
                                     <SelectTrigger className="w-fit flex items-center shadow-none border-0">
                                         <SelectValue placeholder={t("worldwide")} />
                                     </SelectTrigger>

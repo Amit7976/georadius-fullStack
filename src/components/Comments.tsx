@@ -13,7 +13,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { t } from "../helpers/i18n";
-import { CommentType, CurrentUser } from "../helpers/types";
+import { CommentType } from "../helpers/types";
 
 const Comments = ({ news_id, topComments, totalComments, currentLoginUsername }: { news_id: string, topComments: CommentType[], totalComments: number, currentLoginUsername: string }) => {
     const [deleteCommentId, setDeleteCommentId] = useState<string | null>(null);

@@ -9,6 +9,7 @@ import QrButton from "@/src/components/QrButton";
 import VoteButtons from "@/src/components/VoteButtons";
 import { formatTimeAgo } from "@/src/helpers/formatTimeAgo";
 import { t } from "@/src/helpers/i18n";
+import { News } from "@/src/helpers/types";
 import { Pencil } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -18,27 +19,15 @@ import PullToRefresh from "react-pull-to-refresh";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useGeolocation } from "../hooks/useGeolocation";
-import { News, Post } from "@/src/helpers/types";
-import { getDistanceFromCurrentLocation } from "@/src/helpers/getDistanceFromCurrentLocation";
 import GetDistance from "./GetDistance";
 
-
-
-
-
-
 export default function MainContent() {
-
     const [newsData, setNewsData] = useState<News[]>([]);
-    const [posts, setPosts] = useState([]);
+    const [posts, setPosts] = useState<News[]>([]);
     const [loadingPosts, setLoadingPosts] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const location = useGeolocation();
-    const [distance, setDistance] = useState<string | null>(null);
-
-    const [showAddress, setShowAddress] = useState(false);
-
-
+    const [openDrawerId, setOpenDrawerId] = useState<string | null>(null);
 
     useEffect(() => {
         const hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");
@@ -47,22 +36,19 @@ export default function MainContent() {
     }, [posts]);
 
     const handleHide = (postId: string) => {
-        setNewsData(prevNews => prevNews.filter(news => news._id !== postId.toString()));
-
-        const hiddenPosts = JSON.parse(localStorage.getItem("hideNews") || "[]");
-        if (!hiddenPosts.includes(postId)) {
-            hiddenPosts.push(postId);
-            localStorage.setItem("hideNews", JSON.stringify(hiddenPosts));
+        setNewsData(prev => prev.filter(news => news._id !== postId));
+        const hidden = JSON.parse(localStorage.getItem("hideNews") || "[]");
+        if (!hidden.includes(postId)) {
+            hidden.push(postId);
+            localStorage.setItem("hideNews", JSON.stringify(hidden));
         }
     };
 
-
     useEffect(() => {
         if (!location) return;
-
-        const fetchNearbyPosts = async (latitude: number, longitude: number) => {
+        const fetchNearbyPosts = async (lat: number, lng: number) => {
             try {
-                const res = await fetch(`/api/rapid/nearby?lat=${latitude}&lng=${longitude}`);
+                const res = await fetch(`/api/rapid/nearby?lat=${lat}&lng=${lng}`);
                 const json = await res.json();
                 setPosts(json);
             } catch (err) {
@@ -72,168 +58,153 @@ export default function MainContent() {
                 setLoadingPosts(false);
             }
         };
-
-
-
         fetchNearbyPosts(location.lat, location.lng);
-
-
     }, [location]);
-
- 
 
     const handleRefresh = async () => {
         window.location.reload();
     };
 
+    // 💡 Hash sync logic
+    const handleDrawerOpen = (postId: string) => {
+        setOpenDrawerId(postId);
+        window.location.hash = postId;
+    };
 
+    const handleDrawerClose = () => {
+        setOpenDrawerId(null);
+        history.pushState("", document.title, window.location.pathname + window.location.search);
+    };
 
+    useEffect(() => {
+        const onHashChange = () => {
+            if (!window.location.hash && openDrawerId) {
+                setOpenDrawerId(null);
+            }
+        };
+        window.addEventListener("hashchange", onHashChange);
+        return () => window.removeEventListener("hashchange", onHashChange);
+    }, [openDrawerId]);
+
+    useEffect(() => {
+        // Restore state if someone lands on a hash
+        if (window.location.hash) {
+            const hash = window.location.hash.replace("#", "");
+            setOpenDrawerId(hash);
+        }
+    }, []);
 
     if (loadingPosts) return <div className="flex items-center justify-center h-[94vh]"><div className="loader"></div></div>;
     if (error) return <p className="text-red-500">{error}</p>;
 
     return (
-        <>
-            <PullToRefresh
-                onRefresh={handleRefresh}
-                resistance={5}
-            >
-                <div className="bg-gray-100 dark:bg-neutral-800">
-                    <Swiper
-                        direction="vertical"
-                        slidesPerView={1}
-                        pagination={{ clickable: true }}
-                        className="h-[94vh] w-full"
-                    >
-                        {newsData.map((post) => (
-                            (post.images.length) > 0 && (
-                                <SwiperSlide key={post._id} className="relative flex items-center justify-center w-full">
-                                    <Swiper
-                                        direction="horizontal"
-                                        slidesPerView={1}
-                                        pagination={{ clickable: true }}
-                                        className="w-full h-[50vh] z-10 relative"
-                                    >
-                                        {post.images.map((image: string) => (
-                                            <SwiperSlide key={image} className="relative flex items-center justify-center w-full">
-                                                <Image src={image} alt={post.title} layout="fill" sizes="full" objectFit="cover" priority />
-                                            </SwiperSlide>
-                                        ))}
+        <PullToRefresh onRefresh={handleRefresh} resistance={5}>
+            <div className="bg-gray-100 dark:bg-neutral-800">
+                <Swiper direction="vertical" slidesPerView={1} className="h-[94vh] w-full">
+                    {newsData.map(post => (
+                        post.images.length > 0 && (
+                            <SwiperSlide key={post._id} className="relative flex items-center justify-center w-full">
+                                <Swiper direction="horizontal" slidesPerView={1} className="w-full h-[50vh] z-10 relative">
+                                    {post.images.map(image => (
+                                        <SwiperSlide key={image} className="relative flex items-center justify-center w-full">
+                                            <Image src={image} alt={post.title} layout="fill" sizes="full" objectFit="cover" priority />
+                                        </SwiperSlide>
+                                    ))}
+                                </Swiper>
 
-                                    </Swiper>
-
-                                    <div className="absolute top-5 right-4 z-50">
-                                        <Drawer>
-                                            <DrawerTrigger>
-                                                <HiDotsVertical className="text-2xl text-gray-500" />
-                                            </DrawerTrigger>
-                                            <DrawerContent className={""}>
-                                                <div className="px-4 py-10 space-y-6">
-                                                    <DialogTitle className={"flex gap-2 px-4 flex-wrap"}>
-                                                        {post.categories.map((category: string, index: number) => (
-                                                            <LoaderLink href={`/category/${category}`} key={index} className="bg-gray-200 dark:bg-neutral-800 rounded-sm px-5 py-2 text-xs font-semibold text-gray-600 dark:text-gray-400 hover:text-green-500 cursor-pointer">
-                                                                {category}
-                                                            </LoaderLink>
-                                                        ))}
-                                                    </DialogTitle>
-
-                                                    <div className="space-y-2 mb-0">
-                                                        <>
-                                                            <HideButton postId={post._id} onHide={() => handleHide(post._id)} />
-                                                        </>
-                                                        <>
-                                                            <QrButton postId={post._id} />
-                                                        </>
-                                                        {post.currentUserProfile ? (
-                                                            <>
-                                                                <LoaderLink href={"/pages/edit_post/" + post._id} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer text-gray-700 hover:bg-gray-100 dark:text-gray-300 border-2 rounded-lg bg-gray-100 dark:bg-neutral-800">
-                                                                    <Pencil /> {t("edit")}
-                                                                </LoaderLink>
-
-                                                                <DeleteButton postId={post._id} onHide={() => handleHide(post._id)} />
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <LoaderLink href={"/" + post.creatorName} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer text-gray-700 hover:bg-gray-100 dark:text-gray-300 border-2 rounded-lg bg-gray-100 dark:bg-neutral-800">
-                                                                    <Image src={post.creatorImage} alt="Profile" width={40} height={40} className="rounded-full size-5" priority /> {t("viewProfile")}
-                                                                </LoaderLink>
-                                                                <LoaderLink href={`/pages/others/report_an_issue/${post._id}`} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer text-gray-700 hover:bg-gray-100 dark:text-gray-300 border-2 rounded-lg bg-gray-100 dark:bg-neutral-800">
-                                                                    <TbReport className="size-6" /> {t("report")}
-                                                                </LoaderLink>
-                                                            </>
-                                                        )}
-
-                                                    </div>
-                                                </div>
-                                            </DrawerContent>
-                                        </Drawer>
-                                    </div>
-
+                                {/* Menu Drawer */}
+                                <div className="absolute top-5 right-4 z-50">
                                     <Drawer>
-                                        <DrawerTrigger asChild>
-
-                                            <div className="absolute bottom-0 left-0 w-full bg-white dark:bg-neutral-900 h-[50vh] px-5 pt-8 pb-16 overflow-hidden text-black dark:text-white flex flex-col justify-start z-50 pointer-events-none rounded-t-4xl border">
-
-
-                                                {post.latitude !== undefined && post.longitude !== undefined && (
-                                                    <GetDistance lat={post.latitude} lng={post.longitude} location={post.location} />
-                                                )}
-                                                <h2 className="text-2xl font-bold pr-10 pointer-events-auto">{post.title} Lorem ipsum dolor sit amet consectetur adipisicing elit. Beatae, cupiditate.</h2>
-
-
-                                                <div className="flex items-center justify-between gap-3 w-full mt-4 mb-1 pointer-events-auto">
-                                                    <div className="flex items-center gap-2">
-                                                        <Image src={post.creatorImage} alt={post.creatorName} width={40} height={40} className="rounded-full" priority />
-                                                        <span className="text-base font-semibold">{post.creatorName}</span>
-                                                    </div>
-                                                    <span className="text-sm font-semibold text-gray-500">
-                                                        {formatTimeAgo(post.createdAt)}
-                                                    </span>
-                                                </div>
-
-                                                <div className="bg-gradient-to-b from-transparent via-white to-white dark:via-neutral-900 dark:to-neutral-900 h-[10vh] w-full absolute bottom-0"></div>
-
-                                                <p className="text-xl text-gray-400 font-medium mt-6 cursor-pointer pointer-events-auto">
-                                                    {post.description.split(" ").slice(0, 20).join(" ")} Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium minima rem fugiat, laborum libero voluptatem doloribus eos autem a labore? A impedit tempora iusto saepe rerum vero suscipit, mollitia velit? Harum, vero tempore unde cumque voluptatibus sint hic tempora corrupti ipsum ea!
-                                                </p>
-                                            </div>
+                                        <DrawerTrigger>
+                                            <HiDotsVertical className="text-2xl text-gray-500" />
                                         </DrawerTrigger>
-                                        <DrawerContent className="p-0 pointer-events-auto h-screen data-[vaul-drawer-direction=bottom]:max-h-screen">
-                                            <div className="overflow-y-scroll py-20 px-4">
-                                                <span className="text-sm font-semibold text-gray-500">
-                                                    {formatTimeAgo(post.createdAt)}
-                                                </span>
-                                                <DrawerTitle className="pt-4 text-2xl font-bold pr-10 capitalize">
-                                                    {post.title} Lorem ipsum dolor sit amet consectetur adipisicing elit. Beatae, cupiditate.
-                                                </DrawerTitle>
+                                        <DrawerContent className={""}>
+                                            <div className="px-4 py-10 space-y-6">
+                                                <DialogTitle className="flex gap-2 px-4 flex-wrap">
+                                                    {post.categories.map((cat, idx) => (
+                                                        <LoaderLink key={idx} href={`/category/${cat}`} className="bg-gray-200 dark:bg-neutral-800 rounded-sm px-5 py-2 text-xs font-semibold text-gray-600 dark:text-gray-400 hover:text-green-500 cursor-pointer">
+                                                            {cat}
+                                                        </LoaderLink>
+                                                    ))}
+                                                </DialogTitle>
 
-                                                <div className="flex items-center justify-between gap-3 w-full mt-6 mb-1">
-                                                    <div className="flex items-center gap-2">
-                                                        <Image src={post.creatorImage} alt={post.creatorName} width={40} height={40} className="rounded-full" priority />
-                                                        <span className="text-base font-semibold">{post.creatorName}</span>
-                                                    </div>
-
-                                                    <VoteButtons news={post} />
-                                                </div>
-
-                                                <div className="mt-8">
-                                                    {post.latitude !== undefined && post.longitude !== undefined && (
-                                                        <GetDistance lat={post.latitude} lng={post.longitude} location={post.location} />
+                                                <div className="space-y-2">
+                                                    <HideButton postId={post._id} onHide={() => handleHide(post._id)} />
+                                                    <QrButton postId={post._id} />
+                                                    {post.currentUserProfile ? (
+                                                        <>
+                                                            <LoaderLink href={`/pages/edit_post/${post._id}`} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer text-gray-700 hover:bg-gray-100 dark:text-gray-300 border-2 rounded-lg bg-gray-100 dark:bg-neutral-800">
+                                                                <Pencil /> {t("edit")}
+                                                            </LoaderLink>
+                                                            <DeleteButton postId={post._id} onHide={() => handleHide(post._id)} />
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <LoaderLink href={`/${post.creatorName}`} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer text-gray-700 hover:bg-gray-100 dark:text-gray-300 border-2 rounded-lg bg-gray-100 dark:bg-neutral-800">
+                                                                <Image src={post.creatorImage} alt="Profile" width={40} height={40} className="rounded-full size-5" priority /> {t("viewProfile")}
+                                                            </LoaderLink>
+                                                            <LoaderLink href={`/pages/others/report_an_issue/${post._id}`} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer text-gray-700 hover:bg-gray-100 dark:text-gray-300 border-2 rounded-lg bg-gray-100 dark:bg-neutral-800">
+                                                                <TbReport className="size-6" /> {t("report")}
+                                                            </LoaderLink>
+                                                        </>
                                                     )}
                                                 </div>
-
-                                                <p className="text-xl text-gray-400 font-medium mt-5 cursor-pointer text-balance">
-                                                    {post.description.split(" ").slice(0, 30).join(" ") + "..."} Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus magnam repudiandae voluptatem nostrum blanditiis distinctio et eius, delectus adipisci! Iste laudantium ratione doloribus excepturi, necessitatibus dolores labore molestias fuga repudiandae architecto rem incidunt commodi rerum quis sed modi! Suscipit tempora est, delectus iusto dolor architecto quos, nostrum tempore amet commodi, beatae eveniet molestias. Dolor, sint. Quo ipsam quas optio! Dignissimos quo mollitia autem possimus asperiores eum fugit quas, obcaecati tempore quaerat? Repellendus harum tempore sapiente architecto nobis reiciendis error ea sit voluptatem quod consequatur enim facere ab recusandae dolor nihil explicabo sunt quibusdam natus corrupti necessitatibus ipsam, laborum iure rerum. Neque eius ipsa asperiores, harum quidem voluptatibus maxime quae qui totam labore consequatur nihil, in corporis. Nulla rerum, dicta sint quam, quasi perspiciatis consequuntur harum corrupti quae error ullam quisquam. Libero neque quas iure assumenda cumque inventore enim odio consectetur voluptatem. Molestias, facere. Consequuntur recusandae repellat voluptate fugit, omnis odio quas veniam nemo rem necessitatibus blanditiis, tempora nisi consectetur deleniti ducimus voluptates aliquid! Aut nesciunt aspernatur, reprehenderit fugiat ad error tempore, sunt minus, amet necessitatibus hic soluta qui quo nostrum iusto cum officia nulla animi magnam ab voluptatem corrupti? Voluptas, eos delectus, accusamus necessitatibus ducimus sunt voluptatum nobis nisi autem soluta asperiores nemo illo expedita doloremque quasi! Blanditiis, deserunt voluptate cupiditate quos odit amet quis nobis neque praesentium possimus alias aperiam maxime nostrum eius cum soluta pariatur reprehenderit repellendus tempore ducimus inventore quia. Quod maiores, vitae unde iusto eius repellat repellendus accusantium fugiat fugit? Distinctio iure quo unde! Itaque, quos! Doloribus fugiat odit praesentium molestias. Magni odit voluptates perspiciatis ab, voluptate iste nam facilis numquam rerum beatae, blanditiis dolorum vero fugit libero vel accusamus ullam id perferendis incidunt sed distinctio reprehenderit. Recusandae rem tempora non explicabo adipisci? Maiores sed velit porro alias laboriosam error obcaecati culpa totam eos hic enim architecto maxime cumque adipisci magni minima, voluptatibus natus saepe. Voluptas quisquam, eligendi consequuntur atque repudiandae ab nobis architecto ipsa mollitia itaque officia voluptatem laboriosam vero earum tempore quidem saepe voluptates ullam eaque eveniet? Delectus, atque. Laboriosam qui ipsum nesciunt sapiente saepe impedit odio. Consectetur voluptas explicabo, ipsa inventore nam saepe pariatur adipisci sapiente sequi doloremque eaque non quas facilis hic labore dicta dolores perferendis corporis laborum consequatur quod quo molestias aperiam. Nisi, tenetur, aperiam aspernatur laborum aliquid tempora facilis dolore deserunt ullam necessitatibus odio quisquam, quo hic provident quidem! Dolore ratione minus voluptatum impedit sed fuga repellat possimus repellendus vel maxime velit recusandae rerum ipsam, harum beatae distinctio. Quasi ullam quis sint doloremque dolorum velit voluptatum animi repudiandae rem, amet sunt at vel deleniti nostrum natus fugit quo quidem sit doloribus commodi quod eaque consequatur nesciunt? Nam aut doloribus explicabo corporis molestias, ratione dicta expedita ipsam incidunt, reiciendis alias qui? Voluptatem alias sapiente laudantium molestiae, quod, corrupti quas nisi placeat, dicta consequuntur blanditiis voluptatum soluta aliquam! Fugit sed nostrum iusto. Dolores porro id explicabo veniam illo amet libero impedit aperiam consequuntur alias quos sapiente commodi praesentium nulla, nemo voluptates quisquam tempore, suscipit minima autem laudantium? Quas quis saepe at alias.  Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium minima rem fugiat, laborum libero voluptatem doloribus eos autem a labore? A impedit tempora iusto saepe rerum vero suscipit, mollitia velit? Harum, vero tempore unde cumque voluptatibus sint hic tempora corrupti ipsum ea!
-                                                </p>
                                             </div>
                                         </DrawerContent>
                                     </Drawer>
-                                </SwiperSlide>
-                            )
-                        ))}
-                    </Swiper>
-                </div >
-            </PullToRefresh >
-        </>
+                                </div>
+
+                                {/* Post Drawer */}
+                                <Drawer open={openDrawerId === post._id} onOpenChange={(isOpen: boolean) => {
+                                    if (isOpen) handleDrawerOpen(post._id);
+                                    else handleDrawerClose();
+                                }}>
+                                    <DrawerTrigger asChild>
+                                        <div className="absolute bottom-0 left-0 w-full bg-white dark:bg-neutral-900 h-[50vh] px-5 pt-8 pb-16 overflow-hidden text-black dark:text-white flex flex-col justify-start z-50 pointer-events-none rounded-t-4xl border">
+                                            {post.latitude && post.longitude && (
+                                                <GetDistance lat={post.latitude} lng={post.longitude} location={post.location} />
+                                            )}
+                                            <h2 className="text-2xl font-bold pr-10 pointer-events-auto">{post.title}</h2>
+                                            <div className="flex items-center justify-between gap-3 w-full mt-4 mb-1 pointer-events-auto">
+                                                <div className="flex items-center gap-2">
+                                                    <Image src={post.creatorImage} alt={post.creatorName} width={40} height={40} className="rounded-full" priority />
+                                                    <span className="text-base font-semibold">{post.creatorName}</span>
+                                                </div>
+                                                <span className="text-sm font-semibold text-gray-500">{formatTimeAgo(post.createdAt)}</span>
+                                            </div>
+                                            <div className="bg-gradient-to-b from-transparent via-white to-white dark:via-neutral-900 dark:to-neutral-900 h-[10vh] w-full absolute bottom-0"></div>
+                                            <p className="text-xl text-gray-400 font-medium mt-6 cursor-pointer pointer-events-auto">
+                                                {post.description.split(" ").slice(0, 20).join(" ")}
+                                            </p>
+                                        </div>
+                                    </DrawerTrigger>
+                                    <DrawerContent className="p-0 pointer-events-auto h-screen data-[vaul-drawer-direction=bottom]:max-h-screen">
+                                        <div className="overflow-y-scroll py-20 px-4">
+                                            <span className="text-sm font-semibold text-gray-500">{formatTimeAgo(post.createdAt)}</span>
+                                            <DrawerTitle className="pt-4 text-2xl font-bold pr-10 capitalize">{post.title}</DrawerTitle>
+                                            <div className="flex items-center justify-between gap-3 w-full mt-6 mb-1">
+                                                <div className="flex items-center gap-2">
+                                                    <Image src={post.creatorImage} alt={post.creatorName} width={40} height={40} className="rounded-full" priority />
+                                                    <span className="text-base font-semibold">{post.creatorName}</span>
+                                                </div>
+                                                <VoteButtons news={post} />
+                                            </div>
+                                            <div className="mt-8">
+                                                {post.latitude && post.longitude && (
+                                                    <GetDistance lat={post.latitude} lng={post.longitude} location={post.location} />
+                                                )}
+                                            </div>
+                                            <p className="text-xl text-gray-400 font-medium mt-5 cursor-pointer text-balance">
+                                                {post.description.split(" ").slice(0, 30).join(" ") + "..."}
+                                            </p>
+                                        </div>
+                                    </DrawerContent>
+                                </Drawer>
+                            </SwiperSlide>
+                        )
+                    ))}
+                </Swiper>
+            </div>
+        </PullToRefresh>
     );
 }

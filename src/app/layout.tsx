@@ -39,7 +39,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </ThemeHandler>
         </div>
         <div className="hidden lg:flex items-center justify-center h-screen w-full dark:bg-neutral-900 px-10">
-          <p className="max-w-lg mx-auto text-center">You're currently viewing the web version of the Geo Radius app. For the best experience, please use a mobile device.</p>
+          <p className="max-w-lg mx-auto text-center">You&#39;re currently viewing the web version of the Geo Radius app. For the best experience, please use a mobile device.</p>
         </div>
       </body>
     </html>

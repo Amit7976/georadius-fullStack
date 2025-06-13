@@ -85,6 +85,7 @@ export async function POST(req: Request) {
         ...post,
         currentUserProfile,
       },
+      currentLoginUsername: session?.user.username,
     });
   } catch (error) {
     console.error("❌ Error fetching single post:", error);

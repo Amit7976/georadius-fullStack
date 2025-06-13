@@ -7,7 +7,7 @@ import { t } from "../helpers/i18n";
 
 export default function SearchInput({ queryParam = "" }: { queryParam?: string; }) {
     const [query, setQuery] = useState(queryParam);
-    const [suggestions, setSuggestions] = useState<{ name: string }[]>([]);
+    const [suggestions, setSuggestions] = useState<{ name: string, id: string }[]>([]);
     const [hasTyped, setHasTyped] = useState(false);
     const router = useRouter();
     const inputRef = useRef<HTMLInputElement>(null);
@@ -53,7 +53,7 @@ export default function SearchInput({ queryParam = "" }: { queryParam?: string; 
         const searchTerm = (q || query)?.trim();
         if (!searchTerm) return;
         router.push(`/search/results?q=${encodeURIComponent(searchTerm)}`);
-        setSuggestions([]); // 💨 Clear suggestions after search
+        setSuggestions([]);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -97,8 +97,8 @@ export default function SearchInput({ queryParam = "" }: { queryParam?: string; 
                     {suggestions.map((item, idx) => (
                         <div
                             key={idx}
-                            className="p-3 hover:bg-gray-100 cursor-pointer rounded"
-                            onClick={() => handleSearch(item.name)}
+                            className="p-3 hover:bg-gray-100 dark:hover:bg-neutral-900 duration-300 cursor-pointer rounded"
+                            onClick={() => router.push(`/search/results/${item.id}`)}
                         >
                             {item.name}
                         </div>

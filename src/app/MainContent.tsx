@@ -21,7 +21,7 @@ export default function MainContent() {
     const categoriesRef = useRef<HTMLDivElement | null>(null);
     const [currentLoginUsername, setCurrentLoginUsername] = useState("");
 
-    let location = useGeolocation();
+    const location = useGeolocation();
 
     useEffect(() => {
         if (error) {

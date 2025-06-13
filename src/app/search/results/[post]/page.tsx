@@ -11,6 +11,7 @@ export default function SinglePostPage({ params }: { params: Promise<{ post: str
     const { post } = use(params);
 
     const [newsData, setNewsData] = useState<News[]>([]);
+    const [currentLoginUsername, setCurrentLoginUsername] = useState("");
 
     useEffect(() => {
         const fetchPost = async () => {
@@ -24,6 +25,7 @@ export default function SinglePostPage({ params }: { params: Promise<{ post: str
                 const data = await res.json();
                 if (data?.post) {
                     setNewsData([data.post as News]);
+                    setCurrentLoginUsername(data.currentLoginUsername);
                 }
             } catch (err) {
                 console.error("Error fetching post:", err);
@@ -49,6 +51,7 @@ export default function SinglePostPage({ params }: { params: Promise<{ post: str
                     key={news._id}
                     onHide={handleHide}
                     fullDescription={true}
+                    currentLoginUsername={currentLoginUsername}
                 />
             ))}
         </>

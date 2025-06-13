@@ -11,6 +11,7 @@ import { News } from '@/src/helpers/types';
 
 function Page() {
     const [data, setData] = useState<News[]>([]);
+    const [currentLoginUsername, setCurrentLoginUsername] = useState("");
     const [error, setError] = useState<string | null>(null);
     const location = useGeolocation();
 
@@ -18,8 +19,11 @@ function Page() {
         const fetchNearbyPosts = async (latitude: number, longitude: number) => {
             try {
                 const res = await fetch(`/api/main/nearby?lat=${latitude}&lng=${longitude}&range=7000&limit=20&images=0`);
-                const json = await res.json();
-                setData(json);
+                const data = await res.json();
+                if (data?.post) {
+                    setData([data.post as News]);
+                    setCurrentLoginUsername(data.currentLoginUsername);
+                }
             } catch (err) {
                 console.error("API fetch error:", err);
                 setError("Failed to fetch nearby posts.");
@@ -56,7 +60,7 @@ function Page() {
                 </div>
             <div className="py-6 px-1">
                 {data.map((news) => (
-                    <NewsPost news={news} key={news._id} onHide={handleHide} fullDescription={false} />
+                    <NewsPost news={news} key={news._id} onHide={handleHide} fullDescription={false} currentLoginUsername={currentLoginUsername} />
                 ))}
             </div>
         </div>

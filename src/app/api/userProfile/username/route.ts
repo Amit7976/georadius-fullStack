@@ -1,9 +1,8 @@
-import { NextResponse } from "next/server";
-import mongoose from "mongoose";
-import { UserProfile } from "@/src/models/UserProfileModel";
-import { Post } from "@/src/models/postModel";
-import { Comment } from "@/src/models/commentModel";
 import { auth } from "@/src/auth";
+import { UserProfile } from "@/src/models/UserProfileModel";
+import { Comment } from "@/src/models/commentModel";
+import { Post } from "@/src/models/postModel";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {

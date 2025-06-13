@@ -1,13 +1,8 @@
 import { Button } from "@/components/ui/button";
 import interestsList from "@/public/json/interestList.json";
-import { t } from "@/src/helpers/i18n";
 import { News } from "@/src/helpers/types";
 import NewsPost from "../NewsPost";
 import Placeholder from "./Placeholder";
-
-
-const filterOptions = [t("nearby"), t("district"), t("worldwide")];
-
 
 export default function CategoryTabs({ selectedCategory, setSelectedCategory, currentLoginUsername, categoriesRef, loading, newsData, handleHide }: { selectedCategory: string; setSelectedCategory: (category: string) => void;currentLoginUsername:string, categoriesRef: React.RefObject<HTMLDivElement | null>; loading: boolean; newsData: News[], handleHide: (id: string) => void }) {
 
