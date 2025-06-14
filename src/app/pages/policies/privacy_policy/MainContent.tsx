@@ -62,7 +62,7 @@ function MainContent() {
         <h2 className='text-xl font-semibold mt-16 mb-6'>3. How We Share Your Information</h2>
         <p className='text-lg font-normal my-6'>We do not sell your personal data. However, we may share information in the following cases:</p>
         <ul>
-          <li className='text-lg font-normal my-6'><b>With Third-Party Services:</b> For essential services such as push notifications, analytics, and cloud storage, we may collaborate with reputable third-party providers.</li>
+          <li className='text-lg font-normal my-6'><b>With Third-Party Services:</b> For essential services such as analytics, and cloud storage, we may collaborate with reputable third-party providers.</li>
           <li className='text-lg font-normal my-6'><b>With Law Enforcement:</b> If legally required, we may disclose information to comply with Indian legal regulations.</li>
           <li className='text-lg font-normal my-6'><b>With Business Partners:</b> If we collaborate with verified partners to improve news accuracy and delivery, limited data may be shared under strict security measures.</li>
         </ul>
@@ -91,7 +91,7 @@ function MainContent() {
 
 
         <h2 className='text-xl font-semibold mt-16 mb-6'>7. Updates to this Policy</h2>
-        <p className='text-lg font-normal my-6'>We may update this policy from time to time to reflect legal and operational changes. Any modifications will be communicated through in-app notifications or emails to keep users informed.</p>
+        <p className='text-lg font-normal my-6'>We may update this policy from time to time to reflect legal and operational changes. Any modifications will be communicated through emails to keep users informed.</p>
 
 
         <h2 className='text-xl font-semibold mt-16 mb-6'>8. Contact Us</h2>

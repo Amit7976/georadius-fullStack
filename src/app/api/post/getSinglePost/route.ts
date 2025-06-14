@@ -134,22 +134,22 @@ export async function POST(req: Request) {
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Fetch top 10 comments for this post
-    const topComments = await Comment.aggregate([
-      { $match: { postId: post._id } },
-      { $sort: { createdAt: -1 } },
-      { $limit: 10 },
-      {
-        $project: {
-          _id: 1,
-          comment: 1,
-          username: 1,
-          parentCommentId: 1,
-          replyingToUsername: 1,
-          profileImage: 1,
-          updatedAt: 1,
-        },
-      },
-    ]);
+    // const topComments = await Comment.aggregate([
+    //   { $match: { postId: post._id } },
+    //   { $sort: { createdAt: -1 } },
+    //   { $limit: 10 },
+    //   {
+    //     $project: {
+    //       _id: 1,
+    //       comment: 1,
+    //       username: 1,
+    //       parentCommentId: 1,
+    //       replyingToUsername: 1,
+    //       profileImage: 1,
+    //       updatedAt: 1,
+    //     },
+    //   },
+    // ]);
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -162,7 +162,7 @@ export async function POST(req: Request) {
       post: {
         ...post,
         currentUserProfile,
-        topComments,
+        // topComments,
       },
       currentLoginUsername,
     });

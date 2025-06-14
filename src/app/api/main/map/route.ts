@@ -20,7 +20,7 @@ export async function GET() {
 
     return NextResponse.json({ success: true, data: posts });
   } catch (error) {
-    console.error("[GET_NEWS_LOCATIONS_ERROR]", error);
+    console.error("NEWS_LOCATIONS_ERROR: ", error);
     return NextResponse.json(
       { success: false, message: "Failed to fetch news locations" },
       { status: 500 }

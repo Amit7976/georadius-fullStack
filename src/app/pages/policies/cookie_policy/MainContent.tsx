@@ -50,7 +50,7 @@ function MainContent() {
         
         
         <h2 className='text-xl font-semibold mt-16 mb-6'>6. Changes to This Policy</h2>
-        <p className='text-lg font-normal my-6'>We may update this Cookie Policy from time to time. Any changes will be communicated through in-app notifications or emails.</p>
+        <p className='text-lg font-normal my-6'>We may update this Cookie Policy from time to time. Any changes will be communicated through emails.</p>
         
         
         <h2 className='text-xl font-semibold mt-16 mb-6'>7. Contact Us</h2>

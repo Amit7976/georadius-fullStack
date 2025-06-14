@@ -9,7 +9,7 @@ import "swiper/css";
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-function GetDistance({ lat, lng, location }: { lat: number, lng: number, location:string }) {
+function GetDistance({ lat, lng, location }: { lat: number, lng: number, location?: string }) {
 
     const [distance, setDistance] = useState(t("nearby"));
 
@@ -22,13 +22,15 @@ function GetDistance({ lat, lng, location }: { lat: number, lng: number, locatio
                 .catch(() => setDistance(t("nearby")));
         }
     }, [lat, lng]);
-    
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     return (
         <div className="flex items-center gap-4 mb-2">
             <p className="text-gray-500 text-sm">{distance}</p>
-            <p className="text-gray-500 text-xs">{location}</p>
+            {location &&
+                <p className="text-gray-500 text-xs">{location}</p>
+            }
         </div>
     )
 }

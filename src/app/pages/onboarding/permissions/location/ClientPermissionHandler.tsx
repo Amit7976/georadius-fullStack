@@ -24,7 +24,7 @@ export default function ClientPermissionHandler() {
 
     const redirectToNext = () => {
         setLocationPermissionCookie();
-        router.replace("/pages/onboarding/permissions/notification");
+        router.replace("/pages/auth/signin");
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////

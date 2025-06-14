@@ -17,7 +17,6 @@ export default async function page() {
 
   if (onboarding) {
     if (!LPS) redirect("/pages/onboarding/permissions/location");
-    if (!NPS) redirect("/pages/onboarding/permissions/notification");
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////

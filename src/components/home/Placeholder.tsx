@@ -10,6 +10,24 @@ export default function Placeholder() {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+export function PlaceholderComments() {
+    return (
+        <div className="flex flex-col gap-10 py-2">
+            {[...Array(9)].map((_, i) => (
+                <div key={i} className="flex items-center gap-4">
+                    <div className="w-12 h-12 shrink-0 rounded-full bg-gray-100 dark:bg-neutral-800"></div>
+                    <div className="w-full space-y-3">
+                        <div className="w-1/2 h-4 rounded-full bg-gray-100 dark:bg-neutral-800"></div>
+                        <div className="w-full h-5 rounded-full bg-gray-100 dark:bg-neutral-800"></div>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export function PlaceholderPost() {
     return (
         <div className="flex flex-col gap-10 px-0 py-6">

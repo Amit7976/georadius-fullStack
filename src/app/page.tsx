@@ -18,7 +18,6 @@ export default async function Home() {
 
   if (!onboarding) redirect("/pages/onboarding/getstarted");
   if (!LPS) redirect("/pages/onboarding/permissions/location");
-  if (!NPS) redirect("/pages/onboarding/permissions/notification");
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////
 

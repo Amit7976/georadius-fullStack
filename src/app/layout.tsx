@@ -4,6 +4,7 @@ import { auth } from "../auth";
 import BottomNavigation from "../components/BottomNavigation";
 import { ThemeHandler } from "../components/ThemeHandler";
 import "./globals.css";
+import BottomWrapper from "../components/BottomWrapper";
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,12 +34,7 @@ export const metadata = {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-
-  const session = await auth();
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////////
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="antialiased relative bg-white dark:bg-neutral-900">
@@ -47,7 +43,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <main>
               <Toaster richColors position="top-right" />
               {children}
-              <BottomNavigation username={session?.user.username || false} />
+              <BottomWrapper />
             </main>
             <Toaster richColors position="top-center" expand={false} closeButton />
           </ThemeHandler>

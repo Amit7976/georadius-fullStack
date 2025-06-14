@@ -75,12 +75,12 @@ export async function POST(req: Request) {
           _id: 1,
           title: 1,
           userId: 1,
-          description: 1,
+          // description: 1,
           location: 1,
           longitude: 1,
           latitude: 1,
           images: 1,
-          creatorImage: 1, // we'll add creatorName manually
+          creatorImage: 1,
           share: 1,
           categories: 1,
           createdAt: 1,
@@ -99,29 +99,29 @@ export async function POST(req: Request) {
     const finalPosts = [];
 
     for (const post of posts) {
-      const topComments = await Comment.aggregate([
-        { $match: { postId: post._id } },
-        { $sort: { createdAt: -1 } },
-        { $limit: 10 },
-        {
-          $project: {
-            _id: 1,
-            comment: 1,
-            username: 1,
-            parentCommentId: 1,
-            replyingToUsername: 1,
-            profileImage: 1,
-            updatedAt: 1,
-          },
-        },
-      ]);
+      // const topComments = await Comment.aggregate([
+      //   { $match: { postId: post._id } },
+      //   { $sort: { createdAt: -1 } },
+      //   { $limit: 10 },
+      //   {
+      //     $project: {
+      //       _id: 1,
+      //       comment: 1,
+      //       username: 1,
+      //       parentCommentId: 1,
+      //       replyingToUsername: 1,
+      //       profileImage: 1,
+      //       updatedAt: 1,
+      //     },
+      //   },
+      // ]);
 
       finalPosts.push({
         ...post,
         creatorName: username,
         isSaved: userProfile.saved.includes(post._id.toString()),
         currentUserProfile: post.userId?.toString() === userId,
-        topComments,
+        // topComments,
       });
     }
 

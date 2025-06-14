@@ -58,7 +58,7 @@ export default function MainContent() {
         if (!location) return;
         const fetchNearbyPosts = async (lat: number, lng: number) => {
             try {
-                const res = await fetch(`/api/rapid/nearby?lat=${lat}&lng=${lng}`);
+                const res = await fetch(`/api/rapid/nearby?lat=${lat}&lng=${lng}&limit=50`);
                 const json = await res.json();
                 setPosts(json);
             } catch (err) {
@@ -187,7 +187,7 @@ export default function MainContent() {
                                     <DrawerTrigger asChild>
                                         <div className="absolute bottom-0 left-0 w-full bg-white dark:bg-neutral-900 h-[50vh] px-5 pt-8 pb-16 overflow-hidden text-black dark:text-white flex flex-col justify-start z-50 pointer-events-none rounded-t-4xl border">
                                             {post.latitude && post.longitude && (
-                                                <GetDistance lat={post.latitude} lng={post.longitude} location={post.location} />
+                                                <GetDistance lat={post.latitude} lng={post.longitude} />
                                             )}
                                             <h2 className="text-2xl font-bold pr-10 pointer-events-auto">{post.title}</h2>
                                             <div className="flex items-center justify-between gap-3 w-full mt-4 mb-1 pointer-events-auto">

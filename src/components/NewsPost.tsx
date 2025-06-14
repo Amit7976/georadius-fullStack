@@ -32,7 +32,8 @@ import { CommentType, News } from "../helpers/types";
 const NewsPost = ({ news, onHide, fullDescription, currentLoginUsername }: { news: News, currentLoginUsername: string, fullDescription: boolean; onHide: (id: string) => void }) => {
     const [distance, setDistance] = useState<string | null>(null);
     const [openDrawerId, setOpenDrawerId] = useState<string | null>(null);
-    const [comments, setComments] = useState<CommentType[]>([...news.topComments]);
+    const [comments, setComments] = useState<CommentType[]>([]);
+    // const [comments, setComments] = useState<CommentType[]>([...news.topComments]);
     const [hasMore, setHasMore] = useState(false);
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,7 +67,7 @@ const NewsPost = ({ news, onHide, fullDescription, currentLoginUsername }: { new
     };
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
-    
+
     useEffect(() => {
         const onHashChange = () => {
             if (!window.location.hash && openDrawerId) {
@@ -170,15 +171,27 @@ const NewsPost = ({ news, onHide, fullDescription, currentLoginUsername }: { new
                 {news.images.length > 0 && <ImageSlider images={news.images} height={400} />}
 
                 {/* Title & Description */}
-                <div className="pl-1">
-                    <p className={`pl-2 pb-3 text-base font-medium text-gray-800 dark:text-gray-300`}>
-                        {news.title}
-                    </p>
-                    <p className={`border-l-4 border-green-500 pl-3 py-3 text-sm font-medium text-gray-800 dark:text-gray-400 ${showDescription ? "" : "line-clamp-6"}`}
-                        onClick={() => setShowDescription(!showDescription)}>
-                        {news.description}
-                    </p>
-                </div>
+                <LoaderLink href={`/search/results/${news._id}`} className="pl-1 text-start">
+                    {
+                        showDescription ? (
+                            <>
+                                <p className={`pl-2 pb-3 text-base font-medium text-gray-800 dark:text-gray-300`}>
+                                    {news.title}
+                                </p>
+                                <p className={`border-l-4 border-green-500 pl-3 py-2 text-sm font-medium text-gray-800 dark:text-gray-400 ${showDescription ? "" : "line-clamp-6"}`}
+                                    onClick={() => setShowDescription(!showDescription)}>
+                                    {news.description}
+                                </p>
+                            </>
+                        ) : (
+                            <>
+                                <p className={`border-l-4 border-green-500 pl-3 py-2 text-sm font-medium text-gray-800 dark:text-gray-400`}>
+                                    {news.title}
+                                </p>
+                            </>
+                        )
+                    }
+                </LoaderLink>
 
                 {/* Footer */}
                 <div className="flex justify-between items-center px-4">

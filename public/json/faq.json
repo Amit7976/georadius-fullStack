@@ -25,10 +25,6 @@
             "answer": "Yes, the app supports multiple languages which you can select in the language settings."
         },
         {
-            "question": "How do I enable notifications?",
-            "answer": "You can enable notifications in the app settings under 'Notifications'."
-        },
-        {
             "question": "Can I receive emergency alerts?",
             "answer": "Yes, emergency alerts are automatically sent based on your location."
         },

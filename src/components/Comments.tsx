@@ -13,6 +13,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { t } from "../helpers/i18n";
 import { CommentProps, CommentType } from "../helpers/types";
+import { PlaceholderComments } from "./home/Placeholder";
 import { LoaderLink } from "./loaderLinks";
 
 
@@ -29,7 +30,7 @@ const Comments = ({
     setHasMore,
     totalComments,
 }: CommentProps) => {
-    
+
     const [deleteCommentId, setDeleteCommentId] = useState<string | null>(null);
     const [input, setInput] = useState('');
     const [replyingTo, setReplyingTo] = useState<{ parentId: string; replyingToUsername: string } | null>(null);
@@ -72,9 +73,9 @@ const Comments = ({
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     useEffect(() => {
-        if (totalComments > 10) {
-            fetchMoreComments();
-        }
+        // if (totalComments > 10) {
+        fetchMoreComments();
+        // }
     }, [])
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -184,7 +185,7 @@ const Comments = ({
     const CommentItem = ({ comment, level = 0 }: { comment: CommentType; level?: number }) => {
         const replies = getReplies(comment._id);
         return (
-            <div className={`${level ? 'pl-10' : ''} border-gray-200 mt-1 mb-5`}>
+            <div className={`${level ? 'pl-10' : ''} border-gray-200 mt-2 mb-5`}>
                 <div className="flex items-start gap-3">
                     {comment.profileImage && (
                         <LoaderLink href={`/${comment.username}`}>
@@ -264,15 +265,20 @@ const Comments = ({
                         </Button>
                     </div>
                 </div>
-                {rootComments.length === 0 && (
-                    <div className="text-center text-gray-500 mt-4">
-                        {t("noCommentsYet")}
-                    </div>
-                )}
                 <div className="select-none">
                     {rootComments.map(comment => (
                         <CommentItem key={comment._id} comment={comment} />
                     ))}
+
+                    {isLoading ?
+                        <PlaceholderComments />
+                        :
+                        rootComments.length === 0 && (
+                            <div className="text-center text-gray-500 mt-4">
+                                {t("noCommentsYet")}
+                            </div>
+                        )
+                    }
 
                     {hasMore && (comments.length < totalComments) && (
                         <div className="text-center mt-4">

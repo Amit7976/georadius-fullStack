@@ -9,7 +9,7 @@ import { MdBookmark, MdInterests, MdPassword } from "react-icons/md";
 import { SlQuestion } from "react-icons/sl";
 import Display from "./components/Display";
 import Language from "./components/Language";
-import Notification from "./components/Notification";
+// import Notification from "./components/Notification";
 import Radius from "./components/Radius";
 
 
@@ -75,7 +75,7 @@ const MainContent = () => {
             <div className='pt-4 px-5'>
                 <h2 className='text-lg font-semibold mb-2'>{t("appSettings")}</h2>
                 <Language />
-                <Notification />
+                {/* <Notification /> */}
                 <Display />
                 <Radius />
             </div>

@@ -143,7 +143,7 @@ function MainContent() {
 
         <h2 className='text-xl font-semibold mt-16 mb-6'>8. Modifications to Terms</h2>
         <p className='text-lg font-normal my-6'>We reserve the right to update these terms at any time.</p>
-        <p className='text-lg font-normal my-6'>Users will be notified of changes via in-app notifications.</p>
+        <p className='text-lg font-normal my-6'>Users will be notified of changes via emails.</p>
 
 
         <h2 className='text-xl font-semibold mt-16 mb-6'>9. Contact Information</h2>

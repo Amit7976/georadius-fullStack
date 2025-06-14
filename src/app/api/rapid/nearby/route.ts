@@ -34,6 +34,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const lat = parseFloat(searchParams.get("lat") || "");
     const lng = parseFloat(searchParams.get("lng") || "");
+    const limit = parseFloat(searchParams.get("limit") || "");
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -87,6 +88,9 @@ export async function GET(req: NextRequest) {
           isUserUpvote: { $in: [userId, "$upvote"] },
           isUserDownvote: { $in: [userId, "$downvote"] },
         },
+      },
+      {
+        $limit: limit,
       },
     ]);
 
