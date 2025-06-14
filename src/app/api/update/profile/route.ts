@@ -179,36 +179,36 @@ export async function PUT(req: Request) {
 
       /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-      if (oldProfileImageUrl) {
-        try {
-          const publicId = oldProfileImageUrl.split("/").pop()?.split(".")[0];
-          if (publicId) {
-            // console.log(`[STEP 4] Deleting old image from Cloudinary: ${publicId}`);
+      // if (oldProfileImageUrl) {
+      //   try {
+      //     const publicId = oldProfileImageUrl.split("/").pop()?.split(".")[0];
+      //     if (publicId) {
+      //       // console.log(`[STEP 4] Deleting old image from Cloudinary: ${publicId}`);
 
-            // console.log("====================================");
-            const folderPath = "profile_pictures";
-            const publicIdWithFolder = `${folderPath}/${publicId}`;
+      //       // console.log("====================================");
+      //       const folderPath = "profile_pictures";
+      //       const publicIdWithFolder = `${folderPath}/${publicId}`;
             
-            try {
-              await cloudinary.v2.uploader.destroy(publicIdWithFolder);
-              // console.log("[SUCCESS] Old image deleted successfully.");
-            } catch (deleteError) {
-              console.error(
-                "[ERROR] Failed to delete old image from Cloudinary:",
-                deleteError
-              );
-            }
+      //       try {
+      //         await cloudinary.v2.uploader.destroy(publicIdWithFolder);
+      //         // console.log("[SUCCESS] Old image deleted successfully.");
+      //       } catch (deleteError) {
+      //         console.error(
+      //           "[ERROR] Failed to delete old image from Cloudinary:",
+      //           deleteError
+      //         );
+      //       }
 
-            // console.log("====================================");
-            // console.log("[SUCCESS] Old image deleted successfully.");
-          }
-        } catch (deleteError) {
-          console.error(
-            "[ERROR] Failed to delete old image from Cloudinary:",
-            deleteError
-          );
-        }
-      }
+      //       // console.log("====================================");
+      //       // console.log("[SUCCESS] Old image deleted successfully.");
+      //     }
+      //   } catch (deleteError) {
+      //     console.error(
+      //       "[ERROR] Failed to delete old image from Cloudinary:",
+      //       deleteError
+      //     );
+      //   }
+      // }
     } else {
       profileImageUrl = profileImage || "";
       // console.log("[INFO] No new profile image uploaded. Keeping existing image.");
