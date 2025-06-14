@@ -1,7 +1,7 @@
 import { auth } from "@/src/auth";
 import { UserProfile } from "@/src/models/UserProfileModel";
 import { Post } from "@/src/models/postModel";
-import { Comment } from "@/src/models/commentModel";
+// import { Comment } from "@/src/models/commentModel";
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 

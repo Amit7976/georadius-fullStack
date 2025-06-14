@@ -1,6 +1,6 @@
 import { auth } from "@/src/auth";
 import { UserProfile } from "@/src/models/UserProfileModel";
-import { Comment } from "@/src/models/commentModel";
+// import { Comment } from "@/src/models/commentModel";
 import { Post } from "@/src/models/postModel";
 import { NextResponse } from "next/server";
 

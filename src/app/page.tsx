@@ -11,7 +11,7 @@ import MainContent from "./MainContent";
 export default async function Home() {
   const cookieStore = await cookies();
   const onboarding = cookieStore.get("onboarding")?.value;
-  const NPS = cookieStore.get("NPS")?.value;
+  // const NPS = cookieStore.get("NPS")?.value;
   const LPS = cookieStore.get("LPS")?.value;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////

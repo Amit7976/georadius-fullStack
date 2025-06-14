@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { Post } from "@/src/models/postModel";
-import { Comment } from "@/src/models/commentModel";
+// import { Comment } from "@/src/models/commentModel";
 import { auth } from "@/src/auth";
 import mongoose from "mongoose";
 import { connectToDatabase } from "@/src/lib/utils";
