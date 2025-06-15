@@ -86,11 +86,10 @@ export const metadata: Metadata = {
   },
 };
 
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const viewport: Viewport = {
-  themeColor: '#111827', // Tailwind’s gray-900 for newsy dark theme vibe
+  themeColor: '#111827',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -167,7 +166,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </div>
       </body>
 
-      <GoogleAnalytics gaId="G-SQW8D7ZEZ2" />
+      <GoogleAnalytics gaId="G-JLMGJ6PG9F" />
 
     </html>
   );
