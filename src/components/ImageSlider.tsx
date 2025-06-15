@@ -40,7 +40,7 @@ const ImageSlider: React.FC<ImageSliderProps> = ({ images, height }) => {
                             alt={`Slide ${index}`}
                             fill
                             sizes="full"
-                            priority
+                            loading="lazy"
                             style={{ objectFit: "contain" }}
                         />
                         <div className="absolute top-2 right-2 bg-gray-500 dark:bg-neutral-950 rounded-full p-1.5 py-0.5 text-white text-[8px] border-2">

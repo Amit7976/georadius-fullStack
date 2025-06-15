@@ -25,7 +25,7 @@ export default function MainContent({
             <div className="flex items-center justify-between py-5 p-4">
                 <div className="flex items-center gap-0 relative">
                     {!userData.currentUserProfile && (
-                        <BackButton  classname="relative pr-5 pl-0"/>
+                        <BackButton classname="relative pr-5 pl-0" />
                     )}
                     <h2 className="text-lg font-bold">{username}</h2>
                 </div>
@@ -39,7 +39,7 @@ export default function MainContent({
             {/* Profile Info */}
             <div className="flex items-start gap-4 my-2 p-4">
                 <div className="flex-1">
-                    <Image
+                    <Image loading="lazy"
                         width={100}
                         height={100}
                         src={userData.profileImage}
@@ -60,7 +60,7 @@ export default function MainContent({
             </div>
 
             {/* Action Buttons */}
-            <ActionButtons currentUserProfile={userData.currentUserProfile} username={username}/>
+            <ActionButtons currentUserProfile={userData.currentUserProfile} username={username} />
 
             {/* News Posts */}
             <div className="py-6">

@@ -165,12 +165,11 @@ export default function MainContent() {
                     <div className="relative flex-1 w-32 h-32 border-2 border-dashed rounded-xl active:scale-95">
                         {!imagePreview && (
                             <>
-                                <Image
+                                <Image loading="lazy"
                                     src={"/images/profileIcon/default.jpg"}
                                     alt="Preview"
                                     width={80}
                                     height={80}
-                                    priority
                                     className="w-full h-32 rounded-xl object-cover pointer-events-none" />
                             </>
                         )}
@@ -181,12 +180,11 @@ export default function MainContent() {
                             onChange={handleImageChange}
                         />
                         {imagePreview && (
-                            <Image
+                            <Image loading="lazy"
                                 src={imagePreview}
                                 alt="Preview"
                                 width={80}
                                 height={80}
-                                priority
                                 className="w-full h-32 rounded-xl object-cover"
                             />
                         )}

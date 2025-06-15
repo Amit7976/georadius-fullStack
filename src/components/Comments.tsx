@@ -189,7 +189,7 @@ const Comments = ({
                 <div className="flex items-start gap-3">
                     {comment.profileImage && (
                         <LoaderLink href={`/${comment.username}`}>
-                            <Image
+                            <Image loading="lazy"
                                 width={100}
                                 height={100}
                                 src={comment.profileImage}

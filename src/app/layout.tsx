@@ -108,7 +108,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="icon" href="/icons/icon-192x192.png" type="image/png" sizes="192x192" />
         <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
         <meta property="og:updated_time" content={updatedTime} />
 
         {/* Schema.org JSON-LD */}

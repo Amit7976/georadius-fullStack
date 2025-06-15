@@ -97,7 +97,7 @@ const NewsPost = ({ news, onHide, fullDescription, currentLoginUsername }: { new
                 <div className="flex justify-between items-center px-2">
                     <div className="flex items-start gap-2">
                         <Link href={"/" + news.creatorName} className="mt-1 shrink-0 w-9 h-9">
-                            <Image src={news.creatorImage} alt="Profile" width={40} height={40} priority className="rounded-full w-9 h-9 aspect-square" />
+                            <Image loading="lazy" src={news.creatorImage} alt="Profile" width={40} height={40} className="rounded-full w-9 h-9 aspect-square" />
                         </Link>
                         <div>
                             <div className="flex items-center gap-2">
@@ -153,7 +153,7 @@ const NewsPost = ({ news, onHide, fullDescription, currentLoginUsername }: { new
                                     ) : (
                                         <>
                                             <LoaderLink href={"/" + news.creatorName} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer text-gray-700 hover:bg-gray-100 dark:text-gray-300 border-2 rounded-lg bg-gray-100 dark:bg-neutral-800">
-                                                <Image src={news.creatorImage} alt="Profile" width={40} height={40} className="rounded-full size-5" priority /> {t("viewProfile")}
+                                                <Image loading="lazy" src={news.creatorImage} alt="Profile" width={40} height={40} className="rounded-full size-5" /> {t("viewProfile")}
                                             </LoaderLink>
                                             <LoaderLink href={`/pages/others/report_an_issue/${news._id}`} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer text-gray-700 hover:bg-gray-100 dark:text-gray-300 border-2 rounded-lg bg-gray-100 dark:bg-neutral-800">
                                                 <TbReport className="size-6" /> {t("report")}

@@ -132,7 +132,7 @@ export default function MainContent() {
                                 <Swiper direction="horizontal" slidesPerView={1} className="w-full h-[50vh] z-10 relative">
                                     {post.images.map(image => (
                                         <SwiperSlide key={image} className="relative flex items-center justify-center w-full">
-                                            <Image src={image} alt={post.title} layout="fill" sizes="full" objectFit="cover" priority />
+                                            <Image loading="lazy" src={image} alt={post.title} layout="fill" sizes="full" objectFit="cover" />
                                         </SwiperSlide>
                                     ))}
                                 </Swiper>
@@ -166,7 +166,7 @@ export default function MainContent() {
                                                     ) : (
                                                         <>
                                                             <LoaderLink href={`/${post.creatorName}`} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer text-gray-700 hover:bg-gray-100 dark:text-gray-300 border-2 rounded-lg bg-gray-100 dark:bg-neutral-800">
-                                                                <Image src={post.creatorImage} alt="Profile" width={40} height={40} className="rounded-full size-5" priority /> {t("viewProfile")}
+                                                                <Image loading="lazy" src={post.creatorImage} alt="Profile" width={40} height={40} className="rounded-full size-5" /> {t("viewProfile")}
                                                             </LoaderLink>
                                                             <LoaderLink href={`/pages/others/report_an_issue/${post._id}`} className="flex gap-3 w-full p-3 text-lg justify-start cursor-pointer text-gray-700 hover:bg-gray-100 dark:text-gray-300 border-2 rounded-lg bg-gray-100 dark:bg-neutral-800">
                                                                 <TbReport className="size-6" /> {t("report")}
@@ -192,7 +192,7 @@ export default function MainContent() {
                                             <h2 className="text-2xl font-bold pr-10 pointer-events-auto">{post.title}</h2>
                                             <div className="flex items-center justify-between gap-3 w-full mt-4 mb-1 pointer-events-auto">
                                                 <div className="flex items-center gap-2">
-                                                    <Image src={post.creatorImage} alt={post.creatorName} width={40} height={40} className="rounded-full" priority />
+                                                    <Image loading="lazy" src={post.creatorImage} alt={post.creatorName} width={40} height={40} className="rounded-full" />
                                                     <span className="text-base font-semibold">{post.creatorName}</span>
                                                 </div>
                                                 <span className="text-sm font-semibold text-gray-500">{formatTimeAgo(post.createdAt)}</span>
@@ -209,7 +209,7 @@ export default function MainContent() {
                                             <DrawerTitle className="pt-4 text-2xl font-bold pr-10 capitalize">{post.title}</DrawerTitle>
                                             <div className="flex items-center justify-between gap-3 w-full mt-6 mb-1">
                                                 <div className="flex items-center gap-2">
-                                                    <Image src={post.creatorImage} alt={post.creatorName} width={40} height={40} className="rounded-full" priority />
+                                                    <Image loading="lazy" src={post.creatorImage} alt={post.creatorName} width={40} height={40} className="rounded-full" />
                                                     <span className="text-base font-semibold">{post.creatorName}</span>
                                                 </div>
                                                 <VoteButtons news={post} />

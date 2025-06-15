@@ -103,7 +103,7 @@ export default function MainContent() {
 
         try {
             const permissionStatus = await navigator.permissions.query({ name: "geolocation" as PermissionName });
-            
+
             if (permissionStatus.state === "granted" || permissionStatus.state === "prompt") {
                 try {
                     const location = await getAddress();
@@ -197,12 +197,11 @@ export default function MainContent() {
                     <div className="relative flex-1 w-32 h-32 border-2 border-dashed rounded-xl active:scale-95 duration-300">
                         {!imagePreview && (
                             <>
-                                <Image
+                                <Image loading="lazy"
                                     src={"/images/profileIcon/default.jpg"}
                                     alt="Preview"
                                     width={80}
                                     height={80}
-                                    priority
                                     className="w-full h-32 rounded-xl p-0 object-cover pointer-events-none" />
                             </>
                         )}
@@ -213,12 +212,11 @@ export default function MainContent() {
                             onChange={handleImageChange}
                         />
                         {imagePreview && (
-                            <Image
+                            <Image loading="lazy"
                                 src={imagePreview}
                                 alt="Preview"
                                 width={80}
                                 height={80}
-                                priority
                                 className="w-full h-32 rounded-xl object-cover"
                             />
                         )}
@@ -227,7 +225,7 @@ export default function MainContent() {
                         )}
                     </div>
 
-                    
+
                     {/* Username */}
                     <div className="rounded-lg space-y-2 flex-2">
                         <Label className={"text-sm text-gray-600 dark:text-gray-400 font-medium"}>{t("username")}</Label>
@@ -248,7 +246,7 @@ export default function MainContent() {
 
                 </div>
 
-                
+
                 {/* Full Name */}
                 <div className="border border-gray-200 dark:border-neutral-700 w-full px-6 py-10 rounded-lg flex flex-col gap-2">
                     <Label className={"text-sm text-gray-600 dark:text-gray-400 font-medium"}>{t("fullName")}</Label>
@@ -264,7 +262,7 @@ export default function MainContent() {
                     )}
                 </div>
 
-                
+
                 {/* Phone Number (Optional) */}
                 <div className="border border-gray-200 dark:border-neutral-700 w-full px-6 py-10 rounded-lg flex flex-col gap-2">
                     <Label className={"text-sm text-gray-600 dark:text-gray-400 font-medium"}>{t("phoneNumber")}</Label>
@@ -283,7 +281,7 @@ export default function MainContent() {
                     />
                 </div>
 
-                
+
                 {/* Date of Birth */}
                 <div className="border border-gray-200 dark:border-neutral-700 w-full p-6 rounded-lg flex flex-col gap-2">
                     <Label className="text-sm text-gray-600 dark:text-gray-400 font-medium">{t("dateOfBirth")}</Label>
@@ -301,7 +299,7 @@ export default function MainContent() {
                     {errors.dob && <p className="text-red-500">{errors.dob.message}</p>}
                 </div>
 
-                
+
                 {/* Location + Get Current Location Button */}
                 <div className="border border-gray-200 dark:border-neutral-700 w-full px-6 py-10 rounded-lg flex flex-col justify-center-center gap-2">
                     <Label className={"text-sm text-gray-600 dark:text-gray-400 font-medium"}>{t("location")}</Label>
@@ -333,7 +331,7 @@ export default function MainContent() {
                     </div>
                 </div>
 
-                
+
                 {/* Bio */}
                 <div className="border border-gray-200 dark:border-neutral-700 w-full px-6 py-10 rounded-lg flex flex-col gap-2">
                     <Label className={"text-sm text-gray-600 dark:text-gray-400 font-medium"}>{t("bio")}</Label>
@@ -341,7 +339,7 @@ export default function MainContent() {
                     {errors.bio && <p className="text-red-500">{errors.bio.message}</p>}
                 </div>
 
-                
+
                 {/* Submit Button */}
                 <div className="w-full p-6">
                     <Button

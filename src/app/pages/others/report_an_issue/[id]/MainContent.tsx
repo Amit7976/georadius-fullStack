@@ -177,7 +177,7 @@ const MainContent = ({ id }: { id: string | null }) => {
                                         <div className="gap-2 mt-3 flex-wrap grid grid-cols-3">
                                             {selectedImages.map((img: File, index: number) => (
                                                 <div key={index} className="relative col-span-1 h-40 object-cover">
-                                                    <Image
+                                                    <Image loading="lazy"
                                                         src={URL.createObjectURL(img)}
                                                         width={100}
                                                         height={100}

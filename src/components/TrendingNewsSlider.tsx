@@ -41,12 +41,11 @@ const TrendingNewsSlider = ({ trendingNews, loading }: { trendingNews: TrendingN
                         {trendingNews.map((news: TrendingNewsPost, index: number) => (
                             <SwiperSlide key={news._id || index}>
                                 <LoaderLink href={`/search/results/${news._id}`} className="w-full h-80 relative overflow-hidden text-start select-none bg-gray-100 dark:bg-neutral-800">
-                                    <Image
+                                    <Image loading="lazy"
                                         src={news.image || '/default-image.jpg'}
                                         alt={news.creatorName || ""}
                                         width={600}
                                         height={300}
-                                        priority
                                         className="w-full h-full object-cover object-center"
                                     />
                                     {/* Text Overlay */}

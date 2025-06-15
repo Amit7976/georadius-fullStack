@@ -112,7 +112,7 @@ export default function ImageUploader({ setValue, errors, data }: ImageUploaderP
                 <div className="gap-2 mt-3 flex-wrap grid grid-cols-3">
                     {existingImages.map((url, index) => (
                         <div key={`existing-${index}`} className="relative col-span-1 h-40">
-                            <Image
+                            <Image loading="lazy"
                                 src={url}
                                 alt={`existing-preview-${index}`}
                                 width={300}
@@ -131,7 +131,7 @@ export default function ImageUploader({ setValue, errors, data }: ImageUploaderP
 
                     {newImages.map((img, index) => (
                         <div key={`new-${index}`} className="relative col-span-1 h-40">
-                            <Image
+                            <Image loading="lazy"
                                 src={URL.createObjectURL(img)}
                                 alt={`new-preview-${index}`}
                                 width={300}

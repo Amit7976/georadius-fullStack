@@ -85,7 +85,7 @@ export default function ImageUploader({ setValue, errors }: ImageUploaderProps) 
                 <div className="gap-2 mt-3 flex-wrap grid grid-cols-3">
                     {selectedImages.map((img, index) => (
                         <div key={index} className="relative col-span-1 h-40 object-cover">
-                            <Image width={100} height={100} src={URL.createObjectURL(img)} alt={`preview-${index}`} className="w-full h-40 object-cover rounded-md" />
+                            <Image loading="lazy" width={100} height={100} src={URL.createObjectURL(img)} alt={`preview-${index}`} className="w-full h-40 object-cover rounded-md" />
                             <button
                                 type="button"
                                 className="absolute top-0 right-0 bg-red-500 text-white font-extrabold rounded-full w-5 h-5 flex items-center justify-center text-xs"

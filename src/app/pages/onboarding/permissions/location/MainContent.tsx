@@ -9,12 +9,11 @@ import ClientPermissionHandler from "./ClientPermissionHandler";
 export default function MainContent() {
   return (
     <div className="flex items-center justify-around flex-col space-y-4 h-[94.3vh] bg-white">
-      <Image
+      <Image loading="lazy"
         src={"/gif/location.gif"}
         alt="On Boarding Get Started"
         width={200}
         height={200}
-        priority
         className="w-full h-96 object-contain"
       />
 
